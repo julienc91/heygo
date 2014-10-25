@@ -1,0 +1,14 @@
+{{define "title"}}About{{end}}
+{{define "body"}}
+
+    <h1>A propos de {{ .Appname }}</h1>
+    
+    <ul>
+        <li>Version: {{ .Version }}</li>
+        <li>Date: {{ .Date }}</li>
+        <li>Auteur: <a href="{{ .Website }}">{{ .Author }}</a></li>
+    </ul>
+{{end}}
+
+{{define "js"}}
+{{end}}

@@ -1,0 +1,11 @@
+{{define "title"}}Erreur 403{{end}}
+{{define "body"}}
+<p>
+    A propos de {{ .Appname }}:
+    <ul>
+        <li>Version: {{ .Version }}</li>
+        <li>Date: {{ .Date }}</li>
+        <li>Auteur: <a href="{{ .Website }}">{{ .Author }}</a></li>
+    </ul>
+</p>
+{{end}}
