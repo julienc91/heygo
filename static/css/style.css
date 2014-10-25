@@ -1,0 +1,8 @@
+button[disabled] span.glyphicon {
+    opacity: 0.25;
+}
+
+button[disabled]:hover span.glyphicon {
+    opacity: 0.5;
+}
+

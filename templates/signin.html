@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="author" content="Julien CHAUMONT" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+        <title>Connexion</title>
+    </head>
+    <body>
+        
+        <h1>Gomet</h1>
+
+        <h2>Connexion</h2>
+
+        En cas d'oubli de mot de passe, contactez directement 
+        l'<a href="mailto:gomet@julienc.io?subject=Mot%20de%20passe%20oublié">admin</a>
+        pour le réinitialiser.
+
+        <form role="form" method="post" action="/login">
+            <div class="form-group">
+                <label for="login">Login</label>
+                <input type="text" class="form-control" id="login" name="login" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password" required />
+            </div>
+             
+            <button type="submit" class="btn btn-default">Connexion</button>
+        </form>
+
+         
+        <h2>Inscription</h2>
+
+        Gomet est une plate-forme accessible sur invitation seulement. Si vous
+        ne possédez pas de code d'invitation, vous pouvez toujours en faire la
+        demande à l'<a href="mailto:gomet@julienc.io?subject=Invitation">admin</a>.
+
+        Seul le hash (sha512) salé du mot de passe est stocké sur le serveur.
+
+        Une fois l'inscription effectuée, une étape de validation manuelle par
+        l'admin est requise. En attendant, il est possible que vous n'ayez pas
+        accès à la totalité des contenus. Merci de patienter!
+
+        <form role="form" method="post" action="/signup">
+            <div class="form-group">
+                <label for="login">Login</label>
+                <input type="text" class="form-control" id="login" name="login" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password" required />
+            </div>
+            <div class="form-group">
+                <label for="password2">Vérification du mot de passe</label>
+                <input type="password" class="form-control" id="password2" name="password2" required />
+            </div>
+            <div class="form-group">
+                <label for="invitation">Code d'invitation</label>
+                <input type="text" class="form-control" id="invitation" name="invitation" required />
+            </div>
+            <button type="submit" class="btn btn-default">Inscription</button>
+        </form>
+
+    </body>
+</html>

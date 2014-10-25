@@ -1,0 +1,22 @@
+{{define "title"}}Vidéos{{end}}
+{{define "body"}}
+    <h1>Vidéos</h1>
+    
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Titre</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{range .Videos}}
+            <tr>
+                <td>{{ .Title }}</td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+{{end}}
+
+{{define "js"}}
+{{end}}
