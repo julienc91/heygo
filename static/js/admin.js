@@ -114,6 +114,7 @@ $(function() {
                 new_row_cell("videos", "title", true, "data", "Titre") +
                 new_row_cell("videos", "path", true, "data", "Chemin") +
                 new_row_cell("videos", "slug", true, "data", "Slug") +
+                new_row_cell("videos", "url", false, "", "") +
                 new_row_buttons("videos") +
             "</tr>");
         $(this).attr("disabled", "disabled");
@@ -132,19 +133,23 @@ $(function() {
             var elem = $(this);
             
             // Delete the entry from the database
-            $.post('admin/delete', {"table": table, "id": id}, function(data) {
-                data = JSON.parse(data);
-                var success = data["ok"];
-                if(success) {
-                    elem.closest("tr").remove();
-                    elem.removeClass("info danger");
-                    data["err"] = "Modifications enregistrées";
-                    refresh_permissions();
-                } else {
-                    elem.addClass("danger");
-                }
-                
-                print_alert(success, data["err"], alert);
+            $.ajax({
+                url: 'admin/delete',
+                data: {"table": table, "id": id},
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        var success = data["ok"];
+                        if(success) {
+                            elem.closest("tr").remove();
+                            elem.removeClass("info danger");
+                            data["err"] = "Modifications enregistrées";
+                            refresh_permissions();
+                        } else {
+                            elem.addClass("danger");
+                        }
+                        
+                        print_alert(success, data["err"], alert);
+                    }
             });
         // Else, delete the row from the table and show the "add row" button
         } else {
@@ -210,34 +215,42 @@ $(function() {
             dest = "admin/update";
         }
         
-        $.post(dest, parameters, function(data) {
-            
-            data = JSON.parse(data);
-            var success = data["ok"];
-            
-            if(success) {
-                data["err"] = "Modifications enregistrées";
-                if (is_insert) {
-                    id = data["id"];
-                    $("[data-table=" + table + "][data-id=0][role=id]").removeAttr("role data-id data-table").text(id);
-                    $("[data-table=" + table + "][data-id=0]").attr("data-id", id);
-                    $(".add_row[data-table=" + table + "]").removeAttr("disabled");
+        $.ajax({
+            url: dest,
+            data: parameters,
+            success: function(data) {
+                
+                data = JSON.parse(data);
+                var success = data["ok"];
+                
+                if(success) {
+                    data["err"] = "Modifications enregistrées";
+                    if (is_insert) {
+                        id = data["id"];
+                        $("[data-table=" + table + "][data-id=0][role=id]").removeAttr("role data-id data-table").text(id);
+                        $("[data-table=" + table + "][data-id=0]").attr("data-id", id);
+                        $(".add_row[data-table=" + table + "]").removeAttr("disabled");
+                        
+                        $("[data-table=" + table + "][data-id=" + id + "][data-original-value]").each( function() {
+                            $(this).attr("data-original-value", $(this).text());
+                        });
+                    }
                     
-                    $("[data-table=" + table + "][data-id=" + id + "][data-original-value]").each( function() {
-                        $(this).attr("data-original-value", $(this).text());
-                    });
+                    $(".save_row[data-table=" + table + "][data-id=" + id + "]").attr("disabled", "disabled");
+                    $(".reset_row[data-table=" + table + "][data-id=" + id + "]").attr("disabled", "disabled");
+                    
+                    if (table == "users")
+                        reset_password_button(id);
+                    else if (table == "videos") {
+                        var link = "/videos/watch/" + $("[data-table=videos][data-id=" + id + "][data-field=slug]").text();
+                        $("[data-table=videos][data-id=" + id + "][data-field=url]").html("<a href=\"" + link + "\">" + link + "</a>");
+                    }
+                    
+                    refresh_permissions();
                 }
                 
-                $(".save_row[data-table=" + table + "][data-id=" + id + "]").attr("disabled", "disabled");
-                $(".reset_row[data-table=" + table + "][data-id=" + id + "]").attr("disabled", "disabled");
-                
-                if (table == "users")
-                    reset_password_button(id);
-                        
-                refresh_permissions();
+                print_alert(success, data["err"], alert);
             }
-            
-            print_alert(success, data["err"], alert);
         });
     });
     
@@ -327,20 +340,24 @@ $(function() {
             dest = "admin/delete_pivot";
         }
         
-        $.post(dest, parameters, function(data) {
-            
-            data = JSON.parse(data);
-            var success = data["ok"];
-            
-            if(success) {
-                data["err"] = "Modifications enregistrées";
-                if (is_insert)
-                    json_values[table][ref].push(iter);
-                else
-                    json_values[table][ref].splice(json_values[table][ref].indexOf(iter));
+        $.ajax({
+            url: dest,
+            data: parameters,
+            success: function(data) {
+                
+                data = JSON.parse(data);
+                var success = data["ok"];
+                
+                if(success) {
+                    data["err"] = "Modifications enregistrées";
+                    if (is_insert)
+                        json_values[table][ref].push(iter);
+                    else
+                        json_values[table][ref].splice(json_values[table][ref].indexOf(iter));
+                }
+                
+                print_alert(success, data["err"], alert);
             }
-            
-            print_alert(success, data["err"], alert);
         });
     });
     

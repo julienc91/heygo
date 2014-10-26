@@ -5,7 +5,6 @@ import (
     "github.com/jmoiron/sqlx"
     _ "github.com/mattn/go-sqlite3"
     "gomet/globals"
-    "fmt"
 )
 
 var db *sqlx.DB
@@ -109,16 +108,15 @@ func UpdateRow(id int, values map[string]interface{}, validFields []string, tabl
         params = append(params, v)
     }
     
-    query = query[:len(query)-1] + " WHERE id = ?;"
+    query = query[:len(query)-1] + " WHERE id=?;"
     params = append(params, id)
-    fmt.Println(query, params)
 
     stmt, err := db.Prepare(query)
     if err != nil {
         return err
     }
 
-    _, err = stmt.Query(params...)
+    _, err = stmt.Exec(params...)
     return err
 }
 
@@ -156,7 +154,7 @@ func InsertRow(values map[string]interface{}, validFields []string, table string
 
 func DeleteRow(id int, table string) error {
 
-    stmt, err := db.Prepare("DELETE FROM " + table + " WHERE id = ?;")
+    stmt, err := db.Prepare("DELETE FROM " + table + " WHERE id=?;")
     if err != nil {
         return err
     }
