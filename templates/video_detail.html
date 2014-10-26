@@ -1,9 +1,16 @@
 {{define "title"}}{{ .Slug }}{{end}}
 {{define "body"}}
+<p class="video_container">
+    <video src="/media/video/{{ .Slug }}" data-slug="{{ .Slug }}" controls preload="auto" width>
+        {{ .Title }}
+    </video>
+</p>
 <p>
-    <video src="../media/video/{{ .Slug }}">{{ .Title }}</video>
+    <button class="btn btn-info" role="search_subtitles">[[ 'SEARCH_SUBTITLES' | translate ]]</button>
 </p>
 {{end}}
 
 {{define "js"}}
+<script src="/static/js/jquery.xmlrpc.min.js"></script>
+<script src="/static/js/videos.js"></script>
 {{end}}

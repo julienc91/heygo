@@ -6,3 +6,7 @@ button[disabled]:hover span.glyphicon {
     opacity: 0.5;
 }
 
+.video_container {
+    width: 80%;
+    margin: auto;
+}

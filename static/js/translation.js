@@ -28,6 +28,7 @@ app.config(['$translateProvider', function ($translateProvider) {
         'SAVE': 'Enregistrer',
         'SLUG': 'Slug',
         'TITLE': 'Nom',
+        'URL': 'Url',
         'VALUE': 'Valeur',
         
         'MENU_ABOUT': 'A propos',

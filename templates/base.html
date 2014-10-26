@@ -5,28 +5,28 @@
         <meta charset="utf-8" />
         <meta name="author" content="Julien CHAUMONT" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
-        <link rel="stylesheet" href="../static/css/style.css">
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/style.css">
         <title>{{template "title" .}}</title>
     </head>
     <body>
         {{template "menu" .}}
         {{template "body" .}}
-        <script src="../static/js/jquery-2.1.1.min.js"></script>
+        <script src="/static/js/jquery-2.1.1.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/angular.min.js"></script>
+        <script src="/static/js/angular-translate.min.js"></script>
+        <script src="/static/js/translation.js"></script>
         {{template "js" .}}
-        <script src="../static/js/bootstrap.min.js"></script>
-        <script src="../static/js/angular.min.js"></script>
-        <script src="../static/js/angular-translate.min.js"></script>
-        <script src="../static/js/translation.js"></script>
     </body>
 </html>
 {{end}}
 
 {{define "menu"}}
 <nav>
-    <a href="../about">[[ 'MENU_ABOUT' | translate ]]</a>
-    <a href="../videos">[[ 'MENU_VIDEOS' | translate ]]</a>
-    <a href="../admin">[[ 'MENU_ADMINISTRATION' | translate ]]</a>
-    <a href="../signout">[[ 'MENU_SIGNOUT' | translate ]]</a>
+    <a href="/about">[[ 'MENU_ABOUT' | translate ]]</a>
+    <a href="/videos">[[ 'MENU_VIDEOS' | translate ]]</a>
+    <a href="/admin">[[ 'MENU_ADMINISTRATION' | translate ]]</a>
+    <a href="/signout">[[ 'MENU_SIGNOUT' | translate ]]</a>
 </nav>
 {{end}}

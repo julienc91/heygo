@@ -166,6 +166,7 @@
                             <th>[[ 'TITLE' | translate]]</th>
                             <th>[[ 'PATH' | translate]]</th>
                             <th>[[ 'SLUG' | translate]]</th>
+                            <th>[[ 'URL' | translate]]</th>
                             <th/>
                         </tr>
                     </thead>
@@ -176,6 +177,7 @@
                             <td role="data" data-id="{{ .id }}" data-table="videos" data-original-value="{{ .title }}" data-field="title" contenteditable="true">{{ .title }}</td>
                             <td role="data" data-id="{{ .id }}" data-table="videos" data-original-value="{{ .path }}" data-field="path" contenteditable="true">{{ .path }}</td>
                             <td role="data" data-id="{{ .id }}" data-table="videos" data-original-value="{{ .slug }}" data-field="slug" contenteditable="true">{{ .slug }}</td>
+                            <td data-field="url" data-id="{{ .id }}" data-table="videos"><a href="/videos/watch/{{ .slug }}">/videos/watch/{{ .slug }}</a></td>
                             <td>
                                 <button type="submit" class="save_row btn-link" data-table="videos" data-id="{{ .id }}">
                                     <span class="glyphicon glyphicon-ok-sign"></span>
@@ -338,5 +340,5 @@
 
 
 {{define "js"}}
-<script src="../static/js/admin.js"></script>
+<script src="/static/js/admin.js"></script>
 {{end}}

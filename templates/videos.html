@@ -11,7 +11,7 @@
         <tbody>
         {{range .Videos}}
             <tr>
-                <td>{{ .Title }}</td>
+                <td><a href="/videos/watch/{{ .Slug }}">{{ .Title }}</a></td>
             </tr>
         {{end}}
         </tbody>

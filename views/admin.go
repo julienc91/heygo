@@ -121,7 +121,7 @@ func AdminDeletePivotHandler(w http.ResponseWriter, req *http.Request) {
     case "permissions":
         k1 = "video_groups_id"
         k2 = "groups_id"
-        rtable = "groups_id"
+        rtable = "video_permissions"
     default:
         return
     }
