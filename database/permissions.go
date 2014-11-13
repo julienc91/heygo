@@ -5,7 +5,7 @@ import (
 )
 
 
-func CheckPermission(userId int, videoId int) (bool, error) {
+func CheckPermission(userId int64, videoId int64) (bool, error) {
 
     stmt, err := db.Prepare(`SELECT count(*)
 FROM membership
@@ -19,7 +19,7 @@ WHERE membership.users_id = ?;`)
         return false, err
     }
 
-    var nb int
+    var nb int64
     err = stmt.QueryRow(videoId, userId).Scan(&nb)
     if err != nil {
         return false, err
@@ -29,7 +29,7 @@ WHERE membership.users_id = ?;`)
 }
 
 
-func IsAdmin(userId int) (bool, error) {
+func IsAdmin(userId int64) (bool, error) {
 
     stmt, err := db.Prepare(`SELECT count(*)
 FROM membership
@@ -39,7 +39,7 @@ AND groups_id = ?;`)
         return false, err
     }
 
-    var nb int
+    var nb int64
     err = stmt.QueryRow(userId, globals.ADMIN_GROUP_ID).Scan(&nb)
     if err != nil {
         return false, err
@@ -49,7 +49,7 @@ AND groups_id = ?;`)
 }
 
 
-func GetAllowedVideos(userId int) ([]Video, error) {
+func GetAllowedVideos(userId int64) ([]Video, error) {
 
     stmt, err := db.Prepare(`
 SELECT videos.id, videos.title, videos.path, videos.slug
@@ -75,8 +75,7 @@ AND membership.users_id = ?;`)
 
     for rows.Next() {
         var video Video
-        if err := rows.Scan(&video.Id, &video.Title, &video.Path,
-            &video.Slug); err != nil {
+        if err := rows.Scan(&video.Id, &video.Title, &video.Path, &video.Slug); err != nil {
             return nil, err
         }
 

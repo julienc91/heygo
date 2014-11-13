@@ -3,6 +3,7 @@ package views
 import (
     "net/http"
     "gomet/database"
+    "encoding/json"
 )
 
 func RedirectIfNotAdmin(w http.ResponseWriter, req *http.Request) bool {
@@ -14,7 +15,7 @@ func RedirectIfNotAdmin(w http.ResponseWriter, req *http.Request) bool {
     var id = GetUserId(req)
     ok, err := database.IsAdmin(id)
     if err != nil || !ok {
-        http.Redirect(w, req, "/", 302)
+        http.Error(w, "", http.StatusForbidden)
         return true
     }
     
@@ -26,8 +27,21 @@ func RedirectIfNotAuthenticated(w http.ResponseWriter, req *http.Request) bool {
     
     var userId = GetUserId(req)
     if userId == 0 {
-        http.Redirect(w, req, "/signin", 302)
+        http.Redirect(w, req, "/signin", http.StatusFound)
         return true
     }
     return false
+}
+
+
+func writeJsonResult(ret map[string]interface{}, w http.ResponseWriter, code int) {
+
+    val, err := json.Marshal(ret)
+    if err != nil {
+        ret["err"] = err.Error()
+        ret["ok"] = false
+        code = http.StatusInternalServerError
+    }
+
+    http.Error(w, string(val), code)
 }

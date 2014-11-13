@@ -10,3 +10,24 @@ button[disabled]:hover span.glyphicon {
     width: 80%;
     margin: auto;
 }
+
+div.col-sm-10 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.ui-grid {
+    height: initial !important;
+}
+
+.ui-grid-native-scrollbar {
+    display: None !important;
+}
+
+.ui-grid-render-container {
+    margin-bottom: 10px !important;
+}
+
+.edit.btn-link {
+    margin-left: 10px;
+}

@@ -1,7 +1,7 @@
 package database
 
 type Group struct {
-    Id int
+    Id int64
     Title string
 }
 
@@ -34,12 +34,12 @@ func GetAllGroups() ([]Group, error) {
 }
 
 
-func UpdateGroup(groupId int, values map[string]interface{}) error {
+func UpdateGroup(groupId int64, values map[string]interface{}) (map[string]interface{}, error) {
 
     return UpdateRow(groupId, values, []string{"title"}, "groups")
 }
 
-func InsertGroup(values map[string]interface{}) (int, error) {
+func InsertGroup(values map[string]interface{}) (map[string]interface{}, error) {
 
     return InsertRow(values, []string{"title"}, "groups")
 }

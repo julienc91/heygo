@@ -5,7 +5,6 @@ import (
 	"html/template"
     "github.com/gorilla/securecookie"
     "gomet/database"
-    "fmt"
 )
 
 var cookieHandler = securecookie.New(
@@ -18,8 +17,8 @@ func SignInHandler(w http.ResponseWriter, req *http.Request) {
         "templates/signin.html"))
 	err := t.Execute(w, nil)
 	if err != nil {
-		w.WriteHeader(500)
-        fmt.Fprintln(w, err)
+        http.Error(w, "", http.StatusInternalServerError)
+        return
 	}
 }
 
@@ -32,57 +31,55 @@ func SignupHandler(w http.ResponseWriter, req *http.Request) {
     invitation := req.FormValue("invitation")
 
     if len(password) < 7 || password != password2 {
-        fmt.Fprintln(w, "Mot de passe invalide (minimum 7 caractères)")
+        http.Error(w, "Invalid pasword, at least 7 characters", http.StatusBadRequest)
         return
     }
     
     id, err := database.GetUserIdFromLogin(login)
     if err == nil && id != 0 {
-        fmt.Fprintln(w, "Login déjà existant")
+        http.Error(w, "This login already exists", http.StatusConflict)
         return
     }
 
     ok, err := database.CheckInvitation(invitation)
     if err != nil || !ok {
-        fmt.Fprintln(w, "Mauvaise invitation")
+        http.Error(w, "This invitation is not valid", http.StatusBadRequest)
         return
     }
 
     err = database.AddUser(login, password, invitation)
     if err != nil {
-        fmt.Fprintln(w, err)
+        http.Error(w, "", http.StatusInternalServerError)
         return
     }
 
-    fmt.Fprintln(w, "Utilisateur créé avec succès! Vous pouvez à présent vous connecter")
+    http.Error(w, "", http.StatusOK)
 }
+
 
 func LoginHandler(w http.ResponseWriter, req *http.Request) {
 
     login := req.FormValue("login")
     password := req.FormValue("password")
-    var id int
+    var id int64
     var err error
     
     if login != "" && password != "" {
         id, err = database.GetUserIdFromLogin(login)
         if err != nil {
-            w.WriteHeader(403)
-            fmt.Fprintln(w, "Invalid login")
+            http.Error(w, "Invalid login", http.StatusUnauthorized)
             return
         }
         if err := database.AuthenticateUser(id, password); err != nil {
-            w.WriteHeader(403)
-            fmt.Fprintln(w, "Invalid password")
+            http.Error(w, "Invalid password", http.StatusUnauthorized)
             return
         }
     }
 
-    value := map[string]int{"id": id}
+    value := map[string]int64{"id": id}
     encoded, err := cookieHandler.Encode("session", value)
     if err != nil {
-        w.WriteHeader(500)
-        fmt.Fprintln(w, err)
+        http.Error(w, "", http.StatusInternalServerError)
         return
     }
     
@@ -109,10 +106,10 @@ func SignoutHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 
-func GetUserId(req *http.Request) int {
-    var id = 0
+func GetUserId(req *http.Request) int64 {
+    var id int64 = 0
     if cookie, err := req.Cookie("session"); err == nil {
-        cookieValue := make(map[string]int)
+        cookieValue := make(map[string]int64)
         if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
             id = cookieValue["id"]
         }
@@ -120,10 +117,11 @@ func GetUserId(req *http.Request) int {
     return id
 }
 
+
 func MainPageHandler(w http.ResponseWriter, req *http.Request) {
     if RedirectIfNotAuthenticated(w, req) {
         return
     }
-    http.Redirect(w, req, "/about", 302)
+    http.Redirect(w, req, "/about", http.StatusFound)
 }
 
