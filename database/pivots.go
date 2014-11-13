@@ -41,17 +41,17 @@ func GetAllPivotTable(table, key, value string) (map[int][]int, error) {
 }
 
 
-func InsertMembership(values map[string]interface{}) (int, error) {
+func InsertMembership(values map[string]interface{}) (map[string]interface{}, error) {
 
     return InsertRow(values, []string{"users_id", "groups_id"}, "membership")
 }
 
-func InsertClassification(values map[string]interface{}) (int, error) {
+func InsertClassification(values map[string]interface{}) (map[string]interface{}, error) {
 
     return InsertRow(values, []string{"videos_id", "video_groups_id"}, "video_classification")
 }
 
-func InsertPermission(values map[string]interface{}) (int, error) {
+func InsertPermission(values map[string]interface{}) (map[string]interface{}, error) {
 
     return InsertRow(values, []string{"video_groups_id", "groups_id"}, "video_permissions")
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type Video struct {
-    Id int
+    Id int64
     Title string
     Path string
     Slug string
@@ -58,12 +58,12 @@ func GetAllVideos() ([]Video, error) {
     return result, nil
 }
 
-func UpdateVideo(videoId int, values map[string]interface{}) error {
+func UpdateVideo(videoId int64, values map[string]interface{}) (map[string]interface{}, error) {
 
     return UpdateRow(videoId, values, []string{"path", "slug", "title"}, "videos")
 }
 
-func InsertVideo(values map[string]interface{}) (int, error) {
+func InsertVideo(values map[string]interface{}) (map[string]interface{}, error) {
 
     return InsertRow(values, []string{"title", "path", "slug"}, "videos")
 }

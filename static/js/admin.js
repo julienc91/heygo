@@ -1,368 +1,232 @@
-$(function() {
-    
-    config = {};
-    config["display_fields"] = {"users": "login", "groups": "title", "videos": "title", "invitations": "value", "video_groups": "title"};
-    config["ref_main_tab_filter"] = {"membership": "table[data-table=groups] td[data-field=title]", "classification": "table[data-table=video_groups] td[data-field=title]", "permissions": "table[data-table=groups] td[data-field=title]"};
-    config["iter_main_tab_filter"] = {"membership": "table[data-table=users] td[data-field=login]", "classification": "table[data-table=videos] td[data-field=title]", "permissions": "table[data-table=video_groups] td[data-field=title]"};
-    config["keyname"] = {"membership": "groups_id", "classification": "video_groups_id", "permissions": "groups_id" };
-    config["valuename"] = {"membership": "users_id", "classification": "videos_id", "permissions": "video_groups_id" };
+var config = {
+    "titles": {
+        "users": "Utilisateurs",
+        "invitations": "Invitations",
+        "groups": "Groupes",
+        "videos": "Vidéos",
+        "video_groups": "Groupes de vidéos"
+    },
+    "fields": {
+        "users": ["id", "login", "password"],
+        "invitations": ["id", "value"],
+        "groups": ["id", "title"],
+        "videos": ["id", "title", "path", "slug"],
+        "video_groups": ["id", "title"]
+    },
+    "column_definitions": {
+        "users": [{field: "id", width: "10%", displayName: "ID"}, {field: "login", width: "80%", displayName: "Login"}],
+        "invitations": [{field: "id", width: "10%", displayName: "ID"}, {field: "value", width: "80%", displayName: "Valeur"}],
+        "groups": [{field: "id", width: "10%", displayName: "ID"}, {field: "title", width: "80%", displayName: "Nom"}],
+        "videos": [{field: "id", width: "10%", displayName: "ID"}, {field: "title", width: "25%", displayName: "Titre"}, {field: "path", width: "35%", displayName: "Chemin"}, {field: "slug", width: "20%", displayName: "Slug"}],
+        "video_groups": [{field: "id", width: "10%", displayName: "ID"}, {field: "title", width: "80%", displayName: "Nom"}]
+    },
+    "main_fields": {
+        "users": "login",
+        "invitations": "value",
+        "groups": "title",
+        "videos": "title",
+        "video_groups": "title"
+    },
+    "default_values": {
+        "users": [0, "", "random_string"],
+        "invitations": [0, "random_string"],
+        "groups": [0, ""],
+        "videos": [0, "", "", ""],
+        "video_groups": [0, ""]
+    }
+};
 
 
-    // Generate random passwords
-    function random_password() {
-        return Math.random().toString(36).substring(2, 15);
-    }
+app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise("/users");
     
-    // Initialize tooltips
-    function init_tooltips() {
-        $(".save_row").children().attr("data-toggle", "tooltip").attr("title", "[[ 'SAVE' | translate ]]");
-        $(".reset_row").children().attr("data-toggle", "tooltip").attr("title", "[[ 'CANCEL' | translate ]]");
-        $(".del_row").children().attr("data-toggle", "tooltip").attr("title", "[[ 'DELETE' | translate ]]");
-        $(".add_row").children().attr("data-toggle", "tooltip").attr("title", "[[ 'ADD' | translate ]]");
-        $("[data-toggle=tooltip]").tooltip({
-            placement : 'top'
-        });
+    $stateProvider
+        .state('generic_tables', {
+            url: "/{table:users|invitations|groups|videos|video_groups}",
+            controller: "generic_grid_view_controller",
+            templateUrl: "/static/html/admin/generic_grid_view.html"})
+        .state('users_new', {
+            url: "/{table:users}/new/",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/users_add_view.html"})
+        .state('users_edit', {
+            url: "/{table:users}/{mode:edit}/{id:[0-9]+}",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/users_edit_view.html"})
+        .state('invitations_edit', {
+            url: "/{table:invitations}/{mode:new|edit}/{id:[0-9]*}",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/invitations_edit_view.html"})
+        .state('generic_groups_edit', {
+            url: "/{table:groups|video_groups}/{mode:new|edit}/{id:[0-9]*}",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/generic_groups_edit_view.html"})
+        .state('videos_edit', {
+            url: "/{table:videos}/{mode:new|edit}/{id:[0-9]*}",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/videos_edit_view.html"});
+}]);
+
+
+app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams',
+    function ($scope, $http, $stateParams) {
+        $scope.table = $stateParams.table;
+        $scope.title = config["titles"][$scope.table];
+        $scope.rows = [];
+        
+        $scope.external_scope = {
+            table: $scope.table,
+            delete_row: function(row) {
+                bootbox.confirm("Cette action supprimera définitivement l'entrée \"" + row[config["main_fields"][$scope.table]] + "\". Voulez-vous continuer ?",
+                    function(result) {
+                        if (result) {
+                            $http.get("/admin/delete/" + $scope.table + "/" + row.id).success(function(response) {
+                                if (response["ok"]) {
+                                    var index_to_delete = -1;
+                                    for (var i=0; i<$scope.rows.length; i++) {
+                                        if ($scope.rows[i].id == row.id) {
+                                            index_to_delete = i;
+                                            break;
+                                        }
+                                    }
+                                    if (index_to_delete >= 0)
+                                        $scope.rows.splice(index_to_delete, 1);
+                                }
+                        }).error(display_error_message);
+                    }
+                });
+            }
+        };
+        
+        $scope.grid_options = { enableSorting: true,
+                               enableColumnMenus: false,
+                               enableColumnResizing: false,
+                               columnDefs: config["column_definitions"][$scope.table],
+                               data: 'rows' };
+        $scope.grid_options.columnDefs.push({name: 'actions',
+                                            displayName: 'Actions',
+                                            width: "15%",
+                                            cellTemplate: '<a class="edit btn-link" ng-href="#/{{getExternalScopes().table}}/edit/{{row.entity.id}}"><span class="glyphicon glyphicon-pencil"></span></a>\
+                                                           <button class="delete btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove"></span></button>'});
+        $http.get("/admin/get/" + $scope.table).success(function(response) {
+            if (response["ok"])
+                $scope.rows = response["data"];
+        }).error(display_error_message);
     }
+]);
+
+
+app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams', '$location',
+    function ($scope, $http, $stateParams, $location) {
+        $scope.table = $stateParams.table;
+        $scope.fields = config["fields"][$scope.table];
+        $scope.valid_path = false;
+        $scope.is_new = $stateParams.mode == "new";
+
+        if (!$scope.is_new && (!$stateParams.id || $stateParams.id == 0))
+            $location.path("/" + $scope.table + "/new/");
+        
+        $scope.random_string = function() {
+            var random_string = "";
+            for (; random_string.length < 14; random_string = Math.random().toString(36).slice(2)) {}
+            return random_string;
+        };
+        
+        $scope.model = {};
+        if ($stateParams.id) {
+            $http.get("/admin/get/" + $scope.table + "/" + $stateParams.id).success(function(response) {
+                if (response["ok"])
+                    $scope.model = response["data"];
+            }).error(display_error_message);
+        }
+        
+        $scope.init = function() {
+            if (!$scope.is_new)
+                return
+            for (var i=0; i<$scope.fields.length; i++) {
+                var default_value = config["default_values"][$scope.table][i];
+                if ($scope[default_value])
+                    default_value = $scope[default_value]();
+                $scope.model[$scope.fields[i]] = default_value;
+            }
+        };
+
+        $scope.check_file_on_server = function(model_attribute) {
+            $http.get("/admin/media/check", {params: {"path": $scope.model[model_attribute]}}).success(function(response) {
+                $scope.valid_path = response["ok"];
+            }).error(display_error_message);
+        };
+        
+        $scope.change_random_value = function(model_attribute) {
+            $scope.model[model_attribute] = $scope.random_string();
+        };
+
+        $scope.generate_slug = function(model_attribute) {
+            if (!$scope.model[model_attribute]) {
+                $scope.model["slug"] = "";
+                return;
+            }
+            var slug = $scope.model[model_attribute].toLowerCase();
+            var from = "ãàáäâ@ẽèéëêìíïîõòóöôùúüûñç";
+            var to   = "aaaaaaeeeeeiiiiooooouuuunc";
+            for (var i=0, l=from.length ; i<l ; i++) {
+                slug = slug.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+            }
+            $scope.model["slug"] = slug.replace(/[^\w]+/g, "_");
+        };
+        
+        $scope.save_model = function() {
+            if ($scope.edit.$valid) {
+                if (!$scope.is_new && $scope.table == "users" && $scope.model.new_password)
+                    $scope.model.password = $scope.model.new_password;
+                var url = "/admin/" + ($scope.is_new ? "insert" : "update") + "/" + $scope.table + ($scope.model.is_new ? "" : "/" + $scope.model.id);
+                $http.get(url, {params: $scope.model}).success(function(response) {
+                    if (response["ok"]) {
+                        $scope.model = response["data"];
+                        $location.path("/" + $scope.table);
+                    }
+                }).error(display_error_message);
+            }
+        };
+
+    }
+]);
+
+
+
+// Hide alerts instead of dismissing them
+$("[data-hide]").on("click", function(){
+    $(this).closest("." + $(this).attr("data-hide")).hide();
+});
+
+// Hide alert boxes
+$("#alert_box").hide();
+
+var set_active_tab = (function() {
+                        var hash = $(location).attr('hash');
+                        var tab_id = hash.split("/");
+                        if (tab_id.length > 1 && tab_id[0] == "#" && $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").length == 1)
+                            $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").parent().addClass("active");
+                        })();
+
+
+function display_error_message(data, status, headers, config) {
+    $("#alert_box").children(".alert_content").text(data["err"] ? data["err"] : status);
+    $("#alert_box").show();
+}
+
+
+(function() {
+
+    $(".save_row").children().attr("data-toggle", "tooltip").attr("title", "Enregistrer");
+    $(".reset_row").children().attr("data-toggle", "tooltip").attr("title", "Annuler");
+    $(".del_row").children().attr("data-toggle", "tooltip").attr("title", "Supprimer");
+    $(".add_row").children().attr("data-toggle", "tooltip").attr("title", "Ajouter");
+    $("[data-toggle=tooltip]").tooltip({
+        placement : 'top'
+    });
     
-    // Hide alerts instead of dismissing them
     $("[data-hide]").on("click", function(){
         $(this).closest("." + $(this).attr("data-hide")).hide();
     });
-    
-    // Hide alert boxes and "reset password" inputs
-    $("div[role=alert], input[data-table=users][data-field=password]").hide();
-    
-    // Disable "save" and "reset" buttons
-    $(".save_row, .reset_row").attr("disabled", "disabled");
-    
-    // Click on "reset password": generate random password and activate the save button
-    $(document.body).on("click", "[role=reset_password]", function() {
-        $(this).parent().attr("role", "data").attr("contenteditable", "true");
-        $(this).parent().trigger("input");
-        $(this).parent().text(random_password());
-    });
-    
-    // Save and Delete row buttons for new rows
-    function new_row_buttons(table) {
-        return "    <td>" +
-            "        <button type=\"submit\" class=\"save_row btn-link\" data-table=\"" + table + "\" data-id=\"0\">" +
-            "            <span class=\"glyphicon glyphicon-ok-sign\"></span>" +
-            "        </button>" +
-            "        <button type=\"submit\" class=\"reset_row btn-link\" data-table=\"" + table + "\" data-id=\"0\" disabled=\"disabled\">" +
-            "            <span class=\"glyphicon glyphicon-ban-circle\"></span>" +
-            "        </button>" +
-            "        <button type=\"submit\" class=\"del_row btn-link\" data-table=\"" + table + "\" data-id=\"0\">" +
-            "            <span class=\"glyphicon glyphicon-minus-sign\"></span>" +
-            "        </button>" +
-            "    </td>";
-    }
-    
-    // Add a new row
-    function new_row_cell(table, field, editable, role, content) {
-        var res = "<td role=\"" + role + "\" data-id=\"0\" data-table=\"" + table + "\"";
-        if (field != "")
-            res += " data-field=\"" + field + "\"";
-        if (editable)
-            res += " data-original-value=\"\" contenteditable=\"true\"";
-        res += ">" + content + "</td>";
-        return res
-    }
-    
-    // Add a new row for the users table
-    $("button.add_row[data-table=users]").on("click", function() {
-        $("table[data-table=users]").children("tbody").append(
-            "<tr>" +
-                new_row_cell("users", "", false, "id", "") +
-                new_row_cell("users", "login", true, "data", "Login") +
-                new_row_cell("users", "password", true, "data", random_password()) +
-                new_row_buttons("users") +
-            "</tr>");
-        $(this).attr("disabled", "disabled");
-        init_tooltips();
-    });
-    
-    // Add a new row for the groups table
-    $("button.add_row[data-table=groups],button.add_row[data-table=video_groups]").on("click", function() {
-        var group = $(this).attr("data-table");
-        $("table[data-table=" + group + "]").children("tbody").append(
-            "<tr>" +
-                new_row_cell(group, "", false, "id", "") +
-                new_row_cell(group, "title", true, "data", "Nom") +
-                new_row_buttons(group) +
-            "</tr>");
-        $(this).attr("disabled", "disabled");
-        init_tooltips();
-    });
-    
-    // Add a new row for the invitations table
-    $("button.add_row[data-table=invitations]").on("click", function() {
-        $("table[data-table=invitations]").children("tbody").append(
-            "<tr>" +
-                new_row_cell("invitations", "", false, "id", "") +
-                new_row_cell("invitations", "value", true, "data", random_password()) +
-                new_row_buttons("invitations") +
-            "</tr>");
-        $(this).attr("disabled", "disabled");
-        init_tooltips();
-    });
-    
-    // Add a new row for the videos table
-    $("button.add_row[data-table=videos]").on("click", function() {
-        $("table[data-table=videos]").children("tbody").append(
-            "<tr>" +
-                new_row_cell("videos", "", false, "id", "") +
-                new_row_cell("videos", "title", true, "data", "Titre") +
-                new_row_cell("videos", "path", true, "data", "Chemin") +
-                new_row_cell("videos", "slug", true, "data", "Slug") +
-                new_row_cell("videos", "url", false, "", "") +
-                new_row_buttons("videos") +
-            "</tr>");
-        $(this).attr("disabled", "disabled");
-        init_tooltips();
-    });
-    
-    // Click on "delete row"
-    $(document.body).on("click", "button.del_row", function() {
-        
-        var table = $(this).attr("data-table");
-        var id = $(this).attr("data-id");
-        var alert = $("#" + table + "_alert");
-        
-        // If the click is to delete an existing entry
-        if (id != 0) {
-            var elem = $(this);
-            
-            // Delete the entry from the database
-            $.ajax({
-                url: 'admin/delete',
-                data: {"table": table, "id": id},
-                    success: function(data) {
-                        data = JSON.parse(data);
-                        var success = data["ok"];
-                        if(success) {
-                            elem.closest("tr").remove();
-                            elem.removeClass("info danger");
-                            data["err"] = "Modifications enregistrées";
-                            refresh_permissions();
-                        } else {
-                            elem.addClass("danger");
-                        }
-                        
-                        print_alert(success, data["err"], alert);
-                    }
-            });
-        // Else, delete the row from the table and show the "add row" button
-        } else {
-            $("button.add_row[data-table=" + table + "]").removeAttr("disabled");
-            $(this).closest("tr").remove();
-            refresh_permissions();
-        }
-    });
-    
-    // Disable the "enter" keypress in editable tags
-    $(document.body).on("keypress", "[role=data]", function(e) {
-        if (e.which == 13)
-            return false;
-    });
-    
-    // Enable the "save" button when editing an editable tags
-    $(document.body).on("input", "[role=data]", function() {
-        
-        $(".save_row[data-table=" + $(this).attr("data-table") + "][data-id=" + $(this).attr("data-id") + "]").removeAttr("disabled");
-        if ($(this).attr("data-id") != "0") {
-            $(".reset_row[data-table=" + $(this).attr("data-table") + "][data-id=" + $(this).attr("data-id") + "]").removeAttr("disabled");
-        }
-    });
-    
-    function reset_password_button(id) {
-        $("[role=data][data-table=users][data-id=" + id + "][data-field=password]").removeAttr("contenteditable role").html(
-                        "<button class=\"btn btn-warning\" role=\"reset_password\">Réinitialiser</button>");
-    }
-    
-    
-    // Click on "reset row"
-    $(document.body).on("click", ".reset_row", function() {
-        $("[role=data][data-table=" + $(this).attr("data-table") + "][data-id=" + $(this).attr("data-id") + "][data-original-value]").each( function () {
-            $(this).text($(this).attr("data-original-value"));
-        });
-        $("button.save_row[data-table=" + $(this).attr("data-table") + "][data-id=" + $(this).attr("data-id") + "]").attr("disabled", "disabled");
-        $("button.reset_row[data-table=" + $(this).attr("data-table") + "][data-id=" + $(this).attr("data-id") + "]").attr("disabled", "disabled");
-        
-        if ($(this).attr("data-table") == "users" && $(this).attr("data-id") != "0") {
-            reset_password_button($(this).attr("data-id"));
-        }
-    });
-    
-    // Click on "save row"
-    $(document.body).on("click", ".save_row", function() {
-            
-        var id = $(this).attr("data-id");
-        var table = $(this).attr("data-table");
-        var alert = $("#" + table + "_alert");
-        var elem = $(this);
-        var is_insert = (id == 0);
-        var dest = "";
-        
-        var parameters = {"table": table};
-        $("[role=data][data-table=" + table + "][data-id=" + id + "]").each( function() {
-            parameters[$(this).attr("data-field")] = $(this).text();
-        });
-        
-        if (is_insert) {
-            dest = "admin/insert";
-        } else {
-            parameters["id"] = id;
-            dest = "admin/update";
-        }
-        
-        $.ajax({
-            url: dest,
-            data: parameters,
-            success: function(data) {
-                
-                data = JSON.parse(data);
-                var success = data["ok"];
-                
-                if(success) {
-                    data["err"] = "Modifications enregistrées";
-                    if (is_insert) {
-                        id = data["id"];
-                        $("[data-table=" + table + "][data-id=0][role=id]").removeAttr("role data-id data-table").text(id);
-                        $("[data-table=" + table + "][data-id=0]").attr("data-id", id);
-                        $(".add_row[data-table=" + table + "]").removeAttr("disabled");
-                        
-                        $("[data-table=" + table + "][data-id=" + id + "][data-original-value]").each( function() {
-                            $(this).attr("data-original-value", $(this).text());
-                        });
-                    }
-                    
-                    $(".save_row[data-table=" + table + "][data-id=" + id + "]").attr("disabled", "disabled");
-                    $(".reset_row[data-table=" + table + "][data-id=" + id + "]").attr("disabled", "disabled");
-                    
-                    if (table == "users")
-                        reset_password_button(id);
-                    else if (table == "videos") {
-                        var link = "/videos/watch/" + $("[data-table=videos][data-id=" + id + "][data-field=slug]").text();
-                        $("[data-table=videos][data-id=" + id + "][data-field=url]").html("<a href=\"" + link + "\">" + link + "</a>");
-                    }
-                    
-                    refresh_permissions();
-                }
-                
-                print_alert(success, data["err"], alert);
-            }
-        });
-    });
-    
-    // Refresh checkboxes
-    function refresh_permissions() {
-        $("#membership_ref, #classification_ref, #permissions_ref").each( function() {
-            update_permissions_values($(this).attr("data-tab-id"));
-        });
-    }
-    
-    // Display a message in the given alert box
-    function print_alert(success, text, alert) {
-        
-        if (!success) {
-            alert.removeClass("alert-success").addClass("alert-danger");
-        } else {
-            alert.removeClass("alert-danger").addClass("alert-success");
-        }
-        alert.children(".alert_content").text(text);
-        alert.show();
-    }
-    
-    // Update permission views when selecting a new group
-    function update_permissions(tab_id) {
-        
-        var data = json_values[tab_id];
-        var ref_id = $("#" + tab_id + "_ref").val();
-        $("#" + tab_id + "_iter").find("[type=checkbox]").prop("checked", false);
-        if (ref_id in data) {
-            for (var i in data[ref_id]) {
-                var iter_id = data[ref_id][i];
-                $("#" + tab_id + "_iter").find("[type=checkbox][value=" + iter_id + "]").prop("checked", true);
-            }
-        }
-    }
-    
-    // Change values of select inputs and checkboxes
-    function update_permissions_values(tab_id) {
-        
-        var ref_main_tab_filter = config["ref_main_tab_filter"][tab_id];
-        var iter_main_tab_filter = config["iter_main_tab_filter"][tab_id];
-        $("#" + tab_id + "_ref").html("");
-        $("#" + tab_id + "_iter").html("");
-        
-        $(ref_main_tab_filter).each( function() {
-            
-            var ref_id = $(this).attr("data-id");
-            if (ref_id == 0)
-                return
-            var text = $(this).text();
-            
-            $("#" + tab_id + "_ref").append("<option value=\"" + ref_id + "\">" + text + "</option>");
-        });
-        $(iter_main_tab_filter).each( function() {
-            
-            var iter_id = $(this).attr("data-id");
-            if (iter_id == 0)
-                return
-            var text = $(this).text();
-            
-            $("#" + tab_id + "_iter").append("<div class=\"checkbox\"><label><input type=\"checkbox\" data-tab-id=\"" + tab_id + "\" value=\"" + iter_id + "\">" + text + "</label></div>");
-        });
-        
-        update_permissions(tab_id);
-    }
-    
-    $("[role=select_ref]").change( function() { update_permissions($(this).attr("data-tab-id")); });
-    
-    
-    // Change checkboxes state
-    $(document.body).on("change", "[type=checkbox][data-tab-id]", function() {
-        
-        var table = $(this).attr("data-tab-id");
-        var alert = $("#permissions_alert");
-        var dest = "";
-        var is_insert = $(this).prop('checked');
-        var ref = $("#" + table + "_ref").val();
-        var iter = $(this).val();
-        
-        var parameters = {"table": table};
-        parameters[config["keyname"][table]] = ref;
-        parameters[config["valuename"][table]] = iter;
-        
-        if (is_insert) {
-            dest = "admin/insert";
-        } else {
-            dest = "admin/delete_pivot";
-        }
-        
-        $.ajax({
-            url: dest,
-            data: parameters,
-            success: function(data) {
-                
-                data = JSON.parse(data);
-                var success = data["ok"];
-                
-                if(success) {
-                    data["err"] = "Modifications enregistrées";
-                    if (is_insert)
-                        json_values[table][ref].push(iter);
-                    else
-                        json_values[table][ref].splice(json_values[table][ref].indexOf(iter));
-                }
-                
-                print_alert(success, data["err"], alert);
-            }
-        });
-    });
-    
-    
-    refresh_permissions();
-    init_tooltips();
-    
-});
+})();

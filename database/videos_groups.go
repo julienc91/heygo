@@ -1,7 +1,7 @@
 package database
 
 type VideoGroup struct {
-    Id int
+    Id int64
     Title string
 }
 
@@ -34,12 +34,12 @@ func GetAllVideoGroups() ([]VideoGroup, error) {
 }
 
 
-func UpdateVideoGroup(groupId int, values map[string]interface{}) error {
+func UpdateVideoGroup(groupId int64, values map[string]interface{}) (map[string]interface{}, error) {
 
     return UpdateRow(groupId, values, []string{"title"}, "video_groups")
 }
 
-func InsertVideoGroup(values map[string]interface{}) (int, error) {
+func InsertVideoGroup(values map[string]interface{}) (map[string]interface{}, error) {
 
     return InsertRow(values, []string{"title"}, "video_groups")
 }

@@ -11,14 +11,14 @@ import (
 )
 
 type User struct {
-    Id int
+    Id int64
     Login string
     Password string
     Salt string
 }
 
 
-func AuthenticateUser(id int, password string) error {
+func AuthenticateUser(id int64, password string) error {
 
     stmt, err := db.Prepare(`SELECT password, salt
 FROM users
@@ -40,7 +40,7 @@ WHERE id = ?;`)
     return nil    
 }
 
-func GetUserIdFromLogin(login string) (int, error) {
+func GetUserIdFromLogin(login string) (int64, error) {
 
     stmt, err := db.Prepare(`SELECT id
 FROM users
@@ -49,7 +49,7 @@ WHERE login = ?;`)
         return 0, err
     }
 
-    var id int
+    var id int64
     err = stmt.QueryRow(login).Scan(&id)
     if err != nil {
         return 0, errors.New("Unknown login")
@@ -149,7 +149,7 @@ func GetAllUsers() ([]User, error) {
 }
 
 
-func UpdateUser(userId int, values map[string]interface{}) error {
+func UpdateUser(userId int64, values map[string]interface{}) (map[string]interface{}, error) {
     fmt.Println(values)
     if _, ok := values["password"]; ok {
         
@@ -163,7 +163,7 @@ func UpdateUser(userId int, values map[string]interface{}) error {
     return UpdateRow(userId, values, []string{"login", "password", "salt"}, "users")
 }
 
-func InsertUser(values map[string]interface{}) (int, error) {
+func InsertUser(values map[string]interface{}) (map[string]interface{}, error) {
 
     if _, ok := values["password"]; ok {
 

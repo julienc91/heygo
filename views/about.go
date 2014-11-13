@@ -26,6 +26,6 @@ func AboutHandler(w http.ResponseWriter, req *http.Request) {
 		About{globals.APPNAME, globals.VERSION, globals.DATE,
 			globals.AUTHOR, globals.WEBSITE})
 	if err != nil {
-		panic(err)
+		http.Error(w, "", http.StatusInternalServerError)
 	}
 }

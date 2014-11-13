@@ -1,13 +1,11 @@
 package views
 
 import (
-    "errors"
 	"net/http"
 	"html/template"
     "github.com/gorilla/mux"
     "gomet/database"
     "gomet/tools"
-    "fmt"
 )
 
 
@@ -23,14 +21,16 @@ func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 
     videos, err := database.GetAllowedVideos(GetUserId(req))
     if err != nil {
-        panic(err)
+        http.Error(w, "", http.StatusInternalServerError)
+        return
     }
 
 	t := template.Must(template.New("videos.html").ParseFiles(
 		"templates/videos.html", "templates/base.html"))
 	err = t.ExecuteTemplate(w, "base", VideoList{videos})
 	if err != nil {
-		panic(err)
+		http.Error(w, "", http.StatusInternalServerError)
+        return
 	}
 }
 
@@ -52,17 +52,19 @@ func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
     id := GetUserId(req)
     ok, err := database.CheckPermission(id, video.Id)
     if err != nil {
-        panic(err)
-    }
-    if !ok {
-        panic(errors.New("Forbidden"))
+        http.Error(w, "", http.StatusInternalServerError)
+        return
+    } else if !ok {
+        http.Error(w, "", http.StatusForbidden)
+        return
     }
 
     t := template.Must(template.New("video_detail.html").ParseFiles(
         "templates/video_detail.html", "templates/base.html"))
     err = t.ExecuteTemplate(w, "base", video)
     if err != nil {
-        panic(err)
+        http.Error(w, "", http.StatusInternalServerError)
+        return
     }
 }
 
@@ -84,15 +86,21 @@ func VideoGetHash(w http.ResponseWriter, req *http.Request) {
     id := GetUserId(req)
     ok, err := database.CheckPermission(id, video.Id)
     if err != nil {
-        panic(err)
+        http.Error(w, "", http.StatusInternalServerError)
+        return
     }
     if !ok {
-        panic(errors.New("Forbidden"))
+        http.Error(w, "", http.StatusForbidden)
+        return
     }
 
+    var ret = map[string]interface{}{"ok": true, "err": ""}
     hash, size, err := tools.Hash(video.Path)
     if err != nil {
-        fmt.Fprintf(w, "{\"ok\": false, \"err\": \"%s\"}", err.Error())
+        ret["err"] = err.Error()
+        ret["ok"] = false
     }
-    fmt.Fprintf(w, "{\"ok\": true, \"hash\": \"%s\", \"size\": %d}", hash, size)
+    ret["hash"] = hash
+    ret["size"] = size
+    writeJsonResult(ret, w, http.StatusOK)
 }

@@ -6,7 +6,6 @@ import (
     "gomet/database"
     "io"
     "os"
-    "errors"
 )
 
 
@@ -25,23 +24,26 @@ func MediaHandler(w http.ResponseWriter, req *http.Request) {
     case "video":
         video, err := database.GetVideoFromSlug(slug)
         if err != nil {
-            panic(err)
+            http.Error(w, "Video not found", http.StatusNotFound)
+            return
         }
 
         ok, err := database.CheckPermission(id, video.Id)
         if err != nil {
-            panic(err)
+            http.Error(w, "", http.StatusInternalServerError)
+            return
         }
         if !ok {
-            panic(errors.New("Forbidden"))
+            http.Error(w, "", http.StatusForbidden)
+            return
         }
 
         f, err := os.Open(video.Path)
         if err != nil {
-            panic(err)
+            http.Error(w, "", http.StatusInternalServerError)
+            return
         }
 
         io.Copy(w, f)
-        //http.ServeFile(w, req, video.Path)
     }
 }

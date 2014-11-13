@@ -1,15 +1,16 @@
 package database
 
 import (
-    "errors"
     "github.com/jmoiron/sqlx"
     _ "github.com/mattn/go-sqlite3"
     "gomet/globals"
 )
 
 var db *sqlx.DB
-var Tables = []string{"users", "invitations", "groups", "video_groups", "membership",
-    "videos", "video_classification", "vido_permissions"}
+var MainTables = []string{"users", "invitations", "groups", "video_groups", "videos"}
+var PivotTables = []string{"membership", "video_classification", "video_permissions"}
+var Tables = append(MainTables, PivotTables...)
+
 
 func init() {
 
@@ -87,17 +88,17 @@ func checkFields(values map[string]interface{}, validFields []string) error {
             }
         }
         if !isFieldValid {
-            return errors.New("Invalid field")
+            delete(values, field)
         }
     }
 
     return nil
 }
 
-func UpdateRow(id int, values map[string]interface{}, validFields []string, table string) error {
+func UpdateRow(id int64, values map[string]interface{}, validFields []string, table string) (map[string]interface{}, error) {
     
     if err := checkFields(values, validFields); err != nil {
-        return err
+        return nil, err
     }
 
     var query = "UPDATE " + table + " SET "
@@ -113,17 +114,20 @@ func UpdateRow(id int, values map[string]interface{}, validFields []string, tabl
 
     stmt, err := db.Prepare(query)
     if err != nil {
-        return err
+        return nil, err
     }
 
     _, err = stmt.Exec(params...)
-    return err
+    if err != nil {
+        return nil, err
+    }
+    return GetFromId(table, id)
 }
 
-func InsertRow(values map[string]interface{}, validFields []string, table string) (int, error) {
+func InsertRow(values map[string]interface{}, validFields []string, table string) (map[string]interface{}, error) {
 
     if err := checkFields(values, validFields); err != nil {
-        return 0, err
+        return nil, err
     }
 
     var query = "INSERT INTO " + table + " ("
@@ -140,19 +144,24 @@ func InsertRow(values map[string]interface{}, validFields []string, table string
 
     stmt, err := db.Prepare(query)
     if err != nil {
-        return 0, err
+        return nil, err
     }
 
     res, err := stmt.Exec(params...)
     if err != nil {
-        return 0, err
+        return nil, err
     }
     
     id, err := res.LastInsertId()
-    return int(id), err
+    if err != nil {
+        return nil, err
+    }
+    
+    return GetFromId(table, id)
 }
 
-func DeleteRow(id int, table string) error {
+
+func DeleteRow(id int64, table string) error {
 
     stmt, err := db.Prepare("DELETE FROM " + table + " WHERE id=?;")
     if err != nil {
@@ -162,6 +171,7 @@ func DeleteRow(id int, table string) error {
     _, err = stmt.Exec(id)
     return err
 }
+
 
 func GetAll(table string) ([]map[string]interface{}, error) {
 
@@ -192,3 +202,23 @@ func GetAll(table string) ([]map[string]interface{}, error) {
     return res, nil
 }
 
+
+func GetFromId(table string, id int64) (map[string]interface{}, error) {
+
+    var query = "SELECT * FROM " + table + " WHERE id=?;"
+    row := db.QueryRowx(query, id)
+    
+    var res = make(map[string]interface{})
+    err := row.MapScan(res)
+    if err != nil {
+        return nil, err
+    }
+
+    for k, v := range res {
+        if vs, ok := v.([]byte); ok {
+            res[k] = string(vs)
+        }
+    }
+
+    return res, nil
+}

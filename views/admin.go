@@ -4,21 +4,10 @@ import (
     "net/http"
     "html/template"
     "gomet/database"
+    "gomet/tools"
+    "github.com/gorilla/mux"
     "strconv"
-    "fmt"
 )
-
-type AdminData struct {
-    Users []map[string]interface{}
-    Invitations []map[string]interface{}
-    Groups []map[string]interface{}
-    Videos []map[string]interface{}
-    VideoGroups []map[string]interface{}
-    Membership map[int][]int
-    Classification map[int][]int
-    Permissions map[int][]int
-}
-
 
 func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
 
@@ -26,41 +15,44 @@ func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
         return
     }
 
-    req.ParseForm()
-    var data = make(map[string]interface{})
-
-    for k, v := range req.Form {
-        if k != "table" && k != "id" {
-            data[k] = v[0]
-        }
-    }
-
-    var table = req.Form["table"][0]
-    var idStr = req.Form["id"][0]
-
-    id, err := strconv.Atoi(idStr)
-    if err != nil {
+    params := mux.Vars(req)
+    
+    table := params["table"]
+    if !tools.InArray(database.MainTables, table) {
+        http.Error(w, "table is not valid", http.StatusBadRequest)
         return
     }
 
-    var fs = map[string]func (int, map[string]interface{}) error{
+    req.ParseForm()
+
+    var data = make(map[string]interface{})
+    for k := range req.Form {
+        data[k] = req.FormValue(k)
+    }
+    
+    id, err := strconv.ParseInt(params["id"], 10, 64)
+    if err != nil {
+        http.Error(w, "", http.StatusInternalServerError)
+        return
+    }
+
+    var fs = map[string]func (int64, map[string]interface{}) (map[string]interface{}, error) {
         "users": database.UpdateUser,
         "invitations": database.UpdateInvitation,
         "videos": database.UpdateVideo,
         "groups": database.UpdateGroup,
         "video_groups": database.UpdateVideoGroup }
 
-    f, ok := fs[table]
-    if !ok {
-        return
-    }
-
-    err = f(id, data)
+    var ret = map[string]interface{}{"ok": true, "err": ""}
+    
+    updated, err := fs[table](id, data)
     if err != nil {
-        fmt.Fprintf(w, "{\"ok\": false, \"err\": \"%s\"}", err.Error())
-        return
+        ret["err"] = err.Error()
+        ret["ok"] = false
     }
-    fmt.Fprintf(w, "{\"ok\": true}")
+    
+    ret["data"] = updated
+    writeJsonResult(ret, w, http.StatusOK)
 }
 
 
@@ -70,79 +62,28 @@ func AdminDeleteHandler(w http.ResponseWriter, req *http.Request) {
         return 
     }
 
-    req.ParseForm()
+    params := mux.Vars(req)
 
-    id, err := strconv.Atoi(req.Form["id"][0])
+    table := params["table"]
+    if !tools.InArray(database.MainTables, table) {
+        http.Error(w, "table is not valid", http.StatusBadRequest)
+        return
+    }
+
+    id, err := strconv.ParseInt(params["id"], 10, 64)
     if err != nil {
+        http.Error(w, "", http.StatusInternalServerError)
         return
     }
 
-    var fs = map[string]func (int, string) error {
-        "users": database.DeleteRow,
-        "invitations": database.DeleteRow,
-        "videos": database.DeleteRow,
-        "groups": database.DeleteRow,
-        "video_groups": database.DeleteRow }
-
-    f, ok := fs[req.Form["table"][0]]
-    if !ok {
-        return
-    }
-
-    err = f(id, req.Form["table"][0])
+    var ret = map[string]interface{}{"ok": true, "err": ""}
+    err = database.DeleteRow(id, table)
     if err != nil {
-        fmt.Fprintf(w, "{\"ok\": false, \"err\": \"%s\"}", err.Error())
-        return
-    }
-    fmt.Fprintf(w, "{\"ok\": true}")   
-}
-
-
-func AdminDeletePivotHandler(w http.ResponseWriter, req *http.Request) {
-    
-    if RedirectIfNotAdmin(w, req) {
-        return 
+        ret["err"] = err.Error()
+        ret["ok"] = false
     }
 
-    req.ParseForm()
-
-    var table = req.Form["table"][0]
-    var k1, k2, rtable string
-    
-    switch table {
-    case "membership":
-        k1 = "users_id"
-        k2 = "groups_id"
-        rtable = "membership"      
-    case "classification":
-        k1 = "videos_id"
-        k2 = "video_groups_id"
-        rtable = "video_classification"
-    case "permissions":
-        k1 = "video_groups_id"
-        k2 = "groups_id"
-        rtable = "video_permissions"
-    default:
-        return
-    }
-
-    i, err := strconv.Atoi(req.Form[k1][0])
-    if err != nil {
-        return
-    }
-    
-    j, err := strconv.Atoi(req.Form[k2][0])
-    if err != nil {
-        return
-    }
-    
-    err = database.DeletePivotTableRow(i, j, k1, k2, rtable)
-
-    if err != nil {
-        fmt.Fprintf(w, "{\"ok\": false, \"err\": \"%s\"}", err.Error())
-        return
-    }
-    fmt.Fprintf(w, "{\"ok\": true}")   
+    writeJsonResult(ret, w, http.StatusOK)
 }
 
 
@@ -152,40 +93,110 @@ func AdminInsertHandler(w http.ResponseWriter, req *http.Request) {
         return
     }
 
+    params := mux.Vars(req)
+    
+    table := params["table"]
+    if !tools.InArray(database.MainTables, table) {
+        http.Error(w, "table is not valid", http.StatusBadRequest)
+        return
+    }
+
     req.ParseForm()
 
     var data = make(map[string]interface{})
-
-    for k, v := range req.Form {
-        if k != "table" {
-            data[k] = v[0]
-        }
+    for k := range req.Form {
+        data[k] = req.FormValue(k)
     }
 
-    var table = req.Form["table"][0]  
-    delete(req.Form, "table")
-
-    var fs = map[string]func(map[string]interface{}) (int, error) {
+    var fs = map[string]func(map[string]interface{}) (map[string]interface{}, error) {
         "users": database.InsertUser,
         "invitations": database.InsertInvitation,
         "videos": database.InsertVideo,
         "groups": database.InsertGroup,
-        "video_groups": database.InsertVideoGroup,
-        "membership": database.InsertMembership,
-        "classification": database.InsertClassification,
-        "permissions": database.InsertPermission }
+        "video_groups": database.InsertVideoGroup }
 
-    f, ok := fs[table]
-    if !ok {
+    var ret = map[string]interface{}{"ok": true, "err": ""}
+    
+    inserted, err := fs[table](data)
+    if err != nil {
+        ret["err"] = err.Error()
+        ret["ok"] = false
+    }
+    
+    ret["data"] = inserted
+    writeJsonResult(ret, w, http.StatusOK)
+}
+
+
+func AdminGetHandler(w http.ResponseWriter, req *http.Request) {
+
+    if RedirectIfNotAdmin(w, req) {
+        return
+    }
+
+    params := mux.Vars(req)
+
+    table := params["table"]
+    if !tools.InArray(database.MainTables, table) {
+        http.Error(w, "table is not valid", http.StatusBadRequest)
+        return
+    }
+
+    var ret = map[string]interface{}{"ok": true, "err": ""}
+    
+    rows, err := database.GetAll(table)
+    if err != nil {
+        ret["err"] = err.Error()
+        ret["ok"] = false
+    }
+
+    ret["data"] = rows
+    writeJsonResult(ret, w, http.StatusOK)
+}
+
+
+func AdminGetFromIdHandler(w http.ResponseWriter, req *http.Request) {
+
+    if RedirectIfNotAdmin(w, req) {
+        return
+    }
+
+    params := mux.Vars(req)
+    table := params["table"]
+    if !tools.InArray(database.MainTables, table) {
+        http.Error(w, "table is not valid", http.StatusBadRequest)
         return
     }
     
-    id, err := f(data)
+    id, err := strconv.ParseInt(params["id"], 10, 64)
     if err != nil {
-        fmt.Fprintf(w, "{\"ok\": false, \"err\": \"%s\"}", err.Error())
+        http.Error(w, "", http.StatusInternalServerError)
         return
     }
-    fmt.Fprintf(w, "{\"ok\": true, \"id\": %d}", id)
+
+    var ret = map[string]interface{}{"ok": true, "err": ""}
+    
+    rows, err := database.GetFromId(table, id)
+    if err != nil {
+        ret["err"] = err.Error()
+        ret["ok"] = false
+    }
+
+    ret["data"] = rows
+    writeJsonResult(ret, w, http.StatusOK)
+}
+
+
+func AdminMediaCheckHandler(w http.ResponseWriter, req *http.Request) {
+
+    if RedirectIfNotAdmin(w, req) {
+        return
+    }
+
+    path := req.FormValue("path")
+    
+    var ret = map[string]interface{}{"ok": tools.CheckFilePath(path)}
+    writeJsonResult(ret, w, http.StatusOK)
 }
 
 
@@ -195,59 +206,10 @@ func AdminHandler(w http.ResponseWriter, req *http.Request) {
         return
     }
 
-    users, err := database.GetAll("users")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    invitations, err := database.GetAll("invitations")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    videos, err := database.GetAll("videos")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    groups, err := database.GetAll("groups")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    videoGroups, err := database.GetAll("video_groups")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    membership, err := database.GetAllPivotTable("membership", "groups_id", "users_id")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    classification, err := database.GetAllPivotTable("video_classification", "video_groups_id", "videos_id")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
-    permissions, err := database.GetAllPivotTable("video_permissions", "groups_id", "video_groups_id")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-
     t := template.Must(template.New("admin.html").ParseFiles(
         "templates/admin.html", "templates/base.html"))
-    err = t.ExecuteTemplate(w, "base", AdminData{users, invitations, groups, videos, videoGroups, membership, classification, permissions})
+    err := t.ExecuteTemplate(w, "base", nil)
     if err != nil {
-        panic(err)
+        http.Error(w, "", http.StatusInternalServerError)
     }
-
 }
