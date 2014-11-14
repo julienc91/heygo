@@ -1,10 +1,10 @@
 <h2><span ng-show="is_new">Nouvelle</span><span ng-hide="is_new">Modifier une</span> invitation</h2>
 
 <form name="edit" class="form-horizontal" role="form" ng-init="init()" ng-submit="save_model()">
-    <div class="form-group" ng-class="{'has-error': edit.value.$invalid && submitted}">
+    <div class="form-group" ng-class="{'has-error': edit.value.$invalid && edit.$submitted}">
         <label for="value" class="col-sm-2 control-label">Valeur</label>
         <div class="input-group">
-            <input type="text" class="form-control" id="value" name="value" required disabled ng-model="model.value" ng-pattern="/^[a-zA-Z0-9]{14,30}$/">
+            <input type="text" class="form-control" id="value" name="value" required disabled pattern="^[a-zA-Z0-9]{14,30}$" ng-model="model.value">
             <span class="input-group-btn">
                 <button type="button" class="btn btn-default" ng-click="change_random_value('value')">
                     <span class="glyphicon glyphicon-refresh"></span>
@@ -15,7 +15,7 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" ng-href="#/{{table}}">Annuler</a>
-            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid" ng-click="submitted=true">
+            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid">
                 <span ng-show="is_new">Ajouter</span><span ng-hide="is_new">Enregistrer</span>
             </button>
         </div>
