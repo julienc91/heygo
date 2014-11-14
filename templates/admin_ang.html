@@ -2,20 +2,20 @@
 
 <<<define "body">>>
     <h1>Administration</h1>
-    
+
     <div class="container" ng-app="admin_app" ng-controller="admin_controller">
-        
+
         <ul class="nav nav-pills nav-stacked col-md-2">
             <li ng-repeat="section in sections">
                 <a href="#tab_{{section.id}}" data-toggle="pill">{{section.name}}</a>
             </li>
         </ul>
-        
-        
+
+
         <div class="tab-content col-md-10">
 
             <div class="tab-pane" ng-repeat="section in sections" id="tab_{{section.id}}">
-                
+
                 <h2>{{section.name}}</h2>
 
                 <div class="alert alert-dismissible" role="alert" id="{{section.id}}_alert">
@@ -47,10 +47,10 @@
                 <button type="submit" class="add_row btn-link" data-table="{{section}}"><span class="glyphicon glyphicon-plus-sign"></span></button>
 
             </div>
-            
+
         </div>
     </div>
-<<<end>>> 
+<<<end>>>
 
 
 <<<define "js">>>

@@ -39,7 +39,7 @@ var config = {
 
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/users");
-    
+
     $stateProvider
         .state('generic_tables', {
             url: "/{table:users|invitations|groups|videos|video_groups}",
@@ -73,7 +73,7 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
         $scope.table = $stateParams.table;
         $scope.title = config["titles"][$scope.table];
         $scope.rows = [];
-        
+
         $scope.external_scope = {
             table: $scope.table,
             delete_row: function(row) {
@@ -97,7 +97,7 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
                 });
             }
         };
-        
+
         $scope.grid_options = { enableSorting: true,
                                enableColumnMenus: false,
                                enableColumnResizing: false,
@@ -125,13 +125,13 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
 
         if (!$scope.is_new && (!$stateParams.id || $stateParams.id == 0))
             $location.path("/" + $scope.table + "/new/");
-        
+
         $scope.random_string = function() {
             var random_string = "";
             for (; random_string.length < 14; random_string = Math.random().toString(36).slice(2)) {}
             return random_string;
         };
-        
+
         $scope.model = {};
         if ($stateParams.id) {
             $http.get("/admin/get/" + $scope.table + "/" + $stateParams.id).success(function(response) {
@@ -139,7 +139,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
                     $scope.model = response["data"];
             }).error(display_error_message);
         }
-        
+
         $scope.init = function() {
             if (!$scope.is_new)
                 return
@@ -156,7 +156,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
                 $scope.valid_path = response["ok"];
             }).error(display_error_message);
         };
-        
+
         $scope.change_random_value = function(model_attribute) {
             $scope.model[model_attribute] = $scope.random_string();
         };
@@ -174,7 +174,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
             }
             $scope.model["slug"] = slug.replace(/[^\w]+/g, "_");
         };
-        
+
         $scope.save_model = function() {
             if ($scope.edit.$valid) {
                 if (!$scope.is_new && $scope.table == "users" && $scope.model.new_password)
@@ -225,7 +225,7 @@ function display_error_message(data, status, headers, config) {
     $("[data-toggle=tooltip]").tooltip({
         placement : 'top'
     });
-    
+
     $("[data-hide]").on("click", function(){
         $(this).closest("." + $(this).attr("data-hide")).hide();
     });
