@@ -13,7 +13,6 @@ var Tables = append(MainTables, PivotTables...)
 
 
 func init() {
-
     var err error
     db, err = sqlx.Open("sqlite3", globals.DATABASE)
     if err != nil {
@@ -78,7 +77,7 @@ func InitDatabase() {
 
 
 func checkFields(values map[string]interface{}, validFields []string) error {
-    
+
     for field := range values {
         var isFieldValid = false
         for _, validField := range validFields {
@@ -96,19 +95,19 @@ func checkFields(values map[string]interface{}, validFields []string) error {
 }
 
 func UpdateRow(id int64, values map[string]interface{}, validFields []string, table string) (map[string]interface{}, error) {
-    
+
     if err := checkFields(values, validFields); err != nil {
         return nil, err
     }
 
     var query = "UPDATE " + table + " SET "
     var params []interface{}
-    
+
     for k, v := range values {
         query += k + "=?,"
         params = append(params, v)
     }
-    
+
     query = query[:len(query)-1] + " WHERE id=?;"
     params = append(params, id)
 
@@ -133,7 +132,7 @@ func InsertRow(values map[string]interface{}, validFields []string, table string
     var query = "INSERT INTO " + table + " ("
     var query2 = ") VALUES ("
     var params []interface{}
-    
+
     for k, v := range values {
         query += k + ","
         query2 += "?,"
@@ -151,12 +150,12 @@ func InsertRow(values map[string]interface{}, validFields []string, table string
     if err != nil {
         return nil, err
     }
-    
+
     id, err := res.LastInsertId()
     if err != nil {
         return nil, err
     }
-    
+
     return GetFromId(table, id)
 }
 
@@ -177,7 +176,7 @@ func GetAll(table string) ([]map[string]interface{}, error) {
 
     var query = "SELECT * FROM " + table + ";"
     rows, err := db.Queryx(query)
-    
+
     if err != nil {
         return nil, err
     }
@@ -207,7 +206,7 @@ func GetFromId(table string, id int64) (map[string]interface{}, error) {
 
     var query = "SELECT * FROM " + table + " WHERE id=?;"
     row := db.QueryRowx(query, id)
-    
+
     var res = make(map[string]interface{})
     err := row.MapScan(res)
     if err != nil {
