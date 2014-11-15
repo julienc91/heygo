@@ -90,7 +90,7 @@ func LoginHandler(w http.ResponseWriter, req *http.Request) {
 		Path:  "/",
 	}
 	http.SetCookie(w, cookie)
-	http.Redirect(w, req, "/about", 302)
+	http.Redirect(w, req, "/about", http.StatusFound)
 }
 
 // Handle a sign out request
@@ -103,7 +103,7 @@ func SignoutHandler(w http.ResponseWriter, req *http.Request) {
 		MaxAge: -1,
 	}
 	http.SetCookie(w, cookie)
-	http.Redirect(w, req, "/", 302)
+	http.Redirect(w, req, "/", http.StatusFound)
 }
 
 // Get the user's id if he is authenticated, 0 otherwise

@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+// Display the video homepage
 func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
@@ -23,6 +24,27 @@ func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Return a Json object with all the authorized videos
+func VideoGetAllHandler(w http.ResponseWriter, req *http.Request) {
+
+	if RedirectIfNotAuthenticated(w, req) {
+		return
+	}
+
+	id := GetUserId(req)
+
+	var ret = map[string]interface{}{"ok": true, "err": ""}
+
+	rows, err := database.GetAllowedVideos(id)
+	if err != nil {
+		ret["err"] = err.Error()
+		ret["ok"] = false
+	}
+
+	ret["data"] = rows
+	writeJsonResult(ret, w, http.StatusOK)
+}
+
 func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
@@ -34,7 +56,8 @@ func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 
 	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 	if err != nil {
-		panic(err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
 	}
 
 	id := GetUserId(req)
@@ -47,13 +70,8 @@ func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	t := template.Must(template.New("video_detail.html").ParseFiles(
-		"templates/video_detail.html", "templates/base.html"))
-	err = t.ExecuteTemplate(w, "base", video)
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
+	var ret = map[string]interface{}{"ok": true, "err": "", "data": video}
+	writeJsonResult(ret, w, http.StatusOK)
 }
 
 func VideoGetHash(w http.ResponseWriter, req *http.Request) {

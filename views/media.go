@@ -21,7 +21,7 @@ func MediaHandler(w http.ResponseWriter, req *http.Request) {
 	slug := params["slug"]
 
 	switch mediaType {
-	case "video":
+	case "videos":
 		video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 		if err != nil {
 			http.Error(w, "Video not found", http.StatusNotFound)

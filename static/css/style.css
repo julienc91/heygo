@@ -7,8 +7,12 @@ button[disabled]:hover span.glyphicon {
 }
 
 .video_container {
-    width: 80%;
+    width: 70%;
     margin: auto;
+}
+
+.video_container video {
+    width: 100%;
 }
 
 div.col-sm-10 {

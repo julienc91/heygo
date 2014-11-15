@@ -1,0 +1,10 @@
+{{ model.title }}
+
+<p class="video_container">
+    <video ng-src="{{ media_link(model.slug) }}" controls preload="auto">
+        {{ model.title }}
+    </video>
+</p>
+<p>
+    <button class="btn btn-info" role="search_subtitles">Chercher des sous-titres</button>
+</p>

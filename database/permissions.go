@@ -4,60 +4,54 @@ import (
 	"gomet/globals"
 )
 
+// Check if the given user is allowed to access the given video
 func CheckPermission(userId int64, videoId int64) (bool, error) {
 
-	stmt, err := db.Prepare(`SELECT count(*)
-FROM membership
-INNER JOIN video_permissions
-ON video_permissions.groups_id = membership.groups_id
-INNER JOIN video_classification
-ON video_classification.video_groups_id = video_permissions.video_groups_id
-AND video_classification.videos_id = ?
-WHERE membership.users_id = ?;`)
+	var query = "SELECT count(*) FROM membership "
+	query += "INNER JOIN video_permissions ON video_permissions.groups_id = membership.groups_id "
+	query += "INNER JOIN video_classification ON video_classification.video_groups_id = video_permissions.video_groups_id AND video_classification.videos_id=? "
+	query += "WHERE membership.users_id=?;"
+
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		return false, err
 	}
 
 	var nb int64
-	err = stmt.QueryRow(videoId, userId).Scan(&nb)
-	if err != nil {
+	if err := stmt.QueryRow(videoId, userId).Scan(&nb); err != nil {
 		return false, err
 	}
 
 	return nb > 0, nil
 }
 
+// Check if the given user as admin rights
 func IsAdmin(userId int64) (bool, error) {
 
-	stmt, err := db.Prepare(`SELECT count(*)
-FROM membership
-WHERE users_id = ?
-AND groups_id = ?;`)
+	var query = "SELECT count(*) FROM membership WHERE users_id=? AND groups_id=?;"
+
+	stmt, err := db.Preparex(query)
 	if err != nil {
 		return false, err
 	}
 
 	var nb int64
-	err = stmt.QueryRow(userId, globals.ADMIN_GROUP_ID).Scan(&nb)
-	if err != nil {
+	if err := stmt.QueryRow(userId, globals.ADMIN_GROUP_ID).Scan(&nb); err != nil {
 		return false, err
 	}
 
 	return nb > 0, nil
 }
 
+// Get all videos allowed to the given user
 func GetAllowedVideos(userId int64) ([]map[string]interface{}, error) {
 
-	stmt, err := db.Preparex(`
-SELECT videos.id, videos.title, videos.path, videos.slug
-FROM videos
-INNER JOIN video_classification
-ON video_classification.videos_id = videos.id
-INNER JOIN video_permissions
-ON video_permissions.video_groups_id = video_classification.video_groups_id
-INNER JOIN membership
-ON membership.groups_id = video_permissions.groups_id
-AND membership.users_id = ?;`)
+	var query = "SELECT videos.* FROM videos "
+	query += "INNER JOIN video_classification ON video_classification.videos_id = videos.id "
+	query += "INNER JOIN video_permissions ON video_permissions.video_groups_id = video_classification.video_groups_id "
+	query += "INNER JOIN membership ON membership.groups_id = video_permissions.groups_id AND membership.users_id=?;"
+
+	stmt, err := db.Preparex(query)
 	if err != nil {
 		return nil, err
 	}
