@@ -1,3 +1,4 @@
+// Global constants
 package globals
 
 const APPNAME = "gomet"

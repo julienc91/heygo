@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// Handle update requests from admin panel
 func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
@@ -36,16 +37,9 @@ func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var fs = map[string]func(int64, map[string]interface{}) (map[string]interface{}, error){
-		"users":        database.UpdateUser,
-		"invitations":  database.UpdateInvitation,
-		"videos":       database.UpdateVideo,
-		"groups":       database.UpdateGroup,
-		"video_groups": database.UpdateVideoGroup}
-
 	var ret = map[string]interface{}{"ok": true, "err": ""}
 
-	updated, err := fs[table](id, data)
+	updated, err := database.PrepareUpdate(id, data, table)
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false
@@ -55,6 +49,7 @@ func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Handle deletion requests from admin panel
 func AdminDeleteHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
@@ -76,8 +71,7 @@ func AdminDeleteHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var ret = map[string]interface{}{"ok": true, "err": ""}
-	err = database.DeleteRow(id, table)
-	if err != nil {
+	if err = database.PrepareDeleteFromId(id, table); err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false
 	}
@@ -85,6 +79,7 @@ func AdminDeleteHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Handle insert requests from admin panel
 func AdminInsertHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
@@ -106,16 +101,9 @@ func AdminInsertHandler(w http.ResponseWriter, req *http.Request) {
 		data[k] = req.FormValue(k)
 	}
 
-	var fs = map[string]func(map[string]interface{}) (map[string]interface{}, error){
-		"users":        database.InsertUser,
-		"invitations":  database.InsertInvitation,
-		"videos":       database.InsertVideo,
-		"groups":       database.InsertGroup,
-		"video_groups": database.InsertVideoGroup}
-
 	var ret = map[string]interface{}{"ok": true, "err": ""}
 
-	inserted, err := fs[table](data)
+	inserted, err := database.PrepareInsert(data, table)
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false
@@ -125,6 +113,7 @@ func AdminInsertHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Handle get requests from admin panel
 func AdminGetHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
@@ -141,7 +130,7 @@ func AdminGetHandler(w http.ResponseWriter, req *http.Request) {
 
 	var ret = map[string]interface{}{"ok": true, "err": ""}
 
-	rows, err := database.GetAll(table)
+	rows, err := database.PrepareGetAll(table)
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false
@@ -151,6 +140,7 @@ func AdminGetHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Handle get_from_id requests from admin panel
 func AdminGetFromIdHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
@@ -172,7 +162,7 @@ func AdminGetFromIdHandler(w http.ResponseWriter, req *http.Request) {
 
 	var ret = map[string]interface{}{"ok": true, "err": ""}
 
-	rows, err := database.GetFromId(table, id)
+	rows, err := database.PrepareGetFromId(id, table)
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false
@@ -182,6 +172,7 @@ func AdminGetFromIdHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Handle media checking requests
 func AdminMediaCheckHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
@@ -194,6 +185,7 @@ func AdminMediaCheckHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Display the admin panel
 func AdminHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {

@@ -1,6 +1,5 @@
+// Interactions with the OpenSubtitles API
 package tools
-
-// From https://github.com/oz/osdb
 
 import (
 	"encoding/binary"
@@ -8,6 +7,8 @@ import (
 	"strconv"
 )
 
+// Compute the hash of a file, and returns it plus its size
+// Adapted from https://github.com/oz/osdb
 func Hash(filename string) (string, uint64, error) {
 
 	file, err := os.Open(filename)

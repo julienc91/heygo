@@ -8,25 +8,15 @@ import (
 	"net/http"
 )
 
-type VideoList struct {
-	Videos []database.Video
-}
-
 func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
 		return
 	}
 
-	videos, err := database.GetAllowedVideos(GetUserId(req))
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
-
 	t := template.Must(template.New("videos.html").ParseFiles(
 		"templates/videos.html", "templates/base.html"))
-	err = t.ExecuteTemplate(w, "base", VideoList{videos})
+	err := t.ExecuteTemplate(w, "base", nil)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -42,13 +32,13 @@ func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	slug := params["slug"]
 
-	video, err := database.GetVideoFromSlug(slug)
+	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 	if err != nil {
 		panic(err)
 	}
 
 	id := GetUserId(req)
-	ok, err := database.CheckPermission(id, video.Id)
+	ok, err := database.CheckPermission(id, video["id"].(int64))
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -75,13 +65,13 @@ func VideoGetHash(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	slug := params["slug"]
 
-	video, err := database.GetVideoFromSlug(slug)
+	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 	if err != nil {
 		panic(err)
 	}
 
 	id := GetUserId(req)
-	ok, err := database.CheckPermission(id, video.Id)
+	ok, err := database.CheckPermission(id, video["id"].(int64))
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -92,7 +82,7 @@ func VideoGetHash(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var ret = map[string]interface{}{"ok": true, "err": ""}
-	hash, size, err := tools.Hash(video.Path)
+	hash, size, err := tools.Hash(video["path"].(string))
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false

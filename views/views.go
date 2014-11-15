@@ -1,3 +1,4 @@
+// This package implements all the functions which will answer users' requests
 package views
 
 import (
@@ -6,6 +7,18 @@ import (
 	"net/http"
 )
 
+// Handle the homepage
+func MainPageHandler(w http.ResponseWriter, req *http.Request) {
+	if RedirectIfNotAuthenticated(w, req) {
+		return
+	}
+	http.Redirect(w, req, "/about", http.StatusFound)
+}
+
+// Check if the user has admin rights.
+// If he is not authenticated, he will be redirected to the signin page
+// If he is authenticated but without admin rights, a StatusForbidden code is set
+// The function returns whether or not the user is unauthorized
 func RedirectIfNotAdmin(w http.ResponseWriter, req *http.Request) bool {
 
 	if RedirectIfNotAuthenticated(w, req) {
@@ -22,6 +35,9 @@ func RedirectIfNotAdmin(w http.ResponseWriter, req *http.Request) bool {
 	return false
 }
 
+// Check if the user is authenticated
+// If he is not authenticated, he will be redirected to the signin page
+// The function returns whether or not the user is unauthorized
 func RedirectIfNotAuthenticated(w http.ResponseWriter, req *http.Request) bool {
 
 	var userId = GetUserId(req)
@@ -32,6 +48,8 @@ func RedirectIfNotAuthenticated(w http.ResponseWriter, req *http.Request) bool {
 	return false
 }
 
+// Answer the user's query with the given codes and with a json object constructed
+// from 'ret'.
 func writeJsonResult(ret map[string]interface{}, w http.ResponseWriter, code int) {
 
 	val, err := json.Marshal(ret)

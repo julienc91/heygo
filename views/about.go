@@ -14,6 +14,7 @@ type About struct {
 	Website string
 }
 
+// Display the "About" page
 func AboutHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
