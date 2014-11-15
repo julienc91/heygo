@@ -35,5 +35,11 @@ div.col-sm-10 {
 .checkbox_list .form-control {
     height: auto;
     max-height: 200px;
-    overflow-y: scroll;
+    overflow-y: auto;
+}
+
+.grid_wrapper{
+    height: auto;
+    max-height: 500px;
+    overflow-y: auto;
 }
