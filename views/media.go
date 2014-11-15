@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// Stream a media
 func MediaHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
@@ -21,13 +22,13 @@ func MediaHandler(w http.ResponseWriter, req *http.Request) {
 
 	switch mediaType {
 	case "video":
-		video, err := database.GetVideoFromSlug(slug)
+		video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 		if err != nil {
 			http.Error(w, "Video not found", http.StatusNotFound)
 			return
 		}
 
-		ok, err := database.CheckPermission(id, video.Id)
+		ok, err := database.CheckPermission(id, video["id"].(int64))
 		if err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 			return
@@ -37,7 +38,7 @@ func MediaHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		f, err := os.Open(video.Path)
+		f, err := os.Open(video["path"].(string))
 		if err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 			return

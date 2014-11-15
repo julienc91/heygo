@@ -46,9 +46,9 @@ AND groups_id = ?;`)
 	return nb > 0, nil
 }
 
-func GetAllowedVideos(userId int64) ([]Video, error) {
+func GetAllowedVideos(userId int64) ([]map[string]interface{}, error) {
 
-	stmt, err := db.Prepare(`
+	stmt, err := db.Preparex(`
 SELECT videos.id, videos.title, videos.path, videos.slug
 FROM videos
 INNER JOIN video_classification
@@ -62,22 +62,27 @@ AND membership.users_id = ?;`)
 		return nil, err
 	}
 
-	rows, err := stmt.Query(userId)
+	rows, err := stmt.Queryx(userId)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	var result []Video
+	var res []map[string]interface{}
 
 	for rows.Next() {
-		var video Video
-		if err := rows.Scan(&video.Id, &video.Title, &video.Path, &video.Slug); err != nil {
+		var m = make(map[string]interface{})
+		err = rows.MapScan(m)
+		if err != nil {
 			return nil, err
 		}
 
-		result = append(result, video)
+		for k, v := range m {
+			if vs, ok := v.([]byte); ok {
+				m[k] = string(vs)
+			}
+		}
+		res = append(res, m)
 	}
 
-	return result, nil
+	return res, nil
 }

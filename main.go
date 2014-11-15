@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// The main function, from where routes are defined
 func main() {
 
 	var rtr = mux.NewRouter()
@@ -29,6 +30,7 @@ func main() {
 	rtr.HandleFunc("/admin", views.AdminHandler)
 	rtr.HandleFunc("/", views.MainPageHandler)
 
+	// serve static files
 	rtr.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
 	http.Handle("/", rtr)
