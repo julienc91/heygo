@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"gomet/globals"
+	"gomet/tools"
 	"strings"
 )
 
@@ -145,6 +146,10 @@ func insertRow(values map[string]interface{}, validFields []string, table string
 		return nil, err
 	}
 
+	if tools.InArray(PivotTables, table) {
+		return nil, nil
+	}
+
 	id, err := res.LastInsertId()
 	if err != nil {
 		return nil, err
@@ -267,7 +272,21 @@ func deleteFromId(id int64, table string) error {
 // Values and table must have been checked first
 func deleteFromKey(key string, value interface{}, table string) error {
 
-	var query = "DELETE FROM " + table + " WHERE " + key + "=?;"
+	var query = "DELETE FROM " + table + " WHERE " + key + "=? LIMIT 1;"
+	stmt, err := db.Preparex(query)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(value)
+	return err
+}
+
+// Execute a deletion query on the given table using the given unique key
+// Values and table must have been checked first
+func deleteFromFilter(filter string, value interface{}, table string) error {
+
+	var query = "DELETE FROM " + table + " WHERE " + filter + "=?;"
 	stmt, err := db.Preparex(query)
 	if err != nil {
 		return err

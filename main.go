@@ -23,6 +23,7 @@ func main() {
 	rtr.HandleFunc("/media/{type:[a-z]+}/{slug:[a-zA-Z0-9_]+}", views.MediaHandler)
 	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", views.AdminGetHandler)
 	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", views.AdminGetFromIdHandler)
+	rtr.HandleFunc("/admin/set/{table:[a-z_]+}", views.AdminSetHandler)
 	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", views.AdminUpdateHandler)
 	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", views.AdminInsertHandler)
 	rtr.HandleFunc("/admin/delete/{table:[a-z_]+}/{id:[0-9]+}", views.AdminDeleteHandler)

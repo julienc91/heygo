@@ -219,6 +219,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
             $scope.model["slug"] = $scope.slug_from_value($scope.model[model_attribute]);
         };
 
+        $scope.returned_get = 0;
         $scope.save_model = function() {
             if ($scope.edit.$valid) {
                 if (!$scope.is_new && $scope.table == "users" && $scope.model.new_password)
@@ -227,11 +228,36 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
                 $http.get(url, {params: $scope.model}).success(function(response) {
                     if (response["ok"]) {
                         $scope.model = response["data"];
-                        $location.path("/" + $scope.table);
+
                     }
+                    $scope.returned_get++;
                 }).error(display_error_message);
+
+                angular.forEach(config["pivots"][$scope.table], function(pivot) {
+                    var values = [];
+                    for (key in $scope.pivots[pivot.table]) {
+                        if ($scope.pivots[pivot.table][key])
+                            values.push(key);
+                    }
+                    $http.get("/admin/set/" + pivot.table, {params: {"filter": pivot.filter, "value": $scope.model.id, "column": pivot.column, "values": values}}).success(function(response) {
+                        if (response["ok"]) {
+                            $scope.pivots[pivot.table] = {};
+                            for (key in response["data"]) {
+                                $scope.pivots[pivot.table][response["data"][key]] = true;
+                            }
+                        }
+                        $scope.returned_get++;
+                    }).error(display_error_message);
+                });
             }
         };
+
+        $scope.$watch('returned_get', function() {
+            if ($scope.returned_get == 1 + config["pivots"][$scope.table].length) {
+                $location.path("/" + $scope.table);
+                $scope.returned_get = 0;
+            }
+        });
 
     }
 ]);

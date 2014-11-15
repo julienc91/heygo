@@ -122,7 +122,7 @@ func PrepareGetAll(table string) ([]map[string]interface{}, error) {
 }
 
 // Prepare and check arguments before calling getAllFilteredByColumn
-func PrepareGetColumnFiltered(column string, filter string, value interface{}, table string) ([]map[string]interface{}, error) {
+func PrepareGetColumnFiltered(column string, filter string, value interface{}, table string) ([]interface{}, error) {
 
 	columns, ok := validColumns[table]
 	if !ok {
@@ -179,4 +179,17 @@ func PrepareDeleteFromKey(key string, value interface{}, table string) error {
 		return errors.New("invalid key")
 	}
 	return deleteFromKey(key, value, table)
+}
+
+// Prepare and check arguments before calling deleteFromFilter
+func PrepareDeleteFromFilter(filter string, value interface{}, table string) error {
+
+	columns, ok := validColumns[table]
+	if !ok {
+		return errors.New("invalid table")
+	}
+	if !tools.InArray(columns, filter) {
+		return errors.New("invalid filter")
+	}
+	return deleteFromFilter(filter, value, table)
 }

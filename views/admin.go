@@ -134,13 +134,18 @@ func AdminGetHandler(w http.ResponseWriter, req *http.Request) {
 	var filter = req.FormValue("filter")
 	var value = req.FormValue("value")
 	var rows interface{}
-	var err error
 	var ret = map[string]interface{}{"ok": true, "err": ""}
+	var err error
 
 	if column == "" || filter == "" || value == "" {
 		rows, err = database.PrepareGetAll(table)
 	} else {
-		rows, err = database.PrepareGetColumnFiltered(column, filter, value, table)
+		valueId, convErr := strconv.ParseInt(value, 10, 64)
+		if convErr != nil {
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
+		rows, err = database.PrepareGetColumnFiltered(column, filter, valueId, table)
 	}
 
 	if err != nil {
@@ -182,6 +187,51 @@ func AdminGetFromIdHandler(w http.ResponseWriter, req *http.Request) {
 
 	ret["data"] = rows
 	writeJsonResult(ret, w, http.StatusOK)
+}
+
+// Set pivot table values
+func AdminSetHandler(w http.ResponseWriter, req *http.Request) {
+
+	if RedirectIfNotAdmin(w, req) {
+		return
+	}
+	params := mux.Vars(req)
+	table := params["table"]
+	if !tools.InArray(database.PivotTables, table) {
+		http.Error(w, "table is not valid", http.StatusBadRequest)
+		return
+	}
+
+	req.ParseForm()
+
+	var filter = req.FormValue("filter")
+	var column = req.FormValue("column")
+	var value = req.FormValue("value")
+	var values = req.Form["values"]
+
+	valueId, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	if err := database.PrepareDeleteFromFilter(filter, value, table); err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	for _, key := range values {
+		keyId, err := strconv.ParseInt(key, 10, 64)
+		if err != nil {
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
+		data := map[string]interface{}{filter: valueId, column: keyId}
+		if _, err := database.PrepareInsert(data, table); err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+	}
+	AdminGetHandler(w, req)
 }
 
 // Handle media checking requests
