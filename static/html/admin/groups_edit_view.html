@@ -26,7 +26,7 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <a class="btn btn-default" ng-href="#/{{table}}">Annuler</a>
-            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid">
+            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || edit.$pristine">
                 <span ng-show="is_new">Ajouter</span><span ng-hide="is_new">Enregistrer</span>
             </button>
         </div>
