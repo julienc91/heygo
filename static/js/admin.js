@@ -223,7 +223,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
             if ($scope.edit.$valid) {
                 if (!$scope.is_new && $scope.table == "users" && $scope.model.new_password)
                     $scope.model.password = $scope.model.new_password;
-                var url = "/admin/" + ($scope.is_new ? "insert" : "update") + "/" + $scope.table + ($scope.model.is_new ? "" : "/" + $scope.model.id);
+                var url = "/admin/" + ($scope.is_new ? "insert" : "update") + "/" + $scope.table + ($scope.is_new ? "" : "/" + $scope.model.id);
                 $http.get(url, {params: $scope.model}).success(function(response) {
                     if (response["ok"]) {
                         $scope.model = response["data"];
