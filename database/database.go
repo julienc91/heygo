@@ -3,11 +3,9 @@
 package database
 
 import (
-	"errors"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"gomet/globals"
-	"gomet/tools"
 	"strings"
 )
 
@@ -18,7 +16,7 @@ const (
 	TableVideoGroups         = "video_groups"
 	TableVideos              = "videos"
 	TableMembership          = "membership"
-	TableVideoClassification = "video_classificaion"
+	TableVideoClassification = "video_classification"
 	TableVideoPermissions    = "video_permissions"
 )
 
@@ -108,7 +106,7 @@ func updateRow(id int64, values map[string]interface{}, validFields []string, ta
 	query = query + strings.Join(valuesToSet, ",") + " WHERE id=?;"
 	params = append(params, id)
 
-	stmt, err := db.Prepare(query)
+	stmt, err := db.Preparex(query)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +135,7 @@ func insertRow(values map[string]interface{}, validFields []string, table string
 
 	query = query + " (" + strings.Join(columnNames, ",") + ") VALUES (" + strings.Join(columnValues, ",") + ");"
 
-	stmt, err := db.Prepare(query)
+	stmt, err := db.Preparex(query)
 	if err != nil {
 		return nil, err
 	}
@@ -159,12 +157,13 @@ func insertRow(values map[string]interface{}, validFields []string, table string
 // Table must have been checked first
 func getAll(table string) ([]map[string]interface{}, error) {
 
-	if ok := tools.InArray(MainTables, table); !ok {
-		return nil, errors.New("invalid table")
+	var query = "SELECT * FROM " + table + ";"
+	stmt, err := db.Preparex(query)
+	if err != nil {
+		return nil, err
 	}
 
-	var query = "SELECT * FROM " + table + ";"
-	rows, err := db.Queryx(query)
+	rows, err := stmt.Queryx()
 	if err != nil {
 		return nil, err
 	}
@@ -189,6 +188,39 @@ func getAll(table string) ([]map[string]interface{}, error) {
 	return res, nil
 }
 
+// Execute a select query on the given table with a where condition on the given column
+// Table must have been checked first
+func getColumnFiltered(column string, filter string, value interface{}, table string) ([]interface{}, error) {
+
+	var query = "SELECT " + column + " FROM " + table + " WHERE " + filter + "=?;"
+	stmt, err := db.Preparex(query)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := stmt.Queryx(value)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []interface{}
+
+	for rows.Next() {
+		var m interface{}
+		err = rows.Scan(&m)
+		if err != nil {
+			return nil, err
+		}
+
+		if vs, ok := m.([]byte); ok {
+			m = string(vs)
+		}
+		res = append(res, m)
+	}
+
+	return res, nil
+}
+
 // Execute a select query on the given table for the given id.
 // An error is returned if there is no result.
 // Table must have been checked first
@@ -203,11 +235,15 @@ func getFromId(id int64, table string) (map[string]interface{}, error) {
 func getFromKey(key string, value interface{}, table string) (map[string]interface{}, error) {
 
 	var query = "SELECT * FROM " + table + " WHERE " + key + "=?;"
-	row := db.QueryRowx(query, value)
+	stmt, err := db.Preparex(query)
+	if err != nil {
+		return nil, err
+	}
+
+	row := stmt.QueryRowx(value)
 
 	var res = make(map[string]interface{})
-	err := row.MapScan(res)
-	if err != nil {
+	if err = row.MapScan(res); err != nil {
 		return nil, err
 	}
 
@@ -232,7 +268,7 @@ func deleteFromId(id int64, table string) error {
 func deleteFromKey(key string, value interface{}, table string) error {
 
 	var query = "DELETE FROM " + table + " WHERE " + key + "=?;"
-	stmt, err := db.Prepare(query)
+	stmt, err := db.Preparex(query)
 	if err != nil {
 		return err
 	}

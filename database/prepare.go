@@ -6,23 +6,32 @@ import (
 )
 
 var validColumns = map[string][]string{
-	TableUsers:       []string{"login", "password"},
-	TableInvitations: []string{"value"},
-	TableVideos:      []string{"path", "slug", "title"},
-	TableGroups:      []string{"title"},
-	TableVideoGroups: []string{"title"}}
+	TableUsers:               []string{"login", "password"},
+	TableInvitations:         []string{"value"},
+	TableVideos:              []string{"path", "slug", "title"},
+	TableGroups:              []string{"title"},
+	TableVideoGroups:         []string{"title"},
+	TableMembership:          []string{"users_id", "groups_id"},
+	TableVideoClassification: []string{"videos_id", "video_groups_id"},
+	TableVideoPermissions:    []string{"video_groups_id", "groups_id"}}
 var uniqueColumns = map[string][]string{
-	TableUsers:       []string{"login"},
-	TableInvitations: []string{"value"},
-	TableVideos:      []string{"slug"},
-	TableGroups:      []string{"title"},
-	TableVideoGroups: []string{"title"}}
+	TableUsers:               []string{"login"},
+	TableInvitations:         []string{"value"},
+	TableVideos:              []string{"slug"},
+	TableGroups:              []string{"title"},
+	TableVideoGroups:         []string{"title"},
+	TableMembership:          nil,
+	TableVideoClassification: nil,
+	TableVideoPermissions:    nil}
 var requiredColumns = map[string][]string{
-	TableUsers:       []string{"login", "password"},
-	TableInvitations: []string{"value"},
-	TableVideos:      []string{"path", "slug", "title"},
-	TableGroups:      []string{"title"},
-	TableVideoGroups: []string{"title"}}
+	TableUsers:               []string{"login", "password"},
+	TableInvitations:         []string{"value"},
+	TableVideos:              []string{"path", "slug", "title"},
+	TableGroups:              []string{"title"},
+	TableVideoGroups:         []string{"title"},
+	TableMembership:          []string{"users_id", "groups_id"},
+	TableVideoClassification: []string{"videos_id", "video_groups_id"},
+	TableVideoPermissions:    []string{"video_groups_id", "groups_id"}}
 
 // Remove keys from the map which are not in validFields
 func checkFields(values map[string]interface{}, validFields []string, requiredFields []string) error {
@@ -106,10 +115,26 @@ func PrepareUpdate(id int64, values map[string]interface{}, table string) (map[s
 // Prepare and check arguments before calling getAll
 func PrepareGetAll(table string) ([]map[string]interface{}, error) {
 
-	if !tools.InArray(MainTables, table) {
+	if !tools.InArray(Tables, table) {
 		return nil, errors.New("invalid table")
 	}
 	return getAll(table)
+}
+
+// Prepare and check arguments before calling getAllFilteredByColumn
+func PrepareGetColumnFiltered(column string, filter string, value interface{}, table string) ([]map[string]interface{}, error) {
+
+	columns, ok := validColumns[table]
+	if !ok {
+		return nil, errors.New("invalid table")
+	}
+	if !tools.InArray(columns, column) {
+		return nil, errors.New("invalid column")
+	}
+	if !tools.InArray(columns, filter) {
+		return nil, errors.New("invalid filter")
+	}
+	return getColumnFiltered(column, filter, value, table)
 }
 
 // Prepare and check arguments before calling getFromId

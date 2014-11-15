@@ -123,14 +123,26 @@ func AdminGetHandler(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 
 	table := params["table"]
-	if !tools.InArray(database.MainTables, table) {
+	if !tools.InArray(database.Tables, table) {
 		http.Error(w, "table is not valid", http.StatusBadRequest)
 		return
 	}
 
+	req.ParseForm()
+
+	var column = req.FormValue("column")
+	var filter = req.FormValue("filter")
+	var value = req.FormValue("value")
+	var rows interface{}
+	var err error
 	var ret = map[string]interface{}{"ok": true, "err": ""}
 
-	rows, err := database.PrepareGetAll(table)
+	if column == "" || filter == "" || value == "" {
+		rows, err = database.PrepareGetAll(table)
+	} else {
+		rows, err = database.PrepareGetColumnFiltered(column, filter, value, table)
+	}
+
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false

@@ -33,6 +33,20 @@ var config = {
         "groups": [0, ""],
         "videos": [0, "", "", ""],
         "video_groups": [0, ""]
+    },
+    "joins": {
+        "users": ["groups"],
+        "invitations": [],
+        "groups": ["users", "video_groups"],
+        "videos": ["video_groups"],
+        "video_groups": ["videos", "groups"]
+    },
+    "pivots": {
+        "users": [{table: "membership", column: "groups_id", filter: "users_id"}],
+        "invitations": [],
+        "groups": [{table: "membership", column: "users_id", filter: "groups_id"}, {table: "video_permissions", column: "video_groups_id", filter: "groups_id"}],
+        "videos": [{table: "video_classification", column: "video_groups_id", filter: "videos_id"}],
+        "video_groups": [{table: "video_classification", column: "videos_id", filter: "video_groups_id"}, {table: "video_permissions", column: "groups_id", filter: "video_groups_id"}]
     }
 };
 
@@ -57,10 +71,14 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: "/{table:invitations}/{mode:new|edit}/{id:[0-9]*}",
             controller: "generic_edit_view_controller",
             templateUrl: "/static/html/admin/invitations_edit_view.html"})
-        .state('generic_groups_edit', {
-            url: "/{table:groups|video_groups}/{mode:new|edit}/{id:[0-9]*}",
+        .state('groups_edit', {
+            url: "/{table:groups}/{mode:new|edit}/{id:[0-9]*}",
             controller: "generic_edit_view_controller",
-            templateUrl: "/static/html/admin/generic_groups_edit_view.html"})
+            templateUrl: "/static/html/admin/groups_edit_view.html"})
+        .state('video_groups_edit', {
+            url: "/{table:video_groups}/{mode:new|edit}/{id:[0-9]*}",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/video_groups_edit_view.html"})
         .state('videos_edit', {
             url: "/{table:videos}/{mode:new|edit}/{id:[0-9]*}",
             controller: "generic_edit_view_controller",
@@ -122,6 +140,8 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
         $scope.fields = config["fields"][$scope.table];
         $scope.valid_path = false;
         $scope.is_new = $stateParams.mode == "new";
+        $scope.joins = {};
+        $scope.pivots = {};
 
         if (!$scope.is_new && (!$stateParams.id || $stateParams.id == 0))
             $location.path("/" + $scope.table + "/new/");
@@ -133,11 +153,31 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
         };
 
         $scope.model = {};
-        if ($stateParams.id) {
+        if (!$scope.is_new) {
             $http.get("/admin/get/" + $scope.table + "/" + $stateParams.id).success(function(response) {
                 if (response["ok"])
                     $scope.model = response["data"];
             }).error(display_error_message);
+        }
+
+        angular.forEach(config["joins"][$scope.table], function(table) {
+            $http.get("/admin/get/" + table).success(function(response) {
+                if (response["ok"])
+                    $scope.joins[table] = response["data"];
+            }).error(display_error_message);
+        });
+
+        if (!$scope.is_new) {
+            angular.forEach(config["pivots"][$scope.table], function(pivot) {
+                $http.get("/admin/get/" + pivot.table, {params: {"column": pivot.column, "filter": pivot.filter, "value": $stateParams.id}}).success(function(response) {
+                    if (response["ok"]) {
+                        $scope.pivots[pivot.table] = {};
+                        for (key in response["data"]) {
+                            $scope.pivots[pivot.table][response["data"][key]] = true;
+                        }
+                    }
+                }).error(display_error_message);
+            });
         }
 
         $scope.init = function() {
@@ -161,18 +201,22 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
             $scope.model[model_attribute] = $scope.random_string();
         };
 
-        $scope.generate_slug = function(model_attribute) {
-            if (!$scope.model[model_attribute]) {
-                $scope.model["slug"] = "";
-                return;
-            }
-            var slug = $scope.model[model_attribute].toLowerCase();
+        $scope.slug_from_value = function(value) {
+            var slug = value.toLowerCase();
             var from = "ãàáäâ@ẽèéëêìíïîõòóöôùúüûñç";
             var to   = "aaaaaaeeeeeiiiiooooouuuunc";
             for (var i=0, l=from.length ; i<l ; i++) {
                 slug = slug.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
             }
-            $scope.model["slug"] = slug.replace(/[^\w]+/g, "_");
+            return slug.replace(/[^\w]+/g, "_");
+        };
+
+        $scope.generate_slug = function(model_attribute) {
+            if (!$scope.model[model_attribute]) {
+                $scope.model["slug"] = "";
+                return;
+            }
+            $scope.model["slug"] = $scope.slug_from_value($scope.model[model_attribute]);
         };
 
         $scope.save_model = function() {
