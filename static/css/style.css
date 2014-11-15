@@ -31,3 +31,9 @@ div.col-sm-10 {
 .edit.btn-link {
     margin-left: 10px;
 }
+
+.checkbox_list .form-control {
+    height: auto;
+    max-height: 200px;
+    overflow-y: scroll;
+}
