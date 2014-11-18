@@ -1,9 +1,23 @@
 {{ model.title }}
 
 <p class="video_container">
-    <video ng-src="{{ media_link(model.slug) }}" controls preload="auto">
-        {{ model.title }}
-    </video>
+	<videogular vg-theme="video_config.theme.url" vg-player-ready="on_player_ready">
+		<vg-video vg-src="video_config.sources" vg-tracks="video_config.tracks" vg-preload="auto"></vg-video>
+		<vg-controls vg-autohide="true" vg-autohide-time="1500">
+			<vg-play-pause-button></vg-play-pause-button>
+			<vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+			<span style="width: auto;"></span>
+			<vg-volume>
+				<vg-mutebutton></vg-mutebutton>
+				<vg-volumebar></vg-volumebar>
+			</vg-volume>
+			<vg-fullscreenButton></vg-fullscreenButton>
+		</vg-controls>
+        <vg-buffering></vg-buffering>
+        <vg-overlay-play></vg-overlay-play>
+		<img class="video_layer animate-show" src="/static/images/logo_white.png" ng-show="API.currentState != 'play'"/>
+
+	</videogular>
 </p>
 <p>
     <button class="btn btn-info" role="search_subtitles">Chercher des sous-titres</button>

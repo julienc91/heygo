@@ -4,7 +4,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"errors"
-	"gomet/globals"
+	"heygo/globals"
 	"math/rand"
 	"time"
 )

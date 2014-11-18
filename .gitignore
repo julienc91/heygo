@@ -1,5 +1,7 @@
 *~
-gomet.db
+heygo.db
 init.sql
-gomet
+heygo
 media
+*.xcf
+static/bower

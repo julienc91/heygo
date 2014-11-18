@@ -2,7 +2,7 @@ package views
 
 import (
 	"github.com/gorilla/mux"
-	"gomet/database"
+	"heygo/database"
 	"io"
 	"net/http"
 	"os"

@@ -32,18 +32,22 @@ app.controller('videos_grid_view_controller', ['$scope', '$http',
 ]);
 
 
-app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParams',
-    function ($scope, $http, $stateParams) {
+app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParams', '$sce',
+    function ($scope, $http, $stateParams, $sce) {
         $scope.model = {};
-        $http.get("/videos/get/" + $stateParams.slug).success(function(response) {
-            if (response["ok"])
-                $scope.model = response["data"];
-        }).error(display_error_message);
+        $scope.video_config = {theme: {url: "/static/css/videogular.css"}};
+		$scope.API = null;
 
-        $scope.media_link = function(slug) {
-            if (slug)
-                return "/media/videos/" + slug;
-        };
+		$scope.on_player_ready = function(API) {
+			$scope.API = API;
+		};
+
+        $http.get("/videos/get/" + $stateParams.slug).success(function(response) {
+            if (response["ok"]) {
+                $scope.model = response["data"];
+                $scope.video_config.sources = [{src: "/media/videos/" + $scope.model.slug, type: "video/" + $scope.model.path.split('.').pop()}];
+            }
+        }).error(display_error_message);
     }
 ]);
 
@@ -63,15 +67,6 @@ function display_error_message(data, status, headers, config) {
 
 
 $(function() {
-
-    var slug = $("video").attr("data-slug");
-
-    function resize_video() {
-        $("video").width($(".video_container").width());
-    }
-
-    $(window).resize(resize_video);
-    resize_video();
 
     var api_username = "";
     var api_password = "";

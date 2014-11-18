@@ -1,11 +1,34 @@
-button[disabled] span.glyphicon {
+/****** navbar ******/
+nav #logo img {
+    width: 100px;
+    transition: transform 0.1s;
+}
+
+nav #logo img:hover {
+    transform: scale(1.03);
+}
+
+nav a {
+    display: inline-block;
+    padding: 0px 20px;
+}
+
+/****** generic effects ******/
+button[disabled] span.glyphicon, button[disabled]:hover span.glyphicon {
     opacity: 0.25;
 }
 
-button[disabled]:hover span.glyphicon {
-    opacity: 0.5;
+img.animate-show {
+    transition:all linear 0.5s;
+    display: block !important;
 }
 
+img.animate-show.ng-hide {
+    display: block !important;
+    opacity: 0;
+}
+
+/****** videos ******/
 .video_container {
     width: 70%;
     margin: auto;
@@ -15,9 +38,41 @@ button[disabled]:hover span.glyphicon {
     width: 100%;
 }
 
-div.col-sm-10 {
-    padding-left: 0px;
-    padding-right: 0px;
+div.video_layer {
+	position: absolute;
+	display: block;
+	z-index: 50;
+	top: 0;
+}
+
+.video_layer {
+    display: block;
+    position: absolute;
+    z-index: 50;
+    top: 0;
+	width: 150px;
+	height: auto;
+	padding-left: 20px;
+	padding-top: 20px;
+	opacity: 0.5;
+}
+
+/****** admin panel ******/
+.checkbox_list .form-control {
+    height: auto;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.edit_buttons{
+    padding-left: 10px;
+}
+
+/****** ui-grid ******/
+.grid_wrapper{
+    height: auto;
+    max-height: 500px;
+    overflow-y: auto;
 }
 
 .ui-grid {
@@ -32,18 +87,20 @@ div.col-sm-10 {
     margin-bottom: 10px !important;
 }
 
-.edit.btn-link {
-    margin-left: 10px;
+/****** BOOTSTRAP OVERRIDING ******/
+.navbar {
+    border-radius: 0px;
 }
 
-.checkbox_list .form-control {
-    height: auto;
-    max-height: 200px;
-    overflow-y: auto;
+.navbar-inverse {
+    background-color: #252525;
 }
 
-.grid_wrapper{
-    height: auto;
-    max-height: 500px;
-    overflow-y: auto;
+.navbar-nav>li>a {
+    transition: color 0.2s;
+}
+
+div.col-sm-10 {
+    padding-left: 0px;
+    padding-right: 0px;
 }

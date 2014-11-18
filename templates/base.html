@@ -1,27 +1,43 @@
 {{define "base"}}
 <!DOCTYPE html>
-<html lang="fr" ng-app="gomet">
+<html lang="fr" ng-app="heygo">
     <head>
         <meta charset="utf-8" />
         <meta name="author" content="Julien CHAUMONT" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/css/ui-grid.css">
+        <link rel="stylesheet" href="/static/bower/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/bower/angular-ui-grid/ui-grid.css">
         <link rel="stylesheet" href="/static/css/style.css">
         <title>{{template "title" .}}</title>
     </head>
     <body>
         {{template "menu" .}}
         {{template "body" .}}
-        <script src="/static/js/jquery-2.1.1.min.js"></script>
-        <script src="/static/js/bootstrap.min.js"></script>
-        <script src="/static/js/bootbox.min.js"></script>
-        <script src="/static/js/angular.js"></script>
-        <script src="/static/js/angular-ui-router.js"></script>
-        <script src="/static/js/ui-grid.js"></script>
+        <script src="/static/bower/jquery/dist/jquery.js"></script>
+        <script src="/static/bower/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="/static/bower/bootbox/bootbox.js"></script>
+        <script src="/static/bower/angular/angular.js"></script>
+        <script src="/static/bower/angular-ui-router/release/angular-ui-router.js"></script>
+        <script src="/static/bower/angular-ui-grid/ui-grid.js"></script>
+        <script src="/static/bower/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
+        <script src="/static/bower/angular-sanitize/angular-sanitize.js"></script>
+        <script src="/static/bower/videogular/videogular.js"></script>
+        <script src="/static/bower/videogular-overlay-play/overlay-play.js"></script>
+        <script src="/static/bower/videogular-buffering/buffering.js"></script>
+        <script src="/static/bower/videogular-controls/controls.js"></script>
+        <script src="/static/bower/videogular-dash/dash.js"></script>
         <script>
-            var app = angular.module('gomet', ['ui.router', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize']);
+            var app = angular.module('heygo', ['ui.bootstrap', 'ui.router', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize',
+                                               'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.overlayplay',
+                                               'com.2fdevs.videogular.plugins.buffering', 'com.2fdevs.videogular.plugins.controls',
+                                               'com.2fdevs.videogular.plugins.dash']);
             bootbox.setDefaults({ locale: "fr" });
+
+            var set_active_menu = (function() {
+                var menu_id = $(location).attr('pathname').split("/").pop();
+                if ($("#menu_" + menu_id).length == 1)
+                    $("#menu_" + menu_id).parent().addClass("active");
+            })();
         </script>
         {{template "js" .}}
     </body>
@@ -29,10 +45,19 @@
 {{end}}
 
 {{define "menu"}}
-<nav>
-    <a href="/about">A propos</a>
-    <a href="/videos">Vidéos</a>
-    <a href="/admin">Administration</a>
-    <a href="/signout">Déconnexion</a>
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" id="logo" href="/"><img alt="HEYGO" src="/static/images/logo_white.png"></a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/about" id="menu_about">A propos</a></li>
+                <li><a href="/videos" id="menu_videos">Vidéos</a></li>
+                <li><a href="/admin" id="menu_admin">Administration</a></li>
+                <li><a href="/signout" id="menu_signout">Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>
 </nav>
 {{end}}

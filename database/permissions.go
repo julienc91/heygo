@@ -1,7 +1,7 @@
 package database
 
 import (
-	"gomet/globals"
+	"heygo/globals"
 )
 
 // Check if the given user is allowed to access the given video

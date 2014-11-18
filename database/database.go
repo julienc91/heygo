@@ -5,8 +5,8 @@ package database
 import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
-	"gomet/globals"
-	"gomet/tools"
+	"heygo/globals"
+	"heygo/tools"
 	"strings"
 )
 

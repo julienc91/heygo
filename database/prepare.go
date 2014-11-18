@@ -2,7 +2,7 @@ package database
 
 import (
 	"errors"
-	"gomet/tools"
+	"heygo/tools"
 )
 
 var validColumns = map[string][]string{

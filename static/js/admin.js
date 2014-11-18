@@ -14,11 +14,11 @@ var config = {
         "video_groups": ["id", "title"]
     },
     "column_definitions": {
-        "users": [{field: "id", width: "10%", displayName: "ID"}, {field: "login", width: "80%", displayName: "Login"}],
-        "invitations": [{field: "id", width: "10%", displayName: "ID"}, {field: "value", width: "80%", displayName: "Valeur"}],
-        "groups": [{field: "id", width: "10%", displayName: "ID"}, {field: "title", width: "80%", displayName: "Nom"}],
-        "videos": [{field: "id", width: "10%", displayName: "ID"}, {field: "title", width: "25%", displayName: "Titre"}, {field: "path", width: "35%", displayName: "Chemin"}, {field: "slug", width: "20%", displayName: "Slug"}],
-        "video_groups": [{field: "id", width: "10%", displayName: "ID"}, {field: "title", width: "80%", displayName: "Nom"}]
+        "users": [{field: "id", width: "5%", displayName: "ID"}, {field: "login", width: "70%", displayName: "Login"}],
+        "invitations": [{field: "id", width: "5%", displayName: "ID"}, {field: "value", width: "70%", displayName: "Valeur"}],
+        "groups": [{field: "id", width: "5%", displayName: "ID"}, {field: "title", width: "70%", displayName: "Nom"}],
+        "videos": [{field: "id", width: "5%", displayName: "ID"}, {field: "title", width: "15%", displayName: "Titre"}, {field: "path", width: "40%", displayName: "Chemin"}, {field: "slug", width: "15%", displayName: "Slug"}],
+        "video_groups": [{field: "id", width: "5%", displayName: "ID"}, {field: "title", width: "70%", displayName: "Nom"}]
     },
     "main_fields": {
         "users": "login",
@@ -124,8 +124,8 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
         $scope.grid_options.columnDefs.push({name: 'actions',
                                             displayName: 'Actions',
                                             width: "15%",
-                                            cellTemplate: '<a class="edit btn-link" ng-href="#/{{getExternalScopes().table}}/edit/{{row.entity.id}}"><span class="glyphicon glyphicon-pencil"></span></a>\
-                                                           <button class="delete btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove"></span></button>'});
+                                            cellTemplate: '<div class="edit_buttons"><a class="btn-link" ng-href="#/{{getExternalScopes().table}}/edit/{{row.entity.id}}" tooltip="Modifier" tooltip-trigger tooltip-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>\
+                                                           <button class="btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove" tooltip="Supprimer" tooltip-trigger tooltip-placement="left"></span></button></div>'});
         $http.get("/admin/get/" + $scope.table).success(function(response) {
             if (response["ok"])
                 $scope.rows = response["data"];
@@ -263,7 +263,6 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
 ]);
 
 
-
 // Hide alerts instead of dismissing them
 $("[data-hide]").on("click", function(){
     $(this).closest("." + $(this).attr("data-hide")).hide();
@@ -273,30 +272,14 @@ $("[data-hide]").on("click", function(){
 $("#alert_box").hide();
 
 var set_active_tab = (function() {
-                        var hash = $(location).attr('hash');
-                        var tab_id = hash.split("/");
-                        if (tab_id.length > 1 && tab_id[0] == "#" && $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").length == 1)
-                            $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").parent().addClass("active");
-                        })();
+    var hash = $(location).attr('hash');
+    var tab_id = hash.split("/");
+    if (tab_id.length > 1 && tab_id[0] == "#" && $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").length == 1)
+        $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").parent().addClass("active");
+})();
 
 
 function display_error_message(data, status, headers, config) {
     $("#alert_box").children(".alert_content").text(data["err"] ? data["err"] : status);
     $("#alert_box").show();
 }
-
-
-(function() {
-
-    $(".save_row").children().attr("data-toggle", "tooltip").attr("title", "Enregistrer");
-    $(".reset_row").children().attr("data-toggle", "tooltip").attr("title", "Annuler");
-    $(".del_row").children().attr("data-toggle", "tooltip").attr("title", "Supprimer");
-    $(".add_row").children().attr("data-toggle", "tooltip").attr("title", "Ajouter");
-    $("[data-toggle=tooltip]").tooltip({
-        placement : 'top'
-    });
-
-    $("[data-hide]").on("click", function(){
-        $(this).closest("." + $(this).attr("data-hide")).hide();
-    });
-})();

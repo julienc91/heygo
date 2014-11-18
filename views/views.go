@@ -3,7 +3,7 @@ package views
 
 import (
 	"encoding/json"
-	"gomet/database"
+	"heygo/database"
 	"net/http"
 )
 

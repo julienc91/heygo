@@ -1,0 +1,27 @@
+{
+    "name": "heygo",
+    "version": "1.0",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/julienc91/heygo.git"
+    },
+    "authors": [
+        {"name": "Julien CHAUMONT",
+         "email": "heygo@julienc.io",
+         "homepage": "http://julienc.io" }
+    ],
+    "dependencies": {
+        "jquery": "latest",
+        "bootstrap": "latest",
+        "bootbox": "latest",
+        "angularjs": "latest",
+        "angular-ui-bootstrap-bower": "latest",
+        "angular-ui-router": "latest",
+        "angular-ui-grid": "latest",
+        "videogular": "latest",
+        "videogular-dash": "latest",
+        "videogular-overlay-play": "latest",
+        "videogular-controls": "latest",
+        "videogular-buffering": "latest"
+    }
+}

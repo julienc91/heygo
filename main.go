@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"gomet/views"
+	"heygo/views"
 	"net/http"
 )
 

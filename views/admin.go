@@ -2,8 +2,8 @@ package views
 
 import (
 	"github.com/gorilla/mux"
-	"gomet/database"
-	"gomet/tools"
+	"heygo/database"
+	"heygo/tools"
 	"html/template"
 	"net/http"
 	"strconv"

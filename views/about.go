@@ -1,7 +1,7 @@
 package views
 
 import (
-	"gomet/globals"
+	"heygo/globals"
 	"html/template"
 	"net/http"
 )
