@@ -60,7 +60,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             controller: "generic_grid_view_controller",
             templateUrl: "/static/html/admin/generic_grid_view.html"})
         .state('users_new', {
-            url: "/{table:users}/new/",
+            url: "/{table:users}/{mode:new}/",
             controller: "generic_edit_view_controller",
             templateUrl: "/static/html/admin/users_add_view.html"})
         .state('users_edit', {
@@ -219,7 +219,6 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
             $scope.model["slug"] = $scope.slug_from_value($scope.model[model_attribute]);
         };
 
-        $scope.returned_get = 0;
         $scope.save_model = function() {
             if ($scope.edit.$valid) {
                 if (!$scope.is_new && $scope.table == "users" && $scope.model.new_password)
@@ -228,37 +227,32 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
                 $http.get(url, {params: $scope.model}).success(function(response) {
                     if (response["ok"]) {
                         $scope.model = response["data"];
-
+                        $scope.save_pivots();
                     }
-                    $scope.returned_get++;
                 }).error(display_error_message);
+            }
+        };
 
+        $scope.save_pivots = function() {
+            if ($scope.edit.$valid) {
                 angular.forEach(config["pivots"][$scope.table], function(pivot) {
                     var values = [];
                     for (key in $scope.pivots[pivot.table]) {
                         if ($scope.pivots[pivot.table][key])
                             values.push(key);
-                    }
-                    $http.get("/admin/set/" + pivot.table, {params: {"filter": pivot.filter, "value": $scope.model.id, "column": pivot.column, "values": values}}).success(function(response) {
-                        if (response["ok"]) {
-                            $scope.pivots[pivot.table] = {};
-                            for (key in response["data"]) {
-                                $scope.pivots[pivot.table][response["data"][key]] = true;
-                            }
                         }
-                        $scope.returned_get++;
-                    }).error(display_error_message);
-                });
+                        $http.get("/admin/set/" + pivot.table, {params: {"filter": pivot.filter, "value": $scope.model.id, "column": pivot.column, "values": values}}).success(function(response) {
+                            if (response["ok"]) {
+                                $scope.pivots[pivot.table] = {};
+                                for (key in response["data"]) {
+                                    $scope.pivots[pivot.table][response["data"][key]] = true;
+                                }
+                            }
+                            $location.path("/" + $scope.table);
+                        }).error(display_error_message);
+                    });
             }
         };
-
-        $scope.$watch('returned_get', function() {
-            if ($scope.returned_get == 1 + config["pivots"][$scope.table].length) {
-                $location.path("/" + $scope.table);
-                $scope.returned_get = 0;
-            }
-        });
-
     }
 ]);
 
@@ -274,6 +268,8 @@ $("#alert_box").hide();
 var set_active_tab = (function() {
     var hash = $(location).attr('hash');
     var tab_id = hash.split("/");
+    if (tab_id.length <= 1)
+        tab_id = ["#", "users"];
     if (tab_id.length > 1 && tab_id[0] == "#" && $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").length == 1)
         $("#admin_tabs a[href=#" + tab_id[1] + "][data-toggle=pill]").parent().addClass("active");
 })();

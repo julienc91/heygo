@@ -272,7 +272,7 @@ func deleteFromId(id int64, table string) error {
 // Values and table must have been checked first
 func deleteFromKey(key string, value interface{}, table string) error {
 
-	var query = "DELETE FROM " + table + " WHERE " + key + "=? LIMIT 1;"
+	var query = "DELETE FROM " + table + " WHERE " + key + "=?;"
 	stmt, err := db.Preparex(query)
 	if err != nil {
 		return err

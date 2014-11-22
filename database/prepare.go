@@ -32,6 +32,15 @@ var requiredColumns = map[string][]string{
 	TableMembership:          []string{"users_id", "groups_id"},
 	TableVideoClassification: []string{"videos_id", "video_groups_id"},
 	TableVideoPermissions:    []string{"video_groups_id", "groups_id"}}
+var pivots = map[string][][2]string{
+	TableUsers:               [][2]string{{TableMembership, "users_id"}},
+	TableInvitations:         nil,
+	TableVideos:              [][2]string{{TableVideoClassification, "videos_id"}},
+	TableGroups:              [][2]string{{TableMembership, "groups_id"}, {TableVideoPermissions, "groups_id"}},
+	TableVideoGroups:         [][2]string{{TableVideoClassification, "video_groups_id"}, {TableVideoPermissions, "video_groups_id"}},
+	TableMembership:          nil,
+	TableVideoClassification: nil,
+	TableVideoPermissions:    nil}
 
 // Remove keys from the map which are not in validFields
 func checkFields(values map[string]interface{}, validFields []string, requiredFields []string) error {
@@ -143,6 +152,7 @@ func PrepareGetFromId(id int64, table string) (map[string]interface{}, error) {
 	if !tools.InArray(MainTables, table) {
 		return nil, errors.New("invalid table")
 	}
+
 	return getFromId(id, table)
 }
 
@@ -165,6 +175,10 @@ func PrepareDeleteFromId(id int64, table string) error {
 	if !tools.InArray(MainTables, table) {
 		return errors.New("invalid table")
 	}
+	if err := deleteDependencies(id, table); err != nil {
+		return err
+	}
+
 	return deleteFromId(id, table)
 }
 
@@ -177,6 +191,9 @@ func PrepareDeleteFromKey(key string, value interface{}, table string) error {
 	}
 	if !tools.InArray(columns, key) {
 		return errors.New("invalid key")
+	}
+	if err := deleteDependencies(value, table); err != nil {
+		return err
 	}
 	return deleteFromKey(key, value, table)
 }
@@ -191,5 +208,21 @@ func PrepareDeleteFromFilter(filter string, value interface{}, table string) err
 	if !tools.InArray(columns, filter) {
 		return errors.New("invalid filter")
 	}
+	if err := deleteDependencies(value, table); err != nil {
+		return err
+	}
 	return deleteFromFilter(filter, value, table)
+}
+
+// Delete foreign key dependencies
+func deleteDependencies(value interface{}, table string) error {
+
+	for _, pivot := range pivots[table] {
+		var pivotTable = pivot[0]
+		var pivotColumn = pivot[1]
+		if err := PrepareDeleteFromFilter(pivotColumn, value, pivotTable); err != nil {
+			return err
+		}
+	}
+	return nil
 }
