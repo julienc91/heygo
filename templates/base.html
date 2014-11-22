@@ -25,12 +25,10 @@
         <script src="/static/bower/videogular-overlay-play/overlay-play.js"></script>
         <script src="/static/bower/videogular-buffering/buffering.js"></script>
         <script src="/static/bower/videogular-controls/controls.js"></script>
-        <script src="/static/bower/videogular-dash/dash.js"></script>
         <script>
             var app = angular.module('heygo', ['ui.bootstrap', 'ui.router', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize',
                                                'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.overlayplay',
-                                               'com.2fdevs.videogular.plugins.buffering', 'com.2fdevs.videogular.plugins.controls',
-                                               'com.2fdevs.videogular.plugins.dash']);
+                                               'com.2fdevs.videogular.plugins.buffering', 'com.2fdevs.videogular.plugins.controls']);
             bootbox.setDefaults({ locale: "fr" });
 
             var set_active_menu = (function() {

@@ -3,9 +3,9 @@ package views
 import (
 	"github.com/gorilla/mux"
 	"heygo/database"
-	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
 // Stream a media
@@ -38,12 +38,14 @@ func MediaHandler(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		f, err := os.Open(video["path"].(string))
+		var path = video["path"].(string)
+		f, err := os.Open(path)
 		if err != nil {
 			http.Error(w, "", http.StatusInternalServerError)
 			return
 		}
+		defer f.Close()
 
-		io.Copy(w, f)
+		http.ServeContent(w, req, path, time.Time{}, f)
 	}
 }
