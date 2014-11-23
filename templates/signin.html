@@ -1,67 +1,79 @@
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="author" content="Julien CHAUMONT" />
-        <meta name="viewport" content="width=device-width" />
-        <link rel="stylesheet" href="/static/bower/bootstrap/dist/css/bootstrap.css">
-        <title>Connexion</title>
-    </head>
-    <body>
+{{define "title"}}Connexion{{end}}
+{{define "body"}}
+    <h1>HEYGO</h1>
 
-        <h1>HEYGO</h1>
+    <ul id="tabs" class="nav nav-tabs">
+        <li class="active"><a href="#signin">Connexion</a></li>
+        <li><a href="#signup">Inscription</a></li>
+    </ul>
 
-        <h2>Connexion</h2>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="signin">
 
-        En cas d'oubli de mot de passe, contactez directement
-        l'<a href="mailto:heygo@julienc.io?subject=Mot%20de%20passe%20oublié">admin</a>
-        pour le réinitialiser.
+            <h2>Connexion</h2>
 
-        <form role="form" method="post" action="/login">
-            <div class="form-group">
-                <label for="login">Login</label>
-                <input type="text" class="form-control" id="login" name="login" required />
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" class="form-control" id="password" name="password" required />
-            </div>
+            En cas d'oubli de mot de passe, contactez directement
+            l'<a href="mailto:heygo@julienc.io?subject=Mot%20de%20passe%20oublié">admin</a>
+            pour le réinitialiser.
 
-            <button type="submit" class="btn btn-default">Connexion</button>
-        </form>
+            <form role="form" method="post" action="/login">
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <input type="text" class="form-control" id="login" name="login" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required />
+                </div>
 
+                <button type="submit" class="btn btn-default">Connexion</button>
+            </form>
 
-        <h2>Inscription</h2>
+        </div>
 
-        HEYGO est une plate-forme accessible sur invitation seulement. Si vous
-        ne possédez pas de code d'invitation, vous pouvez toujours en faire la
-        demande à l'<a href="mailto:heygo@julienc.io?subject=Invitation">admin</a>.
+        <div role="tabpanel" class="tab-pane" id="signup">
 
-        Seul le hash (sha512) salé du mot de passe est stocké sur le serveur.
+            <h2>Inscription</h2>
 
-        Une fois l'inscription effectuée, une étape de validation manuelle par
-        l'admin est requise. En attendant, il est possible que vous n'ayez pas
-        accès à la totalité des contenus. Merci de patienter!
+            HEYGO est une plate-forme accessible sur invitation seulement. Si vous
+            ne possédez pas de code d'invitation, vous pouvez toujours en faire la
+            demande à l'<a href="mailto:heygo@julienc.io?subject=Invitation">admin</a>.
 
-        <form role="form" method="post" action="/signup">
-            <div class="form-group">
-                <label for="login">Login</label>
-                <input type="text" class="form-control" id="login" name="login" required />
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" class="form-control" id="password" name="password" required />
-            </div>
-            <div class="form-group">
-                <label for="password2">Vérification du mot de passe</label>
-                <input type="password" class="form-control" id="password2" name="password2" required />
-            </div>
-            <div class="form-group">
-                <label for="invitation">Code d'invitation</label>
-                <input type="text" class="form-control" id="invitation" name="invitation" required />
-            </div>
-            <button type="submit" class="btn btn-default">Inscription</button>
-        </form>
+            Seul le hash (sha512) salé du mot de passe est stocké sur le serveur.
 
-    </body>
-</html>
+            Une fois l'inscription effectuée, une étape de validation manuelle par
+            l'admin est requise. En attendant, il est possible que vous n'ayez pas
+            accès à la totalité des contenus. Merci de patienter!
+
+            <form role="form" method="post" action="/signup">
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <input type="text" class="form-control" id="login" name="login" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required />
+                </div>
+                <div class="form-group">
+                    <label for="password2">Vérification du mot de passe</label>
+                    <input type="password" class="form-control" id="password2" name="password2" required />
+                </div>
+                <div class="form-group">
+                    <label for="invitation">Code d'invitation</label>
+                    <input type="text" class="form-control" id="invitation" name="invitation" required />
+                </div>
+                <button type="submit" class="btn btn-default">Inscription</button>
+            </form>
+
+        </div>
+
+    </div>
+{{end}}
+{{define "js"}}
+<script>
+$('#tabs a').click(function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+})
+</script>
+{{end}}

@@ -15,9 +15,11 @@ func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var viewInfo = getViewInfo(req, "videos")
+
 	t := template.Must(template.New("videos.html").ParseFiles(
 		"templates/videos.html", "templates/base.html"))
-	err := t.ExecuteTemplate(w, "base", nil)
+	err := t.ExecuteTemplate(w, "base", viewInfo)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return

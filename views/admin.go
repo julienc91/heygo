@@ -254,9 +254,11 @@ func AdminHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var viewInfo = getViewInfo(req, "admin")
+
 	t := template.Must(template.New("admin.html").ParseFiles(
 		"templates/admin.html", "templates/base.html"))
-	err := t.ExecuteTemplate(w, "base", nil)
+	err := t.ExecuteTemplate(w, "base", viewInfo)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 	}

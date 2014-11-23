@@ -7,8 +7,16 @@ import (
 	"net/http"
 )
 
+// Basic informations about the view to display and the user
+type ViewInfo struct {
+	IsUserAuthenticated bool
+	IsUserAdmin         bool
+	ViewName            string
+}
+
 // Handle the homepage
 func MainPageHandler(w http.ResponseWriter, req *http.Request) {
+
 	if RedirectIfNotAuthenticated(w, req) {
 		return
 	}
@@ -60,4 +68,16 @@ func writeJsonResult(ret map[string]interface{}, w http.ResponseWriter, code int
 	}
 
 	http.Error(w, string(val), code)
+}
+
+// Fille a ViewInfo variable
+func getViewInfo(req *http.Request, viewName string) ViewInfo {
+
+	var viewInfo ViewInfo
+	var id = GetUserId(req)
+	viewInfo.IsUserAuthenticated = id > 0
+	ok, err := database.IsAdmin(id)
+	viewInfo.IsUserAdmin = (err == nil && ok)
+	viewInfo.ViewName = viewName
+	return viewInfo
 }

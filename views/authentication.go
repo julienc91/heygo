@@ -14,9 +14,14 @@ var cookieHandler = securecookie.New(
 // Display the sign in page
 func SignInHandler(w http.ResponseWriter, req *http.Request) {
 
+	var viewInfo = getViewInfo(req, "about")
+
 	t := template.Must(template.New("signin.html").ParseFiles(
-		"templates/signin.html"))
-	err := t.Execute(w, nil)
+		"templates/signin.html", "templates/base.html"))
+	err := t.ExecuteTemplate(w, "base", viewInfo)
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+	}
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
