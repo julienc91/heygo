@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"heygo/tools"
 	"heygo/views"
 	"net/http"
 )
@@ -9,11 +10,13 @@ import (
 // The main function, from where routes are defined
 func main() {
 
+	defer tools.OpenSubtitlesClose()
+
 	var rtr = mux.NewRouter()
 	rtr = rtr.StrictSlash(true)
 
 	rtr.HandleFunc("/about", views.AboutHandler)
-	rtr.HandleFunc("/videos/gethash/{slug:[a-z0-9_]+}", views.VideoGetHash)
+	rtr.HandleFunc("/videos/getsubtitles/{slug:[a-z0-9_]+}", views.VideoGetSubtitles)
 	rtr.HandleFunc("/videos/get/{slug:[a-z0-9_]+}", views.VideoDetailHandler)
 	rtr.HandleFunc("/videos/get", views.VideoGetAllHandler)
 	rtr.HandleFunc("/videos", views.VideoMenuHandler)

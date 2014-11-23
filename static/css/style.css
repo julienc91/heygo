@@ -87,6 +87,23 @@ div.video_layer {
     margin-bottom: 10px !important;
 }
 
+/****** footer ******/
+html, body {
+    height: 100%;
+}
+
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -155px;
+    padding-bottom: 50px;
+}
+
+footer, .push {
+    height: 155px;
+}
+
 /****** BOOTSTRAP OVERRIDING ******/
 .navbar {
     border-radius: 0px;

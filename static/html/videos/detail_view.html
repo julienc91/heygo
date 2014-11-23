@@ -9,7 +9,7 @@
 			<vg-scrubBar>
 				<vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
 			</vg-scrubBar>
-			<span style="width: auto;"></span>
+			<vg-timedisplay>{{ totalTime | date:'mm:ss' }}</vg-timedisplay>
 			<vg-volume>
 				<vg-mutebutton></vg-mutebutton>
 				<vg-volumebar></vg-volumebar>
@@ -23,5 +23,5 @@
 	</videogular>
 </p>
 <p>
-    <button class="btn btn-info" role="search_subtitles">Chercher des sous-titres</button>
+    <button class="btn btn-info" ng-click="search_subtitles()">Chercher des sous-titres</button>
 </p>

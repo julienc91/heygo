@@ -47,6 +47,7 @@ func VideoGetAllHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
+// Return video informations
 func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
@@ -76,7 +77,8 @@ func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
-func VideoGetHash(w http.ResponseWriter, req *http.Request) {
+// Call the OpenSubtitles API
+func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
 		return
@@ -87,7 +89,8 @@ func VideoGetHash(w http.ResponseWriter, req *http.Request) {
 
 	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 	if err != nil {
-		panic(err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
 	}
 
 	id := GetUserId(req)
@@ -101,13 +104,18 @@ func VideoGetHash(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var ret = map[string]interface{}{"ok": true, "err": ""}
 	hash, size, err := tools.Hash(video["path"].(string))
 	if err != nil {
-		ret["err"] = err.Error()
-		ret["ok"] = false
+		http.Error(w, "", http.StatusInternalServerError)
+		return
 	}
-	ret["hash"] = hash
-	ret["size"] = size
-	writeJsonResult(ret, w, http.StatusOK)
+
+	res, err := tools.SearchSubtitles(hash, size)
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/vtt")
+	http.Error(w, res, http.StatusOK)
 }

@@ -48,6 +48,10 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
                 $scope.video_config.sources = [{src: "/media/videos/" + $scope.model.slug, type: "video/" + $scope.model.path.split('.').pop()}];
             }
         }).error(display_error_message);
+
+        $scope.search_subtitles = function() {
+            $scope.video_config.tracks = [{src: "/videos/getsubtitles/" + $scope.model.slug, kind: "subtitles", srclang: "fr", label: "French", default: "true"}];
+        };
     }
 ]);
 
@@ -64,74 +68,3 @@ function display_error_message(data, status, headers, config) {
     $("#alert_box").children(".alert_content").text(data["err"] ? data["err"] : status);
     $("#alert_box").show();
 }
-
-
-$(function() {
-
-    var api_username = "";
-    var api_password = "";
-    var api_useragent = "OS Test User Agent";
-
-    $("[role=search_subtitles]").click(function() {
-        var data = {}
-
-        get_hash(data);
-        api_login(data);
-        api_search_subtitles(data.hash, data.size, data.token);
-        api_logout(data.token);
-    });
-
-    function api_login(d) {
-        $.xmlrpc({
-
-            url: 'http://api.opensubtitles.org/xml-rpc',
-            methodName: 'LogIn',
-            params: [api_username, api_password, "", api_useragent],
-            async: false,
-
-            success: function(response, status, jqXHR) {
-                if (response.length > 0 && response[0].status == "200 OK") {
-                    d.token = response[0].token;
-                }
-            }
-        });
-    }
-
-    function api_logout(token) {
-        $.xmlrpc({
-            url: 'http://api.opensubtitles.org/xml-rpc',
-            methodName: 'LogOut',
-            params: [token]
-        });
-    }
-
-    function api_search_subtitles(hash, size, token) {
-        $.xmlrpc({
-
-            url: 'http://api.opensubtitles.org/xml-rpc',
-            methodName: 'SearchSubtitles',
-            params: [token, [{"moviehash": hash, "moviebytesize": size}]],
-            async: false,
-
-            success: function(response, status, jqXHR) {
-                console.log(response);
-            }
-        });
-    }
-
-    function get_hash(d) {
-        $.ajax({
-
-            url: "/videos/gethash/" + slug,
-            async: false,
-
-            success: function(data) {
-                data = JSON.parse(data);
-                if (data.ok) {
-                    d.hash = data.hash;
-                    d.size = data.size;
-                }
-            }
-        });
-    }
-});

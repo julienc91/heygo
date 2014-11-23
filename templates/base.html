@@ -1,5 +1,4 @@
-{{define "base"}}
-<!DOCTYPE html>
+{{define "base"}}<!DOCTYPE html>
 <html lang="fr" ng-app="heygo">
     <head>
         <meta charset="utf-8" />
@@ -11,8 +10,17 @@
         <title>{{template "title" .}}</title>
     </head>
     <body>
+
+        <div class="wrapper">
         {{template "menu" .}}
-        {{template "body" .}}
+
+
+            {{template "body" .}}
+            <div class="push"></div>
+        </div>
+
+        {{template "footer" .}}
+
         <script src="/static/bower/jquery/dist/jquery.js"></script>
         <script src="/static/bower/bootstrap/dist/js/bootstrap.js"></script>
         <script src="/static/bower/bootbox/bootbox.js"></script>
@@ -71,4 +79,10 @@
         </div>
     </div>
 </nav>
+{{end}}
+
+{{define "footer"}}
+<footer class="navbar-inverse">
+
+</footer>
 {{end}}
