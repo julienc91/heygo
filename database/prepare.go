@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"heygo/globals"
 	"heygo/tools"
 )
 
@@ -13,7 +14,8 @@ var validColumns = map[string][]string{
 	TableVideoGroups:         []string{"title"},
 	TableMembership:          []string{"users_id", "groups_id"},
 	TableVideoClassification: []string{"videos_id", "video_groups_id"},
-	TableVideoPermissions:    []string{"video_groups_id", "groups_id"}}
+	TableVideoPermissions:    []string{"video_groups_id", "groups_id"},
+	TableConfiguration:       []string{"key", "value"}}
 var uniqueColumns = map[string][]string{
 	TableUsers:               []string{"login"},
 	TableInvitations:         []string{"value"},
@@ -22,7 +24,8 @@ var uniqueColumns = map[string][]string{
 	TableVideoGroups:         []string{"title"},
 	TableMembership:          nil,
 	TableVideoClassification: nil,
-	TableVideoPermissions:    nil}
+	TableVideoPermissions:    nil,
+	TableConfiguration:       []string{"key"}}
 var requiredColumns = map[string][]string{
 	TableUsers:               []string{"login", "password"},
 	TableInvitations:         []string{"value"},
@@ -31,7 +34,8 @@ var requiredColumns = map[string][]string{
 	TableVideoGroups:         []string{"title"},
 	TableMembership:          []string{"users_id", "groups_id"},
 	TableVideoClassification: []string{"videos_id", "video_groups_id"},
-	TableVideoPermissions:    []string{"video_groups_id", "groups_id"}}
+	TableVideoPermissions:    []string{"video_groups_id", "groups_id"},
+	TableConfiguration:       []string{"key", "value"}}
 var pivots = map[string][][2]string{
 	TableUsers:               [][2]string{{TableMembership, "users_id"}},
 	TableInvitations:         nil,
@@ -40,7 +44,8 @@ var pivots = map[string][][2]string{
 	TableVideoGroups:         [][2]string{{TableVideoClassification, "video_groups_id"}, {TableVideoPermissions, "video_groups_id"}},
 	TableMembership:          nil,
 	TableVideoClassification: nil,
-	TableVideoPermissions:    nil}
+	TableVideoPermissions:    nil,
+	TableConfiguration:       nil}
 
 // Remove keys from the map which are not in validFields
 func checkFields(values map[string]interface{}, validFields []string, requiredFields []string) error {
@@ -95,11 +100,11 @@ func PrepareInsert(values map[string]interface{}, table string) (map[string]inte
 		values["salt"] = salt
 	}
 
-	return insertRow(values, columns, table)
+	return insertRow(values, table)
 }
 
-// Prepare and check arguments before calling updateRow
-func PrepareUpdate(id int64, values map[string]interface{}, table string) (map[string]interface{}, error) {
+// Prepare and check arguments before calling updateFromId
+func PrepareUpdateFromId(id int64, values map[string]interface{}, table string) (map[string]interface{}, error) {
 
 	columns, ok := validColumns[table]
 	if !ok {
@@ -118,7 +123,19 @@ func PrepareUpdate(id int64, values map[string]interface{}, table string) (map[s
 		values["salt"] = salt
 	}
 
-	return updateRow(id, values, columns, table)
+	return updateFromId(id, values, table)
+}
+
+// Prepare and check arguments before calling updateFromKey
+func PrepareUpdateConfiguration(key string, value interface{}) (map[string]interface{}, error) {
+
+	row, err := PrepareGetFromKey("key", key, TableConfiguration)
+	if err != nil {
+		return nil, err
+	}
+	res, err := PrepareUpdateFromId(row["id"].(int64), map[string]interface{}{"value": value}, TableConfiguration)
+	globals.LoadConfiguration <- true
+	return res, err
 }
 
 // Prepare and check arguments before calling getAll

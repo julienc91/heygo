@@ -3,6 +3,7 @@ package tools
 
 import (
 	"os"
+	"unicode"
 )
 
 // Check if e is in a
@@ -19,4 +20,23 @@ func InArray(a []string, e string) bool {
 func CheckFilePath(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+func UnderscoreToCamelCase(s string) string {
+	var res []rune
+	var upperNextOne bool = false
+
+	for i, c := range s {
+		if i == 0 {
+			res = append(res, unicode.ToUpper(c))
+		} else if c == '_' {
+			upperNextOne = true
+		} else if upperNextOne {
+			res = append(res, unicode.ToUpper(c))
+			upperNextOne = false
+		} else {
+			res = append(res, c)
+		}
+	}
+	return string(res)
 }

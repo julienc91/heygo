@@ -1,0 +1,38 @@
+<h2>Configuration</h2>
+
+<form name="edit" class="form-horizontal" role="form" ng-init="init();" ng-submit="save_configuration()">
+
+    <!-- Workaround for Chrome autocomplete -->
+    <input type="text" name="email" value="" style="display: none" />
+    <input type="password" name="password" value="" style="display: none" />
+
+    <fieldset>
+        <legend>OpenSubtitles</legend>
+        <div class="form-group" ng-class="{'has-error': edit.opensubtitles_login.$invalid && edit.$submitted}">
+            <label for="opensubtitles_login" class="col-sm-2 control-label">Login</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="opensubtitles_login" autocomplete="off" name="opensubtitles_login" ng-model="configuration.opensubtitles_login">
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': edit.opensubtitles_password.$invalid && edit.$submitted}">
+            <label for="opensubtitles_password" class="col-sm-2 control-label">Mot de passe</label>
+            <div class="col-sm-10">
+                <input type="password" class="form-control" id="opensubtitles_password" autocomplete="off" name="opensubtitles_password" ng-model="configuration.opensubtitles_password">
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': edit.opensubtitles_useragent.$invalid && edit.$submitted}">
+            <label for="opensubtitles_useragent" class="col-sm-2 control-label">User-Agent</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="opensubtitles_useragent" name="opensubtitles_useragent" ng-model="configuration.opensubtitles_useragent">
+            </div>
+        </div>
+    </fieldset>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a class="btn btn-default" ng-href="#/{{table}}">Annuler</a>
+            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || edit.$pristine">
+                Enregistrer
+            </button>
+        </div>
+    </div>
+</form>

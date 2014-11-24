@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"heygo/database"
+	"heygo/globals"
 	"heygo/tools"
 	"heygo/views"
 	"net/http"
@@ -11,6 +13,9 @@ import (
 func main() {
 
 	defer tools.OpenSubtitlesClose()
+	defer close(globals.LoadConfiguration)
+	loadConfiguration()
+	go reloadConfiguration()
 
 	var rtr = mux.NewRouter()
 	rtr = rtr.StrictSlash(true)
@@ -25,8 +30,10 @@ func main() {
 	rtr.HandleFunc("/signout", views.SignoutHandler)
 	rtr.HandleFunc("/login", views.LoginHandler)
 	rtr.HandleFunc("/media/{type:videos}/{slug:[a-z0-9_]+}", views.MediaHandler)
+	rtr.HandleFunc("/admin/get/configuration", views.AdminGetConfigurationHandler)
 	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", views.AdminGetHandler)
 	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", views.AdminGetFromIdHandler)
+	rtr.HandleFunc("/admin/set/configuration", views.AdminSetConfigurationHandler)
 	rtr.HandleFunc("/admin/set/{table:[a-z_]+}", views.AdminSetHandler)
 	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", views.AdminUpdateHandler)
 	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", views.AdminInsertHandler)
@@ -40,4 +47,33 @@ func main() {
 
 	http.Handle("/", rtr)
 	http.ListenAndServe(":8080", nil)
+}
+
+// Hot reloading of the configuration
+func reloadConfiguration() {
+	for _ = range globals.LoadConfiguration {
+		loadConfiguration()
+	}
+}
+
+// Load the configuration from the database to the global variable
+func loadConfiguration() {
+
+	config, err := database.PrepareGetAll(database.TableConfiguration)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, row := range config {
+		switch row["key"].(string) {
+		case "opensubtitles_login":
+			globals.CONFIGURATION.OpensubtitlesLogin = row["value"].(string)
+		case "opensubtitles_password":
+			globals.CONFIGURATION.OpensubtitlesPassword = row["value"].(string)
+		case "opensubtitles_useragent":
+			globals.CONFIGURATION.OpensubtitlesUseragent = row["value"].(string)
+		}
+	}
+
+	tools.InitFromConfiguration()
 }

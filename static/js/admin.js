@@ -82,24 +82,28 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         .state('videos_edit', {
             url: "/{table:videos}/{mode:new|edit}/{id:[0-9]*}",
             controller: "generic_edit_view_controller",
-            templateUrl: "/static/html/admin/videos_edit_view.html"});
+            templateUrl: "/static/html/admin/videos_edit_view.html"})
+        .state('configuration', {
+            url: "/{table:configuration}",
+            controller: "configuration_controller",
+            templateUrl: "/static/html/admin/configuration.html"});
 }]);
 
 
 app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams',
     function ($scope, $http, $stateParams) {
         $scope.table = $stateParams.table;
-        $scope.title = config["titles"][$scope.table];
+        $scope.title = config.titles[$scope.table];
         $scope.rows = [];
 
         $scope.external_scope = {
             table: $scope.table,
             delete_row: function(row) {
-                bootbox.confirm("Cette action supprimera définitivement l'entrée \"" + row[config["main_fields"][$scope.table]] + "\". Voulez-vous continuer ?",
+                bootbox.confirm("Cette action supprimera définitivement l'entrée \"" + row[config.main_fields[$scope.table]] + "\". Voulez-vous continuer ?",
                     function(result) {
                         if (result) {
                             $http.get("/admin/delete/" + $scope.table + "/" + row.id).success(function(response) {
-                                if (response["ok"]) {
+                                if (response.ok) {
                                     var index_to_delete = -1;
                                     for (var i=0; i<$scope.rows.length; i++) {
                                         if ($scope.rows[i].id == row.id) {
@@ -119,7 +123,7 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
         $scope.grid_options = { enableSorting: true,
                                enableColumnMenus: false,
                                enableColumnResizing: false,
-                               columnDefs: config["column_definitions"][$scope.table],
+                               columnDefs: config.column_definitions[$scope.table],
                                data: 'rows' };
         $scope.grid_options.columnDefs.push({name: 'actions',
                                             displayName: 'Actions',
@@ -127,8 +131,8 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
                                             cellTemplate: '<div class="edit_buttons"><a class="btn-link" ng-href="#/{{getExternalScopes().table}}/edit/{{row.entity.id}}" tooltip="Modifier" tooltip-trigger tooltip-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>\
                                                            <button class="btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove" tooltip="Supprimer" tooltip-trigger tooltip-placement="left"></span></button></div>'});
         $http.get("/admin/get/" + $scope.table).success(function(response) {
-            if (response["ok"])
-                $scope.rows = response["data"];
+            if (response.ok)
+                $scope.rows = response.data;
         }).error(display_error_message);
     }
 ]);
@@ -137,13 +141,13 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
 app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams', '$location',
     function ($scope, $http, $stateParams, $location) {
         $scope.table = $stateParams.table;
-        $scope.fields = config["fields"][$scope.table];
+        $scope.fields = config.fields[$scope.table];
         $scope.valid_path = false;
         $scope.is_new = $stateParams.mode == "new";
         $scope.joins = {};
         $scope.pivots = {};
 
-        if (!$scope.is_new && (!$stateParams.id || $stateParams.id == 0))
+        if (!$scope.is_new && (!$stateParams.id || $stateParams.id === 0))
             $location.path("/" + $scope.table + "/new/");
 
         $scope.random_string = function() {
@@ -155,25 +159,25 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
         $scope.model = {};
         if (!$scope.is_new) {
             $http.get("/admin/get/" + $scope.table + "/" + $stateParams.id).success(function(response) {
-                if (response["ok"])
-                    $scope.model = response["data"];
+                if (response.ok)
+                    $scope.model = response.data;
             }).error(display_error_message);
         }
 
-        angular.forEach(config["joins"][$scope.table], function(table) {
+        angular.forEach(config.joins[$scope.table], function(table) {
             $http.get("/admin/get/" + table).success(function(response) {
-                if (response["ok"])
-                    $scope.joins[table] = response["data"];
+                if (response.ok)
+                    $scope.joins[table] = response.data;
             }).error(display_error_message);
         });
 
         if (!$scope.is_new) {
-            angular.forEach(config["pivots"][$scope.table], function(pivot) {
+            angular.forEach(config.pivots[$scope.table], function(pivot) {
                 $http.get("/admin/get/" + pivot.table, {params: {"column": pivot.column, "filter": pivot.filter, "value": $stateParams.id}}).success(function(response) {
-                    if (response["ok"]) {
+                    if (response.ok) {
                         $scope.pivots[pivot.table] = {};
-                        for (key in response["data"]) {
-                            $scope.pivots[pivot.table][response["data"][key]] = true;
+                        for (var key in response.data) {
+                            $scope.pivots[pivot.table][response.data[key]] = true;
                         }
                     }
                 }).error(display_error_message);
@@ -182,9 +186,9 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
 
         $scope.init = function() {
             if (!$scope.is_new)
-                return
+                return;
             for (var i=0; i<$scope.fields.length; i++) {
-                var default_value = config["default_values"][$scope.table][i];
+                var default_value = config.default_values[$scope.table][i];
                 if ($scope[default_value])
                     default_value = $scope[default_value]();
                 $scope.model[$scope.fields[i]] = default_value;
@@ -193,7 +197,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
 
         $scope.check_file_on_server = function(model_attribute) {
             $http.get("/admin/media/check", {params: {"path": $scope.model[model_attribute]}}).success(function(response) {
-                $scope.valid_path = response["ok"];
+                $scope.valid_path = response.ok;
             }).error(display_error_message);
         };
 
@@ -213,10 +217,10 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
 
         $scope.generate_slug = function(model_attribute) {
             if (!$scope.model[model_attribute]) {
-                $scope.model["slug"] = "";
+                $scope.model.slug = "";
                 return;
             }
-            $scope.model["slug"] = $scope.slug_from_value($scope.model[model_attribute]);
+            $scope.model.slug = $scope.slug_from_value($scope.model[model_attribute]);
         };
 
         $scope.save_model = function() {
@@ -225,8 +229,8 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
                     $scope.model.password = $scope.model.new_password;
                 var url = "/admin/" + ($scope.is_new ? "insert" : "update") + "/" + $scope.table + ($scope.is_new ? "" : "/" + $scope.model.id);
                 $http.get(url, {params: $scope.model}).success(function(response) {
-                    if (response["ok"]) {
-                        $scope.model = response["data"];
+                    if (response.ok) {
+                        $scope.model = response.data;
                         $scope.save_pivots();
                     }
                 }).error(display_error_message);
@@ -235,22 +239,55 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
 
         $scope.save_pivots = function() {
             if ($scope.edit.$valid) {
-                angular.forEach(config["pivots"][$scope.table], function(pivot) {
+                angular.forEach(config.pivots[$scope.table], function(pivot) {
                     var values = [];
-                    for (key in $scope.pivots[pivot.table]) {
+                    for (var key in $scope.pivots[pivot.table]) {
                         if ($scope.pivots[pivot.table][key])
                             values.push(key);
                         }
                         $http.get("/admin/set/" + pivot.table, {params: {"filter": pivot.filter, "value": $scope.model.id, "column": pivot.column, "values": values}}).success(function(response) {
-                            if (response["ok"]) {
+                            if (response.ok) {
                                 $scope.pivots[pivot.table] = {};
-                                for (key in response["data"]) {
-                                    $scope.pivots[pivot.table][response["data"][key]] = true;
+                                for (key in response.data) {
+                                    $scope.pivots[pivot.table][response.data[key]] = true;
                                 }
                             }
                             $location.path("/" + $scope.table);
                         }).error(display_error_message);
                     });
+            }
+        };
+    }
+]);
+
+
+app.controller('configuration_controller', ['$scope', '$http', '$stateParams', '$location',
+    function ($scope, $http, $stateParams, $location) {
+        $scope.table = $stateParams.table;
+        $scope.configuration = {};
+        $scope.initial_configuration = {};
+
+        $http.get("/admin/get/" + $scope.table).success(function(response) {
+            if (response.ok) {
+                $scope.configuration = response.data;
+                $scope.initial_configuration = jQuery.extend(true, {}, $scope.configuration);
+            }
+        }).error(display_error_message);
+
+        $scope.save_configuration = function() {
+            if ($scope.edit.$valid) {
+                var url = "/admin/set/configuration";
+                var f = function(response) {
+                    if (response.ok) {
+                        $scope.configuration[response.data.key] = response.data.value;
+                        $scope.initial_configuration[response.data.key] = jQuery.extend(true, {}, $scope.configuration[response.data.key]);
+                    }
+                };
+                for (var property in $scope.configuration) {
+                    if ($scope.configuration[property] != $scope.initial_configuration[property]) {
+                        $http.get(url, {params: {key: property, value: $scope.configuration[property]}}).success(f).error(display_error_message);
+                    }
+                }
             }
         };
     }
@@ -276,6 +313,6 @@ var set_active_tab = (function() {
 
 
 function display_error_message(data, status, headers, config) {
-    $("#alert_box").children(".alert_content").text(data["err"] ? data["err"] : status);
+    $("#alert_box").children(".alert_content").text(data.err ? data.err : status);
     $("#alert_box").show();
 }

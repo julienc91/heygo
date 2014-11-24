@@ -19,10 +19,11 @@ const (
 	TableMembership          = "membership"
 	TableVideoClassification = "video_classification"
 	TableVideoPermissions    = "video_permissions"
+	TableConfiguration       = "configuration"
 )
 
 var db *sqlx.DB
-var MainTables = []string{TableUsers, TableInvitations, TableGroups, TableVideoGroups, TableVideos}
+var MainTables = []string{TableUsers, TableInvitations, TableGroups, TableVideoGroups, TableVideos, TableConfiguration}
 var PivotTables = []string{TableMembership, TableVideoClassification, TableVideoPermissions}
 var Tables = append(MainTables, PivotTables...)
 
@@ -84,7 +85,15 @@ func InitDatabase() {
 		// invitations (id, value)
 		`CREATE TABLE IF NOT EXISTS invitations
 (id INTEGER PRIMARY KEY AUTOINCREMENT,
- value VARCHAR UNIQUE NOT NULL);`}
+ value VARCHAR UNIQUE NOT NULL);`,
+		// configuration (id, key, value)
+		`CREATE TABLE IF NOT EXISTS configuration
+(id INTEGER PRIMARY KEY AUTOINCREMENT,
+ key VARCHAR UNIQUE NOT NULL,
+ value BLOB);`,
+		// configuration default values
+		`INSERT OR IGNORE INTO configuration (key, value) VALUES
+('opensubtitles_login', ''), ('opensubtitles_password', ''), ('opensubtitles_useragent', 'OSTestUserAgent');`}
 
 	for _, query := range queries {
 		db.MustExec(query)
@@ -93,7 +102,7 @@ func InitDatabase() {
 
 // Execute an update query on the given table, with the given parameters for the given id
 // Values and table must have been checked first
-func updateRow(id int64, values map[string]interface{}, validFields []string, table string) (map[string]interface{}, error) {
+func updateFromId(id int64, values map[string]interface{}, table string) (map[string]interface{}, error) {
 
 	var query = "UPDATE " + table + " SET "
 	var valuesToSet []string
@@ -121,7 +130,7 @@ func updateRow(id int64, values map[string]interface{}, validFields []string, ta
 
 // Execute an insert query on the given table, with the given parameters
 // Values and table must have been checked first
-func insertRow(values map[string]interface{}, validFields []string, table string) (map[string]interface{}, error) {
+func insertRow(values map[string]interface{}, table string) (map[string]interface{}, error) {
 
 	var query = "INSERT INTO " + table
 	var columnNames []string

@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/kolo/xmlrpc"
+	"heygo/globals"
 	"io"
 	"net/http"
 	"os"
@@ -16,15 +17,19 @@ import (
 	"strings"
 )
 
-var username = ""
-var password = ""
-var useragent = "OSTestUserAgent"
+var username, password, useragent string
 var url = "http://api.opensubtitles.org/xml-rpc"
 var token = ""
 var client *xmlrpc.Client
 
 func init() {
 	client, _ = xmlrpc.NewClient(url, nil)
+}
+
+func InitFromConfiguration() {
+	username = globals.CONFIGURATION.OpensubtitlesLogin
+	password = globals.CONFIGURATION.OpensubtitlesPassword
+	useragent = globals.CONFIGURATION.OpensubtitlesUseragent
 }
 
 // Defer this function's call in the main function
@@ -99,6 +104,7 @@ func Logout() error {
 func SearchSubtitles(hash string, size uint64) (string, error) {
 
 	Login()
+	defer Logout()
 	var result = make(map[string]interface{})
 	err := client.Call("SearchSubtitles", []interface{}{token, []interface{}{map[string]interface{}{"moviehash": hash, "moviebytesize": size, "sublanguageid": "fre"}}}, &result)
 	if err != nil {

@@ -8,7 +8,7 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
         .state('detail_view', {
             url: "/{slug:[a-z0-9_]+}",
             controller: "videos_detail_view_controller",
-            templateUrl: "/static/html/videos/detail_view.html"})
+            templateUrl: "/static/html/videos/detail_view.html"});
 }]);
 
 app.controller('videos_grid_view_controller', ['$scope', '$http',
@@ -25,8 +25,8 @@ app.controller('videos_grid_view_controller', ['$scope', '$http',
                                             cellTemplate: '<a class="btn-link" ng-href="#/{{row.entity.slug}}"><span class="glyphicon glyphicon-film"></span></a>'});
 
         $http.get("/videos/get").success(function(response) {
-            if (response["ok"])
-                $scope.rows = response["data"];
+            if (response.ok)
+                $scope.rows = response.data;
         }).error(display_error_message);
     }
 ]);
@@ -43,8 +43,8 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
 		};
 
         $http.get("/videos/get/" + $stateParams.slug).success(function(response) {
-            if (response["ok"]) {
-                $scope.model = response["data"];
+            if (response.ok) {
+                $scope.model = response.data;
                 $scope.video_config.sources = [{src: "/media/videos/" + $scope.model.slug, type: "video/" + $scope.model.path.split('.').pop()}];
             }
         }).error(display_error_message);
@@ -65,6 +65,6 @@ $("[data-hide]").on("click", function(){
 $("#alert_box").hide();
 
 function display_error_message(data, status, headers, config) {
-    $("#alert_box").children(".alert_content").text(data["err"] ? data["err"] : status);
+    $("#alert_box").children(".alert_content").text(data.err ? data.err : status);
     $("#alert_box").show();
 }

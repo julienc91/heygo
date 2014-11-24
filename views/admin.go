@@ -3,6 +3,7 @@ package views
 import (
 	"github.com/gorilla/mux"
 	"heygo/database"
+	"heygo/globals"
 	"heygo/tools"
 	"html/template"
 	"net/http"
@@ -39,7 +40,7 @@ func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
 
 	var ret = map[string]interface{}{"ok": true, "err": ""}
 
-	updated, err := database.PrepareUpdate(id, data, table)
+	updated, err := database.PrepareUpdateFromId(id, data, table)
 	if err != nil {
 		ret["err"] = err.Error()
 		ret["ok"] = false
@@ -110,6 +111,18 @@ func AdminInsertHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ret["data"] = inserted
+	writeJsonResult(ret, w, http.StatusOK)
+}
+
+// Return the configuration variables
+func AdminGetConfigurationHandler(w http.ResponseWriter, req *http.Request) {
+
+	if RedirectIfNotAdmin(w, req) {
+		return
+	}
+
+	var ret = map[string]interface{}{"ok": true, "err": ""}
+	ret["data"] = globals.CONFIGURATION
 	writeJsonResult(ret, w, http.StatusOK)
 }
 
@@ -186,6 +199,29 @@ func AdminGetFromIdHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ret["data"] = rows
+	writeJsonResult(ret, w, http.StatusOK)
+}
+
+// Set configuration values
+func AdminSetConfigurationHandler(w http.ResponseWriter, req *http.Request) {
+
+	if RedirectIfNotAdmin(w, req) {
+		return
+	}
+	req.ParseForm()
+
+	var key = req.FormValue("key")
+	var value = req.FormValue("value")
+
+	var ret = map[string]interface{}{"ok": true, "err": ""}
+
+	res, err := database.PrepareUpdateConfiguration(key, value)
+	if err != nil {
+		ret["err"] = err.Error()
+		ret["ok"] = false
+	}
+
+	ret["data"] = res
 	writeJsonResult(ret, w, http.StatusOK)
 }
 

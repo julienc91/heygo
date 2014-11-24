@@ -104,6 +104,12 @@ footer, .push {
     height: 155px;
 }
 
+footer {
+    padding-top: 30px;
+    color: white;
+    text-align: center;
+}
+
 /****** BOOTSTRAP OVERRIDING ******/
 .navbar {
     border-radius: 0px;
