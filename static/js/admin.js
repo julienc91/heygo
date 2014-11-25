@@ -10,7 +10,7 @@ var config = {
         "users": ["id", "login", "password"],
         "invitations": ["id", "value"],
         "groups": ["id", "title"],
-        "videos": ["id", "title", "path", "slug"],
+        "videos": ["id", "title", "path", "slug", "imdb_id"],
         "video_groups": ["id", "title"]
     },
     "column_definitions": {
@@ -31,7 +31,7 @@ var config = {
         "users": [0, "", "random_string"],
         "invitations": [0, "random_string"],
         "groups": [0, ""],
-        "videos": [0, "", "", ""],
+        "videos": [0, "", "", "", ""],
         "video_groups": [0, ""]
     },
     "joins": {

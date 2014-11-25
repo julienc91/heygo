@@ -106,13 +106,13 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 
 	hash, size, err := tools.Hash(video["path"].(string))
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res, err := tools.SearchSubtitles(hash, size)
+	res, err := tools.SearchSubtitles(hash, size, video["imdb_id"].(string))
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

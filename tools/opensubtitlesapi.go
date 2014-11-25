@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"github.com/kolo/xmlrpc"
 	"heygo/globals"
 	"io"
@@ -101,66 +102,122 @@ func Logout() error {
 }
 
 // Search subtitles
-func SearchSubtitles(hash string, size uint64) (string, error) {
+func SearchSubtitles(hash string, size uint64, imdbId string) (string, error) {
+
+	search := func(token string, params map[string]interface{}) ([]map[string]interface{}, error) {
+
+		var result = make(map[string]interface{})
+		err := client.Call("SearchSubtitles", []interface{}{token, []interface{}{params}}, &result)
+		if err != nil {
+			return nil, err
+		}
+
+		list, ok := result["data"].([]interface{})
+		if !ok {
+			if _, ok := result["data"].(bool); ok {
+				return nil, nil
+			}
+			fmt.Println(result)
+			return nil, errors.New("Type assertion error for data")
+		}
+
+		var res []map[string]interface{}
+		for i := range list {
+			data, ok := list[i].(map[string]interface{})
+			if ok {
+				res = append(res, data)
+			}
+		}
+		if len(res) == 0 {
+			return nil, nil
+		}
+
+		return res, nil
+	}
+
+	downloadArchive := func(url string) (*bytes.Buffer, int64, error) {
+
+		resp, err := http.Get(url)
+		if err != nil {
+			return nil, 0, err
+		}
+		defer resp.Body.Close()
+
+		var buffer = new(bytes.Buffer)
+		n, err := buffer.ReadFrom(resp.Body)
+		if err != nil {
+			return nil, 0, err
+		}
+		return buffer, n, nil
+	}
+
+	handleZipFile := func(buffer *bytes.Buffer, n int64) (string, error) {
+
+		var reader = bytes.NewReader(buffer.Bytes())
+		zipReader, err := zip.NewReader(reader, n)
+		if err != nil {
+			return "", err
+		}
+
+		for _, f := range zipReader.File {
+			if path.Ext(f.Name) == ".srt" {
+
+				rc, err := f.Open()
+				if err != nil {
+					return "", err
+				}
+				defer rc.Close()
+
+				var buffer = new(bytes.Buffer)
+				_, err = io.Copy(buffer, rc)
+				if err != nil {
+					return "", err
+				}
+				return buffer.String(), nil
+			}
+		}
+		return "", errors.New("No srt subtitles found")
+	}
 
 	Login()
 	defer Logout()
-	var result = make(map[string]interface{})
-	err := client.Call("SearchSubtitles", []interface{}{token, []interface{}{map[string]interface{}{"moviehash": hash, "moviebytesize": size, "sublanguageid": "fre"}}}, &result)
+
+	subtitlesList, err := search(token, map[string]interface{}{"moviehash": hash, "moviebytesize": size, "sublanguageid": "fre"})
 	if err != nil {
 		return "", err
-	}
+	} else if subtitlesList == nil && imdbId != "" {
+		var imdbNumber int
 
-	data1, ok := result["data"].([]interface{})
-	if !ok || len(data1) == 0 {
-		return "", nil
-	}
+		if len(imdbId) <= 2 || !strings.HasPrefix(imdbId, "tt") {
+			return "", errors.New("Invalid imdb id")
+		} else if imdbNumber, err = strconv.Atoi(imdbId[2:]); err != nil {
+			return "", err
+		}
 
-	data, ok := data1[0].(map[string]interface{})
-	if !ok {
-		return "", nil
-	}
-
-	var url = data["ZipDownloadLink"].(string)
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	var buffer = new(bytes.Buffer)
-	n, err := buffer.ReadFrom(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	var reader = bytes.NewReader(buffer.Bytes())
-	zipReader, err := zip.NewReader(reader, n)
-
-	if err != nil {
-		return "", err
-	}
-
-	for _, f := range zipReader.File {
-		if path.Ext(f.Name) == ".srt" {
-
-			rc, err := f.Open()
-			if err != nil {
-				return "", err
-			}
-			defer rc.Close()
-
-			var buffer = new(bytes.Buffer)
-			_, err = io.Copy(buffer, rc)
-			if err != nil {
-				return "", err
-			}
-			var subtitles = srtToVtt(buffer.String())
-			return subtitles, nil
+		subtitlesList, err = search(token, map[string]interface{}{"imdbid": imdbNumber, "sublanguageid": "fre"})
+		if err != nil {
+			return "", err
 		}
 	}
 
-	return "", err
+	if subtitlesList == nil {
+		return "", nil
+	}
+
+	var data = subtitlesList[0]
+
+	var url = data["ZipDownloadLink"].(string)
+	buffer, n, err := downloadArchive(url)
+	if err != nil {
+		return "", err
+	}
+
+	subtitles, err := handleZipFile(buffer, n)
+	if err != nil {
+		return "", err
+	}
+
+	return srtToVtt(subtitles), nil
 }
 
 // Convert SubRip subtitles to WebVtt subtitles

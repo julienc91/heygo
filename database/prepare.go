@@ -9,7 +9,7 @@ import (
 var validColumns = map[string][]string{
 	TableUsers:               []string{"login", "password"},
 	TableInvitations:         []string{"value"},
-	TableVideos:              []string{"path", "slug", "title"},
+	TableVideos:              []string{"path", "slug", "title", "imdb_id"},
 	TableGroups:              []string{"title"},
 	TableVideoGroups:         []string{"title"},
 	TableMembership:          []string{"users_id", "groups_id"},

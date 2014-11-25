@@ -58,12 +58,13 @@ func InitDatabase() {
  FOREIGN KEY (users_id) REFERENCES users (id) ON DELETE CASCADE,
  FOREIGN KEY (groups_id) REFERENCES groups (id) ON DELETE CASCADE,
  PRIMARY KEY (users_id, groups_id));`,
-		// videos (id, title, path, slug)
+		// videos (id, title, path, slug, imdb_id)
 		`CREATE TABLE IF NOT EXISTS videos
 (id INTEGER PRIMARY KEY AUTOINCREMENT,
  title VARCHAR UNIQUE NOT NULL DEFAULT '',
  path VARCHAR UNIQUE NOT NULL DEFAULT '',
- slug VARCHAR UNIQUE NOT NULL DEFAULT '');`,
+ slug VARCHAR UNIQUE NOT NULL DEFAULT '',
+ imdb_id VARCHAR);`,
 		// video_groups (id, title)
 		`CREATE TABLE IF NOT EXISTS video_groups
 (id INTEGER PRIMARY KEY AUTOINCREMENT,
