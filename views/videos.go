@@ -8,6 +8,14 @@ import (
 	"net/http"
 )
 
+var subtitlesToServe map[string]string
+var salt string
+
+func init() {
+	subtitlesToServe = make(map[string]string)
+	salt = tools.SaltGenerator()
+}
+
 // Display the video homepage
 func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 
@@ -104,7 +112,7 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	hash, size, err := tools.Hash(video["path"].(string))
+	hash, size, err := tools.OpensubtitlesHash(video["path"].(string))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -116,6 +124,32 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/vtt")
-	http.Error(w, res, http.StatusOK)
+	var ret = map[string]interface{}{"ok": true, "err": "", "data": []string{}}
+	var data []string
+
+	for _, subtitles := range res {
+		hash = tools.Hash(subtitles, salt)
+		subtitlesToServe[hash] = subtitles
+		data = append(data, hash)
+	}
+	ret["data"] = data
+
+	writeJsonResult(ret, w, http.StatusOK)
+}
+
+// Serve subtitle files
+func SubtitlesServerHandler(w http.ResponseWriter, req *http.Request) {
+
+	if RedirectIfNotAuthenticated(w, req) {
+		return
+	}
+
+	params := mux.Vars(req)
+	hash := params["hash"]
+
+	if _, ok := subtitlesToServe[hash]; !ok {
+		http.Error(w, "", http.StatusNotFound)
+		return
+	}
+	http.Error(w, subtitlesToServe[hash], http.StatusOK)
 }

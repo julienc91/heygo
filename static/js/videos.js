@@ -50,7 +50,15 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
         }).error(display_error_message);
 
         $scope.search_subtitles = function() {
-            $scope.video_config.tracks = [{src: "/videos/getsubtitles/" + $scope.model.slug, kind: "subtitles", srclang: "fr", label: "French", default: "true"}];
+            $http.get("/videos/getsubtitles/" + $stateParams.slug).success(function(response) {
+                if (response.ok) {
+                    var tracks = [];
+                    for (var subtitles in response.data) {
+                        tracks.push({src: "/videos/subtitles/" + response.data[subtitles], kind: "subtitles", srclang: "fr", label: "French"});
+                    }
+                    $scope.video_config.tracks = tracks;
+                }
+            }).error(display_error_message);
         };
     }
 ]);

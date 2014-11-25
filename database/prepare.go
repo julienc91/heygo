@@ -93,8 +93,8 @@ func PrepareInsert(values map[string]interface{}, table string) (map[string]inte
 	}
 
 	if table == TableUsers {
-		var salt = saltGenerator()
-		var password = hashPassword(values["password"].(string), salt)
+		var salt = tools.SaltGenerator()
+		var password = tools.Hash(values["password"].(string), salt)
 
 		values["password"] = password
 		values["salt"] = salt
@@ -116,8 +116,8 @@ func PrepareUpdateFromId(id int64, values map[string]interface{}, table string) 
 
 	if _, ok := values["password"]; ok {
 
-		var salt = saltGenerator()
-		var password = hashPassword(values["password"].(string), salt)
+		var salt = tools.SaltGenerator()
+		var password = tools.Hash(values["password"].(string), salt)
 
 		values["password"] = password
 		values["salt"] = salt

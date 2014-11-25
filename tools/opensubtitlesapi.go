@@ -41,7 +41,7 @@ func OpenSubtitlesClose() {
 
 // Compute the hash of a file, and returns it plus its size
 // Adapted from https://github.com/oz/osdb
-func Hash(filename string) (string, uint64, error) {
+func OpensubtitlesHash(filename string) (string, uint64, error) {
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -102,7 +102,7 @@ func Logout() error {
 }
 
 // Search subtitles
-func SearchSubtitles(hash string, size uint64, imdbId string) (string, error) {
+func SearchSubtitles(hash string, size uint64, imdbId string) ([]string, error) {
 
 	search := func(token string, params map[string]interface{}) ([]map[string]interface{}, error) {
 
@@ -184,40 +184,43 @@ func SearchSubtitles(hash string, size uint64, imdbId string) (string, error) {
 
 	subtitlesList, err := search(token, map[string]interface{}{"moviehash": hash, "moviebytesize": size, "sublanguageid": "fre"})
 	if err != nil {
-		return "", err
+		return nil, err
 	} else if subtitlesList == nil && imdbId != "" {
 		var imdbNumber int
 
 		if len(imdbId) <= 2 || !strings.HasPrefix(imdbId, "tt") {
-			return "", errors.New("Invalid imdb id")
+			return nil, errors.New("Invalid imdb id")
 		} else if imdbNumber, err = strconv.Atoi(imdbId[2:]); err != nil {
-			return "", err
+			return nil, err
 		}
 
 		subtitlesList, err = search(token, map[string]interface{}{"imdbid": imdbNumber, "sublanguageid": "fre"})
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
 
 	if subtitlesList == nil {
-		return "", nil
+		return nil, nil
 	}
 
-	var data = subtitlesList[0]
+	var res []string
+	for _, data := range subtitlesList {
 
-	var url = data["ZipDownloadLink"].(string)
-	buffer, n, err := downloadArchive(url)
-	if err != nil {
-		return "", err
+		var url = data["ZipDownloadLink"].(string)
+		buffer, n, err := downloadArchive(url)
+		if err != nil {
+			continue
+		}
+
+		subtitles, err := handleZipFile(buffer, n)
+		if err != nil {
+			continue
+		}
+		res = append(res, srtToVtt(subtitles))
 	}
 
-	subtitles, err := handleZipFile(buffer, n)
-	if err != nil {
-		return "", err
-	}
-
-	return srtToVtt(subtitles), nil
+	return res, nil
 }
 
 // Convert SubRip subtitles to WebVtt subtitles

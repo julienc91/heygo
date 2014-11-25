@@ -22,6 +22,7 @@ func main() {
 
 	rtr.HandleFunc("/about", views.AboutHandler)
 	rtr.HandleFunc("/videos/getsubtitles/{slug:[a-z0-9_]+}", views.VideoGetSubtitles)
+	rtr.HandleFunc("/videos/subtitles/{hash:[a-zA-Z0-9/_=-]+}", views.SubtitlesServerHandler)
 	rtr.HandleFunc("/videos/get/{slug:[a-z0-9_]+}", views.VideoDetailHandler)
 	rtr.HandleFunc("/videos/get", views.VideoGetAllHandler)
 	rtr.HandleFunc("/videos", views.VideoMenuHandler)
