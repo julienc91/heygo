@@ -93,6 +93,7 @@ func InitDatabase() {
  value BLOB);`,
 		// configuration default values
 		`INSERT OR IGNORE INTO configuration (key, value) VALUES
+('domain', 'localhost'), ('port', '8080'),
 ('opensubtitles_login', ''), ('opensubtitles_password', ''), ('opensubtitles_useragent', 'OSTestUserAgent');`}
 
 	for _, query := range queries {

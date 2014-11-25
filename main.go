@@ -46,7 +46,7 @@ func main() {
 	rtr.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
 	http.Handle("/", rtr)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(globals.CONFIGURATION.Domain+":"+globals.CONFIGURATION.Port, nil)
 }
 
 // Hot reloading of the configuration
@@ -66,6 +66,10 @@ func loadConfiguration() {
 
 	for _, row := range config {
 		switch row["key"].(string) {
+		case "domain":
+			globals.CONFIGURATION.Domain = row["value"].(string)
+		case "port":
+			globals.CONFIGURATION.Port = row["value"].(string)
 		case "opensubtitles_login":
 			globals.CONFIGURATION.OpensubtitlesLogin = row["value"].(string)
 		case "opensubtitles_password":

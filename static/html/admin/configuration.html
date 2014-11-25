@@ -7,7 +7,31 @@
     <input type="password" name="password" value="" style="display: none" />
 
     <fieldset>
-        <legend>OpenSubtitles</legend>
+        <legend>Serveur<button class="btn btn-link" type="button" popover-placement="right"
+            popover="Un redémarrage sera néssaire pour prendre en compte ces modifications.">
+            <span class="glyphicon glyphicon-info-sign"></span></button>
+        </legend>
+
+        <div class="form-group" ng-class="{'has-error': edit.domain.$invalid && edit.$submitted}">
+            <label for="domain" class="col-sm-2 control-label">Domaine</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="domain" name="domain" ng-model="configuration.domain">
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': edit.port.$invalid && edit.$submitted}">
+            <label for="port" class="col-sm-2 control-label">Port</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" id="port" name="port" ng-model="configuration.port" ng-value="configuration.port">
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>OpenSubtitles<button class="btn btn-link" type="button" popover-placement="right"
+            popover="Ces informations sont nécessaires pour utiliser l'API OpenSubtitles. Utilisez le user-agent de test si vous ne souhaitez pas créer de compte.">
+            <span class="glyphicon glyphicon-info-sign"></span></button>
+        </legend>
+
         <div class="form-group" ng-class="{'has-error': edit.opensubtitles_login.$invalid && edit.$submitted}">
             <label for="opensubtitles_login" class="col-sm-2 control-label">Login</label>
             <div class="col-sm-10">

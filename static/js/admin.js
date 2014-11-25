@@ -270,6 +270,7 @@ app.controller('configuration_controller', ['$scope', '$http', '$stateParams', '
         $http.get("/admin/get/" + $scope.table).success(function(response) {
             if (response.ok) {
                 $scope.configuration = response.data;
+                $scope.configuration.port = parseInt($scope.configuration.port);
                 $scope.initial_configuration = jQuery.extend(true, {}, $scope.configuration);
             }
         }).error(display_error_message);
@@ -280,11 +281,14 @@ app.controller('configuration_controller', ['$scope', '$http', '$stateParams', '
                 var f = function(response) {
                     if (response.ok) {
                         $scope.configuration[response.data.key] = response.data.value;
+                        $scope.configuration.port = parseInt($scope.configuration.port);
                         $scope.initial_configuration[response.data.key] = jQuery.extend(true, {}, $scope.configuration[response.data.key]);
                     }
                 };
                 for (var property in $scope.configuration) {
                     if ($scope.configuration[property] != $scope.initial_configuration[property]) {
+                        if (property == "port")
+                            $scope.configuration[property] = $scope.configuration[property].toString();
                         $http.get(url, {params: {key: property, value: $scope.configuration[property]}}).success(f).error(display_error_message);
                     }
                 }
