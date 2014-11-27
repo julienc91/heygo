@@ -24,9 +24,7 @@ videogular {
 
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
   -moz-user-select: moz-none;
-  -ms-user-select: none;
   user-select: none;
 }
 
@@ -34,7 +32,7 @@ videogular button {
   cursor: pointer;
 }
 
-videogular.fullscreen {
+.fullscreen {
   position: absolute;
   left: 0;
   top: 0;
@@ -162,8 +160,6 @@ videogular vg-controls #controls-container {
   display: table;
 
   zoom: 1;
-  filter: alpha(opacity=50);
-  opacity: 0.5;
 }
 
 videogular vg-play-pause-button {
@@ -229,15 +225,6 @@ videogular vg-volumebar {
   cursor: pointer;
 }
 
-/* IE10 hack */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  videogular vg-volumebar {
-    zoom: 1;
-    filter: alpha(opacity=50);
-    opacity: 0.5;
-  }
-}
-
 videogular vg-fullscreenButton {
   display: table-cell;
   width: 50px;
@@ -285,17 +272,11 @@ videogular vg-controls .hide-animation {
   -moz-animation: hideControlsAnimationFrames ease-out 0.5s;
   -moz-animation-iteration-count: 1;
   -moz-animation-fill-mode: forwards; /*FF 5+*/
-  -o-animation: hideControlsAnimationFrames ease-out 0.5s;
-  -o-animation-iteration-count: 1;
-  -o-animation-fill-mode: forwards; /*Not implemented yet*/
-  -ms-animation: hideControlsAnimationFrames ease-out 0.5s;
-  -ms-animation-iteration-count: 1;
-  -ms-animation-fill-mode: forwards; /*IE 10+*/
 }
 
 @keyframes hideControlsAnimationFrames {
   0% {
-    opacity: 0.5;
+    opacity: 1;
   }
   100% {
     opacity: 0;
@@ -304,7 +285,7 @@ videogular vg-controls .hide-animation {
 
 @-moz-keyframes hideControlsAnimationFrames {
   0% {
-    opacity: 0.5;
+    opacity: 1;
   }
   100% {
     opacity: 0;
@@ -313,30 +294,12 @@ videogular vg-controls .hide-animation {
 
 @-webkit-keyframes hideControlsAnimationFrames {
   0% {
-    opacity: 0.5;
+    opacity: 1;
   }
   100% {
     opacity: 0;
   }
-}
-
-@-o-keyframes hideControlsAnimationFrames {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-@-ms-keyframes hideControlsAnimationFrames {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 0;
-  }
-}
+}s
 
 videogular vg-controls .show-animation {
   animation: showControlsAnimationFrames ease-out 0.5s;
@@ -348,12 +311,6 @@ videogular vg-controls .show-animation {
   -moz-animation: showControlsAnimationFrames ease-out 0.5s;
   -moz-animation-iteration-count: 1;
   -moz-animation-fill-mode: forwards; /*FF 5+*/
-  -o-animation: showControlsAnimationFrames ease-out 0.5s;
-  -o-animation-iteration-count: 1;
-  -o-animation-fill-mode: forwards; /*Not implemented yet*/
-  -ms-animation: showControlsAnimationFrames ease-out 0.5s;
-  -ms-animation-iteration-count: 1;
-  -ms-animation-fill-mode: forwards; /*IE 10+*/
 }
 
 @keyframes showControlsAnimationFrames {
@@ -361,7 +318,7 @@ videogular vg-controls .show-animation {
     opacity: 0;
   }
   100% {
-    opacity: 0.5;
+    opacity: 1;
   }
 }
 
@@ -370,7 +327,7 @@ videogular vg-controls .show-animation {
     opacity: 0;
   }
   100% {
-    opacity: 0.5;
+    opacity: 1;
   }
 }
 
@@ -379,25 +336,7 @@ videogular vg-controls .show-animation {
     opacity: 0;
   }
   100% {
-    opacity: 0.5;
-  }
-}
-
-@-o-keyframes showControlsAnimationFrames {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-
-@-ms-keyframes showControlsAnimationFrames {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.5;
+    opacity: 1;
   }
 }
 
@@ -489,39 +428,43 @@ videogular vg-buffering .loadingSpinner .stop {
   -moz-animation-play-state: paused;
 }
 
-@-moz-keyframes spin {
+@keyframes spin {
   0% {
-    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
-@-moz-keyframes spinoff {
+@keyframes spinoff {
   0% {
-    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-    -moz-transform: rotate(-360deg);
+    transform: rotate(-360deg);
   }
 }
 
 @-webkit-keyframes spin {
   0% {
     -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
     -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
 @-webkit-keyframes spinoff {
   0% {
     -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
     -webkit-transform: rotate(-360deg);
+    transform: rotate(360deg);
   }
 }
 

@@ -37,6 +37,8 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
         $scope.model = {};
         $scope.video_config = {theme: {url: "/static/css/videogular.css"}};
 		$scope.API = null;
+        $scope.tracks = [];
+        $scope.current_track = -1;
 
 		$scope.on_player_ready = function(API) {
 			$scope.API = API;
@@ -52,16 +54,36 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
         $scope.search_subtitles = function() {
             $http.get("/videos/getsubtitles/" + $stateParams.slug).success(function(response) {
                 if (response.ok) {
-                    var tracks = [];
-                    for (var subtitles in response.data) {
-                        tracks.push({src: "/videos/subtitles/" + response.data[subtitles], kind: "subtitles", srclang: "fr", label: "French"});
+                    for (var i in response.data) {
+                        $scope.tracks.push({src: "/videos/subtitles/" + response.data[i], kind: "subtitles", srclang: "fr", label: "Français " + (parseInt(i) + 1), trackid: i});
                     }
-                    $scope.video_config.tracks = tracks;
+                    if ($scope.tracks.length > 0)
+                        $scope.video_config.tracks = [$scope.tracks[0]];
                 }
             }).error(display_error_message);
         };
+
+        $scope.change_subtitles = function(i) {
+            if (i < 0 || i >= $scope.tracks.length) {
+                $scope.video_config.tracks = [];
+                $scope.current_track = -1;
+            }
+            else {
+                $scope.video_config.tracks = [$scope.tracks[i]];
+                $scope.current_track = i;
+            }
+        };
     }
 ]);
+
+app.directive("vgSubtitles",
+    function() {
+        return {
+            restrict: "E",
+            templateUrl: "/static/html/videos/subtitles.html"
+        };
+    }
+);
 
 
 // Hide alerts instead of dismissing them

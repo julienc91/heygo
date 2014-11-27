@@ -3,6 +3,7 @@ package views
 
 import (
 	"encoding/json"
+	"fmt"
 	"heygo/database"
 	"net/http"
 )
@@ -67,7 +68,15 @@ func writeJsonResult(ret map[string]interface{}, w http.ResponseWriter, code int
 		code = http.StatusInternalServerError
 	}
 
-	http.Error(w, string(val), code)
+	writeResponse(string(val), w, "application/json", code)
+}
+
+// Set http error code and content-type and write response
+func writeResponse(content interface{}, w http.ResponseWriter, contentType string, code int) {
+
+	w.Header().Set("Content-Type", contentType)
+	w.WriteHeader(code)
+	fmt.Fprint(w, content)
 }
 
 // Fille a ViewInfo variable

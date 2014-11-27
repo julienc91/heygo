@@ -151,5 +151,5 @@ func SubtitlesServerHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
-	http.Error(w, subtitlesToServe[hash], http.StatusOK)
+	writeResponse(subtitlesToServe[hash], w, "text/vtt", http.StatusOK)
 }

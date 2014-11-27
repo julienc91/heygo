@@ -1,0 +1,7 @@
+<div class='iconButton btn-group' dropdown is-open='status.isopen'>
+    <a class="dropdown-toggle" dropdown-toggle><span class='glyphicon glyphicon-subtitles'></span></a>
+    <ul class="dropdown-menu" role="menu">
+        <li><a ng-click="change_subtitles(-1)" ng-class="{ 'selected': -1 == current_track}">Aucun</a></li>
+        <li ng-repeat="subtitles in tracks"><a ng-click="change_subtitles(subtitles.trackid)" ng-class="{ 'selected': subtitles.trackid == current_track}">{{ subtitles.label }}</a></li>
+    </ul>
+</div>

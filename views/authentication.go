@@ -62,7 +62,7 @@ func SignupHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	http.Error(w, "", http.StatusOK)
+	writeResponse("", w, "text/plain", http.StatusOK)
 }
 
 // Handle a login request

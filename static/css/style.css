@@ -57,6 +57,25 @@ div.video_layer {
 	opacity: 0.5;
 }
 
+videogular vg-subtitles {
+    display: table-cell;
+    width: 50px;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+}
+
+videogular vg-subtitles a,
+videogular vg-subtitles a:hover,
+videogular vg-subtitles a:visited {
+    color: white;
+    text-decoration: none;
+}
+
+videogular vg-subtitles .selected {
+    color: #337ab7;
+}
+
 /****** admin panel ******/
 .checkbox_list .form-control {
     height: auto;
