@@ -299,7 +299,7 @@ videogular vg-controls .hide-animation {
   100% {
     opacity: 0;
   }
-}s
+}
 
 videogular vg-controls .show-animation {
   animation: showControlsAnimationFrames ease-out 0.5s;
