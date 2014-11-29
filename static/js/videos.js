@@ -55,12 +55,15 @@ app.controller('videos_thumbnail_view_controller', ['$scope', '$http',
                     row.loaded = true;
                     $http.get("http://www.omdbapi.com/?i=" + row.imdb_id).success(function(response) {
                         if (response.Response != "False") {
-                            row.thumbnail = (response.Poster == "N/A") ? "/static/images/no_thumbnail.png" : response.Poster;
+                            if (response.Poster && response.Poster == "N/A")
+                                row.thumbnail = "/static/images/no_thumbnail.png";
+                            else
+                                row.thumbnail = "/media/thumbnail/" + btoa(response.Poster);
                             if (response.Plot != "N/A")
                                 row.resume = response.Plot;
                             row.year = response.Year;
                         }
-                    });
+                    }).error(display_error_message);
                 } else if (!row.imdb_id && !row.loaded) {
                     row.loaded = true;
                     row.thumbnail = "/static/images/no_thumbnail.png";

@@ -31,6 +31,7 @@ func main() {
 	rtr.HandleFunc("/signout", views.SignoutHandler)
 	rtr.HandleFunc("/login", views.LoginHandler)
 	rtr.HandleFunc("/media/{type:videos}/{slug:[a-z0-9_]+}", views.MediaHandler)
+	rtr.HandleFunc("/media/{type:thumbnail}/{url}", views.MediaThumbnailHandler)
 	rtr.HandleFunc("/admin/get/configuration", views.AdminGetConfigurationHandler)
 	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", views.AdminGetHandler)
 	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", views.AdminGetFromIdHandler)
