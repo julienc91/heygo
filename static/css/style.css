@@ -29,6 +29,10 @@ img.animate-show.ng-hide {
 }
 
 /****** videos ******/
+#form_video_list {
+    margin-bottom: 20px;
+}
+
 .video_container {
     width: 70%;
     margin: auto;

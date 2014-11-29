@@ -1,12 +1,16 @@
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.otherwise("/");
+    $urlRouterProvider.otherwise("/grid");
     $stateProvider
         .state('grid_view', {
-            url: "/",
+            url: "/grid",
             controller: "videos_grid_view_controller",
             templateUrl: "/static/html/videos/grid_view.html"})
+        .state('thumbnail_view', {
+            url: "/list",
+            controller: "videos_thumbnail_view_controller",
+            templateUrl: "/static/html/videos/thumbnail_view.html"})
         .state('detail_view', {
-            url: "/{slug:[a-z0-9_]+}",
+            url: "/watch/{slug:[a-z0-9_]+}",
             controller: "videos_detail_view_controller",
             templateUrl: "/static/html/videos/detail_view.html"});
 }]);
@@ -22,12 +26,60 @@ app.controller('videos_grid_view_controller', ['$scope', '$http',
         $scope.grid_options.columnDefs.push({name: 'link',
                                             displayName: 'Lien',
                                             width: "15%",
-                                            cellTemplate: '<a class="btn-link" ng-href="#/{{row.entity.slug}}"><span class="glyphicon glyphicon-film"></span></a>'});
+                                            cellTemplate: '<a class="btn-link" ng-href="#/watch/{{row.entity.slug}}"><span class="glyphicon glyphicon-film"></span></a>'});
 
         $http.get("/videos/get").success(function(response) {
             if (response.ok)
                 $scope.rows = response.data;
         }).error(display_error_message);
+    }
+]);
+
+app.controller('videos_thumbnail_view_controller', ['$scope', '$http',
+    function ($scope, $http) {
+        $scope.rows = [];
+        $scope.rows_to_display = [];
+        $scope.current_filter = "";
+
+        $http.get("/videos/get").success(function(response) {
+            if (response.ok) {
+                $scope.rows = response.data;
+                $scope.rows_to_display = $scope.rows;
+                $scope.load_thumbnails();
+            }
+        }).error(display_error_message);
+
+        $scope.load_thumbnails = function() {
+            angular.forEach($scope.rows_to_display, function(row) {
+                if (row.imdb_id && !row.loaded) {
+                    row.loaded = true;
+                    $http.get("http://www.omdbapi.com/?i=" + row.imdb_id).success(function(response) {
+                        if (response.Response != "False") {
+                            row.thumbnail = (response.Poster == "N/A") ? "/static/images/no_thumbnail.png" : response.Poster;
+                            if (response.Plot != "N/A")
+                                row.resume = response.Plot;
+                            row.year = response.Year;
+                        }
+                    });
+                } else if (!row.imdb_id && !row.loaded) {
+                    row.loaded = true;
+                    row.thumbnail = "/static/images/no_thumbnail.png";
+                }
+            });
+        };
+
+        $scope.filter_results = function() {
+            var tmp_rows_to_display = [];
+            var filter = $scope.current_filter.toLowerCase();
+
+            angular.forEach($scope.rows, function(row) {
+                if (row.title.toLowerCase().indexOf(filter) >= 0) {
+                    tmp_rows_to_display.push(row);
+                }
+            });
+            $scope.rows_to_display = tmp_rows_to_display;
+            $scope.load_thumbnails();
+        };
     }
 ]);
 
@@ -52,6 +104,8 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
         }).error(display_error_message);
 
         $scope.search_subtitles = function() {
+            if ($scope.tracks.length > 0)
+                return;
             $http.get("/videos/getsubtitles/" + $stateParams.slug).success(function(response) {
                 if (response.ok) {
                     for (var i in response.data) {
@@ -60,6 +114,7 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
                     if ($scope.tracks.length > 0)
                         $scope.video_config.tracks = [$scope.tracks[0]];
                 }
+                $('#search_subtitles').hide();
             }).error(display_error_message);
         };
 

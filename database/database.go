@@ -92,7 +92,13 @@ func InitDatabase() {
 (id INTEGER PRIMARY KEY AUTOINCREMENT,
  key VARCHAR UNIQUE NOT NULL,
  value BLOB);`,
-		// configuration default values
+		// Default values
+		`INSERT OR IGNORE INTO users (id, login, password, salt) VALUES
+(1, 'admin', '8fFeeOTH2mSMU0Bb97LtDNYz6Nio2wYQgmQdl7cDKrXYTEoxyhy_sVe-d4oHM18KLguW1ppj-_gs_oAyYYEVcQ==', '9PiJbmrrfo3urA4');`,
+		`INSERT OR IGNORE INTO groups (id, title) VALUES
+(1, 'admin');`,
+		`INSERT OR IGNORE INTO membership (users_id, groups_id) VALUES
+(1, 1);`,
 		`INSERT OR IGNORE INTO configuration (key, value) VALUES
 ('domain', 'localhost'), ('port', '8080'),
 ('opensubtitles_login', ''), ('opensubtitles_password', ''), ('opensubtitles_useragent', 'OSTestUserAgent');`}
