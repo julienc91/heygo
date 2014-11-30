@@ -6,7 +6,10 @@ import (
 	"heygo/database"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
+	"path"
+	"strings"
 	"time"
 )
 
@@ -81,6 +84,17 @@ func MediaThumbnailHandler(w http.ResponseWriter, req *http.Request) {
 
 	mediaUrl, err := base64.StdEncoding.DecodeString(mediaUrlB64)
 	if err != nil {
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	parsedUrl, err := url.ParseRequestURI(string(mediaUrl))
+	if err != nil {
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	if !strings.HasSuffix(parsedUrl.Host, "media-imdb.com") || path.Ext(parsedUrl.Path) != ".jpg" || parsedUrl.Scheme != "http" {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
