@@ -102,7 +102,7 @@ func Logout() error {
 }
 
 // Search subtitles
-func SearchSubtitles(hash string, size uint64, imdbId string) ([]string, error) {
+func SearchSubtitles(hash string, size uint64, imdbId string, lang string) ([]string, error) {
 
 	search := func(token string, params map[string]interface{}) ([]map[string]interface{}, error) {
 
@@ -182,7 +182,7 @@ func SearchSubtitles(hash string, size uint64, imdbId string) ([]string, error) 
 	Login()
 	defer Logout()
 
-	subtitlesList, err := search(token, map[string]interface{}{"moviehash": hash, "moviebytesize": size, "sublanguageid": "fre"})
+	subtitlesList, err := search(token, map[string]interface{}{"moviehash": hash, "moviebytesize": size, "sublanguageid": lang})
 	if err != nil {
 		return nil, err
 	} else if subtitlesList == nil && imdbId != "" {
@@ -194,7 +194,7 @@ func SearchSubtitles(hash string, size uint64, imdbId string) ([]string, error) 
 			return nil, err
 		}
 
-		subtitlesList, err = search(token, map[string]interface{}{"imdbid": imdbNumber, "sublanguageid": "fre"})
+		subtitlesList, err = search(token, map[string]interface{}{"imdbid": imdbNumber, "sublanguageid": lang})
 		if err != nil {
 			return nil, err
 		}

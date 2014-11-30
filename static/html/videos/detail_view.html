@@ -24,5 +24,14 @@
 	</videogular>
 </p>
 <p>
-    <button id="search_subtitles" type="button" class="btn btn-info" ng-click="search_subtitles()">Chercher des sous-titres</button>
+	<div id="search_subtitles" class="btn-group">
+		<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+			Chercher des sous-titres
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a class="btn btn-link" ng-click="search_subtitles('fre')">Français</a></li>
+			<li><a class="btn btn-link" ng-click="search_subtitles('eng')">Anglais</a></li>
+		</ul>
+	</div>
 </p>

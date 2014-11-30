@@ -94,6 +94,7 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 
 	params := mux.Vars(req)
 	slug := params["slug"]
+	lang := params["lang"]
 
 	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
 	if err != nil {
@@ -118,7 +119,7 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res, err := tools.SearchSubtitles(hash, size, video["imdb_id"].(string))
+	res, err := tools.SearchSubtitles(hash, size, video["imdb_id"].(string), lang)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

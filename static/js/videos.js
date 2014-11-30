@@ -106,18 +106,19 @@ app.controller('videos_detail_view_controller', ['$scope', '$http', '$stateParam
             }
         }).error(display_error_message);
 
-        $scope.search_subtitles = function() {
+        $scope.search_subtitles = function(lang) {
+            $('#search_subtitles').hide();
             if ($scope.tracks.length > 0)
                 return;
-            $http.get("/videos/getsubtitles/" + $stateParams.slug).success(function(response) {
+            var label = (lang == 'eng') ? "Anglais" : "Français";
+            var srclang = (lang == 'eng') ? "en" : "fr";
+            $http.get("/media/subtitles/list/" + $stateParams.slug + "/" + lang).success(function(response) {
                 if (response.ok) {
                     for (var i in response.data) {
-                        $scope.tracks.push({src: "/videos/subtitles/" + response.data[i], kind: "subtitles", srclang: "fr", label: "Français " + (parseInt(i) + 1), trackid: i});
+                        $scope.tracks.push({src: "/media/subtitles/get/" + response.data[i], kind: "subtitles", srclang: srclang, label: label + " " + (parseInt(i) + 1), trackid: i, default: true});
                     }
-                    if ($scope.tracks.length > 0)
-                        $scope.video_config.tracks = [$scope.tracks[0]];
+                    $scope.change_subtitles(0);
                 }
-                $('#search_subtitles').hide();
             }).error(display_error_message);
         };
 
