@@ -7,3 +7,5 @@ media
 static/bower
 *.mp4
 TODO
+node_modules
+*.mo

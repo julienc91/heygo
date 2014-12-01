@@ -1,14 +1,14 @@
-<h2><span ng-show="is_new">Nouvelle</span><span ng-hide="is_new">Modifier une</span> vidéo</h2>
+<h2 translate><span ng-show="is_new">New</span><span ng-hide="is_new">Edit</span> video</h2>
 
 <form name="edit" class="form-horizontal" role="form" ng-init="init();" ng-submit="save_model()">
     <div class="form-group" ng-class="{'has-error': edit.title.$invalid && edit.$submitted}">
-        <label for="title" class="col-sm-2 control-label">Titre</label>
+        <label for="title" class="col-sm-2 control-label" translate>Title</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" id="title" name="title" required maxlength="100" ng-change="!manual_slug && generate_slug('title')" ng-model="model.title">
         </div>
     </div>
     <div class="form-group" ng-class="{'has-error': edit.path.$invalid && edit.$submitted}">
-        <label for="path" class="col-sm-2 control-label">Chemin</label>
+        <label for="path" class="col-sm-2 control-label" translate>Path</label>
         <div class="input-group">
             <input type="text" class="form-control" id="path" name="path" required maxlength="255" ng-model="model.path" ng-pattern="/\w+\.(mp4|mkv|avi|flv|webm|ogv)$/i" ng-change="checked_file_on_server=false; valid_path=false">
             <span class="input-group-btn">
@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="form-group" ng-class="{'has-error': edit.slug.$invalid && edit.$submitted}">
-        <label for="slug" class="col-sm-2 control-label">Slug</label>
+        <label for="slug" class="col-sm-2 control-label" translate>Slug</label>
         <div class="input-group">
             <input type="text" class="form-control" id="slug" name="slug" required maxlength="255" pattern="^[a-z0-9_]+$" ng-change="manual_slug=true" ng-model="model.slug">
             <span class="input-group-btn">
@@ -30,13 +30,13 @@
         </div>
     </div>
     <div class="form-group" ng-class="{'has-error': edit.imdb_id.$invalid && edit.$submitted}">
-        <label for="imdb_id" class="col-sm-2 control-label">ID IMDB</label>
+        <label for="imdb_id" class="col-sm-2 control-label" translate>IMDB id</label>
         <div class="col-sm-10">
             <input type="text" class="form-control" id="imdb_id" name="imdb_id" maxlength="255" pattern="^[a-zA-Z0-9]+$" ng-model="model.imdb_id">
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">Groupes de vidéos</label>
+        <label class="col-sm-2 control-label" translate>Video groups</label>
         <div class="checkbox_list col-sm-10">
             <div class="form-control">
                 <div class="checkbox" ng-repeat="x in joins.video_groups"><label><input type="checkbox" ng-model="pivots.video_classification[x.id]">{{ x.title }}</label></div>
@@ -45,9 +45,9 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" ng-href="#/{{table}}">Annuler</a>
+            <a class="btn btn-default" ng-href="#/{{table}}" translate>Cancel</a>
             <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || edit.$pristine">
-                <span ng-show="is_new">Ajouter</span><span ng-hide="is_new">Enregistrer</span>
+                <span ng-show="is_new" translate>Add</span><span ng-hide="is_new" translate>Save</span>
             </button>
         </div>
     </div>

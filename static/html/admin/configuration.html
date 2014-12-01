@@ -1,4 +1,4 @@
-<h2>Configuration</h2>
+<h2 translate>Settings</h2>
 
 <form name="edit" class="form-horizontal" role="form" ng-init="init();" ng-submit="save_configuration()">
 
@@ -7,19 +7,19 @@
     <input type="password" name="password" value="" style="display: none" />
 
     <fieldset>
-        <legend>Serveur<button class="btn btn-link" type="button" popover-placement="right"
-            popover="Un redémarrage sera néssaire pour prendre en compte ces modifications.">
+        <legend>{{ 'Server' | translate }}<button class="btn btn-link" type="button" popover-placement="right"
+            popover="{{ 'A reboot is required to use these settings' | translate }}">
             <span class="glyphicon glyphicon-info-sign"></span></button>
         </legend>
 
         <div class="form-group" ng-class="{'has-error': edit.domain.$invalid && edit.$submitted}">
-            <label for="domain" class="col-sm-2 control-label">Domaine</label>
+            <label for="domain" class="col-sm-2 control-label" translate>Hostname</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="domain" name="domain" ng-model="configuration.domain">
             </div>
         </div>
         <div class="form-group" ng-class="{'has-error': edit.port.$invalid && edit.$submitted}">
-            <label for="port" class="col-sm-2 control-label">Port</label>
+            <label for="port" class="col-sm-2 control-label" translate>Port</label>
             <div class="col-sm-10">
                 <input type="number" class="form-control" id="port" name="port" ng-model="configuration.port" ng-value="configuration.port">
             </div>
@@ -27,25 +27,25 @@
     </fieldset>
 
     <fieldset>
-        <legend>OpenSubtitles<button class="btn btn-link" type="button" popover-placement="right"
-            popover="Ces informations sont nécessaires pour utiliser l'API OpenSubtitles. Utilisez le user-agent de test si vous ne souhaitez pas créer de compte.">
+        <legend>{{ 'OpenSubtitles' | translate }}<button class="btn btn-link" type="button" popover-placement="right"
+            popover="{{ 'These fields are needed to use the OpenSubtitles API. Use the testing user-agent if you don\'t want to create an account.' | translate }}">
             <span class="glyphicon glyphicon-info-sign"></span></button>
         </legend>
 
         <div class="form-group" ng-class="{'has-error': edit.opensubtitles_login.$invalid && edit.$submitted}">
-            <label for="opensubtitles_login" class="col-sm-2 control-label">Login</label>
+            <label for="opensubtitles_login" class="col-sm-2 control-label" translate>Login</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="opensubtitles_login" autocomplete="off" name="opensubtitles_login" ng-model="configuration.opensubtitles_login">
             </div>
         </div>
         <div class="form-group" ng-class="{'has-error': edit.opensubtitles_password.$invalid && edit.$submitted}">
-            <label for="opensubtitles_password" class="col-sm-2 control-label">Mot de passe</label>
+            <label for="opensubtitles_password" class="col-sm-2 control-label" translate>Password</label>
             <div class="col-sm-10">
                 <input type="password" class="form-control" id="opensubtitles_password" autocomplete="off" name="opensubtitles_password" ng-model="configuration.opensubtitles_password">
             </div>
         </div>
         <div class="form-group" ng-class="{'has-error': edit.opensubtitles_useragent.$invalid && edit.$submitted}">
-            <label for="opensubtitles_useragent" class="col-sm-2 control-label">User-Agent</label>
+            <label for="opensubtitles_useragent" class="col-sm-2 control-label" translate>User-Agent</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="opensubtitles_useragent" name="opensubtitles_useragent" ng-model="configuration.opensubtitles_useragent">
             </div>
@@ -53,10 +53,8 @@
     </fieldset>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" ng-href="#/{{table}}">Annuler</a>
-            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || edit.$pristine">
-                Enregistrer
-            </button>
+            <a class="btn btn-default" ng-href="#/{{table}}" translate>Cancel</a>
+            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || edit.$pristine">Save</button>
         </div>
     </div>
 </form>

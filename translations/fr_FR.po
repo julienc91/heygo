@@ -1,0 +1,277 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 1.6.11\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr_FR\n"
+"X-Language: fr_FR\n"
+"X-Source-Language: C\n"
+
+#: static/html/admin/groups_edit_view.html
+msgid ""
+"<span ng-show=\"is_new\">New</span><span ng-hide=\"is_new\">Edit</span> group"
+msgstr ""
+"<span ng-show=\"is_new\">Nouveau</span><span ng-hide=\"is_new\">Modifier un "
+"</span> groupe"
+
+#: static/html/admin/invitations_edit_view.html
+msgid ""
+"<span ng-show=\"is_new\">New</span><span ng-hide=\"is_new\">Edit</span> "
+"invitation"
+msgstr ""
+"<span ng-show=\"is_new\">Nouvelle</span><span ng-hide=\"is_new\">Modifier "
+"une</span> invitation"
+
+#: static/html/admin/videos_edit_view.html
+msgid ""
+"<span ng-show=\"is_new\">New</span><span ng-hide=\"is_new\">Edit</span> video"
+msgstr ""
+"<span ng-show=\"is_new\">Nouvelle</span><span ng-hide=\"is_new\">Modifier "
+"une</span> vidéo"
+
+#: static/html/admin/video_groups_edit_view.html
+msgid ""
+"<span ng-show=\"is_new\">New</span><span ng-hide=\"is_new\">Edit</span> "
+"video group"
+msgstr ""
+"<span ng-show=\"is_new\">Nouveau</span><span ng-hide=\"is_new\">Modifier "
+"un</span> groupe de vidéos"
+
+#: static/html/admin/configuration.html
+msgid "A reboot is required to use these settings"
+msgstr "Un redémarrage est nécessaire pour prendre en compte ces modifications"
+
+#: templates/base.html
+msgid "About"
+msgstr "À propos"
+
+#: templates/about.html
+msgid "About HEYGO"
+msgstr "À propos de HEYGO"
+
+#: static/html/admin/groups_edit_view.html
+#: static/html/admin/invitations_edit_view.html
+#: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_edit_view.html
+msgid "Add"
+msgstr "Ajouter"
+
+#: templates/admin.html templates/base.html
+msgid "Administration"
+msgstr "Administration"
+
+#: templates/about.html
+msgid "Author: <a href=\"{{ .Website }}\">{{ .Author }}</a>"
+msgstr "Auteur : <a href=\"{{ .Website }}\">{{ .Author }}</a>"
+
+#: static/html/admin/configuration.html static/html/admin/groups_edit_view.html
+#: static/html/admin/invitations_edit_view.html
+#: static/html/admin/users_add_view.html static/html/admin/users_edit_view.html
+#: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_edit_view.html
+msgid "Cancel"
+msgstr "Annuler"
+
+#: templates/signin.html
+msgid "Check password"
+msgstr "Vérification du mot de passe"
+
+#: templates/admin.html templates/videos.html
+msgid "Close"
+msgstr "Fermer"
+
+#: templates/about.html
+msgid "Date: {{ .Date }}"
+msgstr "Date : {{ .Dae }}"
+
+#: static/html/admin/users_edit_view.html
+msgid "Edit user"
+msgstr "Modifier un utilisateur"
+
+#: static/html/videos/detail_view.html
+msgid "English"
+msgstr "Anglais"
+
+#: static/html/videos/thumbnail_view.html
+msgid "Filter..."
+msgstr "Filtrer..."
+
+#: static/html/videos/detail_view.html
+msgid "French"
+msgstr "Français"
+
+#: static/html/admin/users_add_view.html static/html/admin/users_edit_view.html
+#: templates/admin.html
+msgid "Groups"
+msgstr "Groupes"
+
+#: templates/signin.html
+msgid ""
+"HEYGO is a private media sharing platform. Authentication is required to get "
+"access to the contents.\n"
+"    HEYGO is available by invitation only. If you don't have an invitation "
+"code, ask the <a "
+"href=\"mailto:heygo@julienc.io?subject=Invitation\">admin</a>."
+msgstr ""
+"HEYGO est une plate-forme privée de partage de média. L'authentification est "
+"nécessaire pour accéder aux contenus proposés.\n"
+"    HEYGO est accessible sur invitation seulement. Si vous n'avez pas votre "
+"code d'invitation, demandez-en un à l'<a "
+"href=\"mailto:heygo@julienc.io?subject=Invitation\">admin</a>."
+
+#: templates/base.html
+msgid ""
+"HEYGO is an <a href=\"https://github.com/julienc91/heygo\" "
+"class=\"navbar-link\">open-source</a> project"
+msgstr ""
+"HEYGO est un projet <a href=\"https://github.com/julienc91/heygo\" "
+"class=\"navbar-link\">open-source</a>"
+
+#: static/html/admin/configuration.html
+msgid "Hostname"
+msgstr "Domaine"
+
+#: static/html/admin/videos_edit_view.html
+msgid "IMDB id"
+msgstr "ID IMDB"
+
+#: templates/signin.html
+#, qt-format
+msgid ""
+"If you forgot your password, please contact the\n"
+"                <a "
+"href=\"mailto:heygo@julienc.io?subject=Forgot%20password\">admin</a>\n"
+"                to reset it."
+msgstr ""
+"Si vous avez oublié votre mot de passe, contactez\n"
+"                l'<a "
+"href=\"mailto:heygo@julienc.io?subject=Forgot%20password\">admin</a>\n"
+"                pour le réinitialiser."
+
+#: templates/signin.html
+msgid "Invitation code"
+msgstr "Code d'invitation"
+
+#: templates/admin.html
+msgid "Invitations"
+msgstr "Invitations"
+
+#: static/html/admin/configuration.html static/html/admin/users_add_view.html
+#: static/html/admin/users_edit_view.html templates/signin.html
+msgid "Login"
+msgstr "Login"
+
+#: static/html/admin/groups_edit_view.html
+#: static/html/admin/video_groups_edit_view.html
+msgid "Name"
+msgstr "Nom"
+
+#: static/html/admin/users_edit_view.html
+msgid "New password"
+msgstr "Nouveau mot de passe"
+
+#: static/html/admin/users_add_view.html
+msgid "New user"
+msgstr "Nouvel utilisateur"
+
+#: static/html/admin/configuration.html
+msgid "OpenSubtitles"
+msgstr "OpenSubtitles"
+
+#: static/html/admin/configuration.html static/html/admin/users_add_view.html
+#: static/html/admin/users_edit_view.html templates/signin.html
+msgid "Password"
+msgstr "Mot de passe"
+
+#: static/html/admin/videos_edit_view.html
+msgid "Path"
+msgstr "Chemin"
+
+#: static/html/admin/groups_edit_view.html
+#: static/html/admin/video_groups_edit_view.html
+msgid "Permissions"
+msgstr "Permissions"
+
+#: static/html/admin/configuration.html
+msgid "Port"
+msgstr "Port"
+
+#: static/html/admin/groups_edit_view.html
+#: static/html/admin/invitations_edit_view.html
+#: static/html/admin/users_add_view.html static/html/admin/users_edit_view.html
+#: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_edit_view.html
+msgid "Save"
+msgstr "Enregistrer"
+
+#: static/html/admin/configuration.html
+msgid "Server"
+msgstr "Serveur"
+
+#: static/html/admin/configuration.html
+msgid ""
+"Server<button class=\"btn btn-link\" type=\"button\" "
+"popover-placement=\"right\" popover=\"{{ A reboot is required to use these "
+"settings | translate }}\">\n"
+"            <span class=\"glyphicon glyphicon-info-sign\"></span></button>"
+msgstr ""
+
+#: static/html/admin/configuration.html templates/admin.html
+msgid "Settings"
+msgstr "Configuration"
+
+#: templates/signin.html
+msgid "Sign in"
+msgstr "Connexion"
+
+#: templates/signin.html
+msgid "Sign up"
+msgstr "Inscription"
+
+#: static/html/admin/videos_edit_view.html
+msgid "Slug"
+msgstr "Slug"
+
+#: static/html/admin/configuration.html
+msgid "These fields are needed to use the OpenSubtitles API. Use the testing user-agent if you don't want to create an account."
+msgstr "Ces informations sont nécessaires à l'utilisation de l'API OpenSubtitles. Utilisez le user-agent de test si vous ne souhaitez pas créer de compte."
+
+#: static/html/admin/videos_edit_view.html
+msgid "Title"
+msgstr "Titre"
+
+#: static/html/admin/configuration.html
+msgid "User-Agent"
+msgstr "User-Agent"
+
+#: static/html/admin/groups_edit_view.html templates/admin.html
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: static/html/admin/invitations_edit_view.html
+msgid "Value"
+msgstr "Valeur"
+
+#: templates/about.html
+msgid "Version: {{ .Version }}"
+msgstr "Version: {{ .Version }}"
+
+#: static/html/admin/videos_edit_view.html templates/admin.html
+msgid "Video groups"
+msgstr "Groupe de vidéos"
+
+#: static/html/admin/video_groups_edit_view.html templates/admin.html
+#: templates/base.html templates/videos.html
+msgid "Videos"
+msgstr "Vidéos"
+
+#: static/html/videos/thumbnail_view.html
+msgid "Watch"
+msgstr "Regarder"

@@ -1,8 +1,8 @@
-<h2><span ng-show="is_new">Nouvelle</span><span ng-hide="is_new">Modifier une</span> invitation</h2>
+<h2 translate><span ng-show="is_new">New</span><span ng-hide="is_new">Edit</span> invitation</h2>
 
 <form name="edit" class="form-horizontal" role="form" ng-init="init()" ng-submit="save_model()">
     <div class="form-group" ng-class="{'has-error': edit.value.$invalid && edit.$submitted}">
-        <label for="value" class="col-sm-2 control-label">Valeur</label>
+        <label for="value" class="col-sm-2 control-label" translate>Value</label>
         <div class="input-group">
             <input type="text" class="form-control" id="value" name="value" required disabled pattern="^[a-zA-Z0-9]{14,30}$" ng-model="model.value">
             <span class="input-group-btn">
@@ -14,9 +14,9 @@
     </div>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <a class="btn btn-default" ng-href="#/{{table}}">Annuler</a>
+            <a class="btn btn-default" ng-href="#/{{table}}" translate>Cancel</a>
             <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || (edit.$pristine && is_new)">
-                <span ng-show="is_new">Ajouter</span><span ng-hide="is_new">Enregistrer</span>
+                <span ng-show="is_new" translate>Add</span><span ng-hide="is_new" translate>Save</span>
             </button>
         </div>
     </div>

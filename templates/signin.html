@@ -4,9 +4,8 @@
         <h1>HEYGO</h1>
     </div>
 
-    <p class="lead">HEYGO est une plate-forme privée de partage de média. L'authentification est nécessaire pour accéder aux
-    contenus proposés. HEYGO est accessible sur invitation seulement. Si vous ne possédez pas de code d'invitation, vous pouvez
-    en faire la demande à l'<a href="mailto:heygo@julienc.io?subject=Invitation">admin</a>.</p>
+    <p class="lead" translate>HEYGO is a private media sharing platform. Authentication is required to get access to the contents.
+    HEYGO is available by invitation only. If you don't have an invitation code, ask the <a href="mailto:heygo@julienc.io?subject=Invitation">admin</a>.</p>
 
     <div class="container-fluid">
 
@@ -14,11 +13,11 @@
 
             <div class="col-md-6">
 
-                <h2>Connexion</h2>
+                <h2 translate>Sign in</h2>
 
-                En cas d'oubli de mot de passe, contactez directement
-                l'<a href="mailto:heygo@julienc.io?subject=Mot%20de%20passe%20oublié">admin</a>
-                pour le réinitialiser.
+                <p translate>If you forgot your password, please contact the
+                <a href="mailto:heygo@julienc.io?subject=Forgot%20password">admin</a>
+                to reset it.</p>
 
                 <form role="form" method="post" action="/login">
                     <div class="form-group">
@@ -30,39 +29,39 @@
                         <input type="password" class="form-control" id="signin_password" name="password" required />
                     </div>
 
-                    <button type="submit" class="btn btn-default">Connexion</button>
+                    <button type="submit" class="btn btn-default" translate>Sign in</button>
                 </form>
 
             </div>
 
             <div class="col-md-6">
 
-                <h2>Inscription</h2>
+                <h2 translate>Sign up</h2>
 
-                Seul le hash (sha512) salé du mot de passe est stocké sur le serveur.
+                <p>The salted hash (SHA512) is the only thing stored on the server.
 
-                Une fois l'inscription effectuée, une étape de validation manuelle par
-                l'admin est requise. En attendant, il est possible que vous n'ayez pas
-                accès à la totalité des contenus. Merci de patienter!
+                Once the inscription is complete, your account must be authorized by
+                the admin. Meanwhile, you may not have access to all the contents.
+                Please be patient !</p>
 
                 <form role="form" method="post" action="/signup">
                     <div class="form-group">
-                        <label for="signup_login">Login</label>
+                        <label for="signup_login" translate>Login</label>
                         <input type="text" class="form-control" id="signup_login" name="login" required />
                     </div>
                     <div class="form-group">
-                        <label for="signup_password">Mot de passe</label>
+                        <label for="signup_password" translate>Password</label>
                         <input type="password" class="form-control" id="signup_password" name="password" required />
                     </div>
                     <div class="form-group">
-                        <label for="singup_password2">Vérification du mot de passe</label>
+                        <label for="singup_password2" translate>Check password</label>
                         <input type="password" class="form-control" id="singup_password2" name="password2" required />
                     </div>
                     <div class="form-group">
-                        <label for="signup_invitation">Code d'invitation</label>
+                        <label for="signup_invitation" translate>Invitation code</label>
                         <input type="text" class="form-control" id="signup_invitation" name="invitation" required />
                     </div>
-                    <button type="submit" class="btn btn-default">Inscription</button>
+                    <button type="submit" class="btn btn-default" translate>Sign up</button>
                 </form>
 
             </div>

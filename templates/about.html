@@ -2,13 +2,13 @@
 {{define "body"}}
 
     <div class="page-header">
-        <h1>A propos de {{ .Appname }}</h1>
+        <h1 translate>About {{ .Appname }}</h1>
     </div>
 
     <ul>
-        <li>Version: {{ .Version }}</li>
-        <li>Date: {{ .Date }}</li>
-        <li>Auteur: <a href="{{ .Website }}">{{ .Author }}</a></li>
+        <li translate>Version: {{ .Version }}</li>
+        <li translate>Date: {{ .Date }}</li>
+        <li translate>Author: <a href="{{ .Website }}">{{ .Author }}</a></li>
     </ul>
 {{end}}
 

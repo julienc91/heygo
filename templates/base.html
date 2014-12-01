@@ -28,6 +28,8 @@
         <script src="/static/bower/angular-ui-router/release/angular-ui-router.js"></script>
         <script src="/static/bower/angular-ui-grid/ui-grid.js"></script>
         <script src="/static/bower/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
+        <script src="/static/bower/angular-gettext/dist/angular-gettext.js"></script>
+        <script src="/static/js/translations.js"></script>
         {{ if eq .ViewName "videos" }}
         <script src="/static/bower/angular-sanitize/angular-sanitize.js"></script>
         <script src="/static/bower/videogular/videogular.js"></script>
@@ -37,6 +39,7 @@
         {{ end }}
         <script>
             var app = angular.module('heygo', ['ui.bootstrap', 'ui.router', 'ui.grid', 'ui.grid.resizeColumns', 'ui.grid.autoResize',
+                                               'gettext',
             {{ if eq .ViewName "videos" }}
                                                'ngSanitize', 'com.2fdevs.videogular', 'com.2fdevs.videogular.plugins.overlayplay',
                                                'com.2fdevs.videogular.plugins.buffering', 'com.2fdevs.videogular.plugins.controls'
@@ -49,6 +52,10 @@
                 if ($("#menu_" + menu_id).length == 1)
                     $("#menu_" + menu_id).parent().addClass("active");
             })();
+
+            app.run(function (gettextCatalog) {
+                gettextCatalog.setCurrentLanguage('fr_FR');
+            });
         </script>
         {{template "js" .}}
     </body>
@@ -61,7 +68,7 @@
 
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapse_menu">
-                <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -71,15 +78,15 @@
 
         <div class="collapse navbar-collapse" id="collapse_menu">
             <ul class="nav navbar-nav navbar-left">
-                <li><a href="/about" id="menu_about">A propos</a></li>
+                <li><a href="/about" id="menu_about" translate>About</a></li>
                 {{ if .IsUserAuthenticated }}
-                <li><a href="/videos" id="menu_videos">Vidéos</a></li>
+                <li><a href="/videos" id="menu_videos" translate>Videos</a></li>
                 {{ end }}
             </ul>
             {{ if .IsUserAuthenticated }}
             <ul class="nav navbar-nav navbar-right">
                 {{ if .IsUserAdmin }}
-                <li><a href="/admin" id="menu_admin">Administration</a></li>
+                <li><a href="/admin" id="menu_admin" translate>Administration</a></li>
                 {{ end }}
                 <li><a href="/signout" id="menu_signout"><span class="glyphicon glyphicon-off"></span></a></li>
             </ul>
@@ -90,7 +97,7 @@
 {{end}}
 
 {{define "footer"}}
-<footer class="navbar-inverse">
-    HEYGO est un projet <a href="https://github.com/julienc91/heygo" class="navbar-link">open-source</a>
+<footer class="navbar-inverse" translate>
+    HEYGO is an <a href="https://github.com/julienc91/heygo" class="navbar-link">open-source</a> project
 </footer>
 {{end}}

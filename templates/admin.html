@@ -1,23 +1,23 @@
 {{define "title"}}Administration{{end}}
 {{define "body"}}
     <div class="page-header">
-        <h1>Administration</h1>
+        <h1 translate>Administration</h1>
     </div>
 
     <div class="container">
 
         <ul id="admin_tabs"class="nav nav-pills nav-stacked col-md-2">
-            <li><a href="#users" data-toggle="pill">Utilisateurs</a></li>
-            <li><a href="#invitations" data-toggle="pill">Invitations</a></li>
-            <li><a href="#groups" data-toggle="pill">Groupes</a></li>
-            <li><a href="#videos" data-toggle="pill">Vidéos</a></li>
-            <li><a href="#video_groups" data-toggle="pill">Groupes de vidéos</a></li>
-            <li><a href="#configuration" data-toggle="pill">Configuration</a></li>
+            <li><a href="#users" data-toggle="pill" translate>Users</a></li>
+            <li><a href="#invitations" data-toggle="pill" translate>Invitations</a></li>
+            <li><a href="#groups" data-toggle="pill" translate>Groups</a></li>
+            <li><a href="#videos" data-toggle="pill" translate>Videos</a></li>
+            <li><a href="#video_groups" data-toggle="pill" translate>Video groups</a></li>
+            <li><a href="#configuration" data-toggle="pill" translate>Settings</a></li>
         </ul>
 
         <div class="tab-content col-md-10">
             <div id="alert_box" class="alert alert-danger alert-dismissible" role="alert" style="display: none;">
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Fermer</span></button>
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only" translate>Close</span></button>
                 <span class="alert_content"></span>
             </div>
             <div class="tab-pane active" ui-view></div>
