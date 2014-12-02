@@ -1,54 +1,59 @@
-var config = {
-    "titles": {
-        "users": "Utilisateurs",
-        "invitations": "Invitations",
-        "groups": "Groupes",
-        "videos": "Vidéos",
-        "video_groups": "Groupes de vidéos"
-    },
-    "fields": {
-        "users": ["id", "login", "password"],
-        "invitations": ["id", "value"],
-        "groups": ["id", "title"],
-        "videos": ["id", "title", "path", "slug", "imdb_id"],
-        "video_groups": ["id", "title"]
-    },
-    "column_definitions": {
-        "users": [{field: "id", width: "5%", displayName: "ID"}, {field: "login", width: "70%", displayName: "Login"}],
-        "invitations": [{field: "id", width: "5%", displayName: "ID"}, {field: "value", width: "70%", displayName: "Valeur"}],
-        "groups": [{field: "id", width: "5%", displayName: "ID"}, {field: "title", width: "70%", displayName: "Nom"}],
-        "videos": [{field: "id", width: "5%", displayName: "ID"}, {field: "title", width: "15%", displayName: "Titre"}, {field: "path", width: "40%", displayName: "Chemin"}, {field: "slug", width: "15%", displayName: "Slug"}],
-        "video_groups": [{field: "id", width: "5%", displayName: "ID"}, {field: "title", width: "70%", displayName: "Nom"}]
-    },
-    "main_fields": {
-        "users": "login",
-        "invitations": "value",
-        "groups": "title",
-        "videos": "title",
-        "video_groups": "title"
-    },
-    "default_values": {
-        "users": [0, "", "random_string"],
-        "invitations": [0, "random_string"],
-        "groups": [0, ""],
-        "videos": [0, "", "", "", ""],
-        "video_groups": [0, ""]
-    },
-    "joins": {
-        "users": ["groups"],
-        "invitations": [],
-        "groups": ["users", "video_groups"],
-        "videos": ["video_groups"],
-        "video_groups": ["videos", "groups"]
-    },
-    "pivots": {
-        "users": [{table: "membership", column: "groups_id", filter: "users_id"}],
-        "invitations": [],
-        "groups": [{table: "membership", column: "users_id", filter: "groups_id"}, {table: "video_permissions", column: "video_groups_id", filter: "groups_id"}],
-        "videos": [{table: "video_classification", column: "video_groups_id", filter: "videos_id"}],
-        "video_groups": [{table: "video_classification", column: "videos_id", filter: "video_groups_id"}, {table: "video_permissions", column: "groups_id", filter: "video_groups_id"}]
-    }
-};
+var config = {};
+
+app.run(function(gettextCatalog) {
+        config = { "titles": {
+            "users": gettextCatalog.getString("Users"),
+            "invitations": gettextCatalog.getString("Invitations"),
+            "groups": gettextCatalog.getString("Groups"),
+            "videos": gettextCatalog.getString("Videos"),
+            "video_groups": gettextCatalog.getString("Video Groups")
+        },
+        "fields": {
+            "users": ["id", "login", "password"],
+            "invitations": ["id", "value"],
+            "groups": ["id", "title"],
+            "videos": ["id", "title", "path", "slug", "imdb_id"],
+            "video_groups": ["id", "title"]
+        },
+        "column_definitions": {
+            "users": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "login", width: "70%", displayName: gettextCatalog.getString("Login")}],
+            "invitations": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "value", width: "70%", displayName: gettextCatalog.getString("Value")}],
+            "groups": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "title", width: "70%", displayName: gettextCatalog.getString("Name")}],
+            "videos": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "title", width: "15%", displayName: gettextCatalog.getString("Title")}, {field: "path", width: "40%", displayName: gettextCatalog.getString("Path")}, {field: "slug", width: "15%", displayName: gettextCatalog.getString("Slug")}],
+            "video_groups": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "title", width: "70%", displayName: gettextCatalog.getString("Name")}]
+        },
+        "main_fields": {
+            "users": "login",
+            "invitations": "value",
+            "groups": "title",
+            "videos": "title",
+            "video_groups": "title"
+        },
+        "default_values": {
+            "users": [0, "", "random_string"],
+            "invitations": [0, "random_string"],
+            "groups": [0, ""],
+            "videos": [0, "", "", "", ""],
+            "video_groups": [0, ""]
+        },
+        "joins": {
+            "users": ["groups"],
+            "invitations": [],
+            "groups": ["users", "video_groups"],
+            "videos": ["video_groups"],
+            "video_groups": ["videos", "groups"]
+        },
+        "pivots": {
+            "users": [{table: "membership", column: "groups_id", filter: "users_id"}],
+            "invitations": [],
+            "groups": [{table: "membership", column: "users_id", filter: "groups_id"}, {table: "video_permissions", column: "video_groups_id", filter: "groups_id"}],
+            "videos": [{table: "video_classification", column: "video_groups_id", filter: "videos_id"}],
+            "video_groups": [{table: "video_classification", column: "videos_id", filter: "video_groups_id"}, {table: "video_permissions", column: "groups_id", filter: "video_groups_id"}]
+        }
+    };
+
+});
+
 
 
 app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
@@ -90,8 +95,8 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
 }]);
 
 
-app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams',
-    function ($scope, $http, $stateParams) {
+app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog',
+    function ($scope, $http, $stateParams, gettextCatalog) {
         $scope.table = $stateParams.table;
         $scope.title = config.titles[$scope.table];
         $scope.rows = [];
@@ -99,7 +104,7 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
         $scope.external_scope = {
             table: $scope.table,
             delete_row: function(row) {
-                bootbox.confirm("Cette action supprimera définitivement l'entrée \"" + row[config.main_fields[$scope.table]] + "\". Voulez-vous continuer ?",
+                bootbox.confirm(gettextCatalog.getString("This will permanently remove \"{{ entry }}\". Are you sure ?", {entry: row[config.main_fields[$scope.table]]}),
                     function(result) {
                         if (result) {
                             $http.get("/admin/delete/" + $scope.table + "/" + row.id).success(function(response) {
@@ -126,10 +131,10 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
                                columnDefs: config.column_definitions[$scope.table],
                                data: 'rows' };
         $scope.grid_options.columnDefs.push({name: 'actions',
-                                            displayName: 'Actions',
+                                            displayName: gettextCatalog.getString("Actions"),
                                             width: "15%",
-                                            cellTemplate: '<div class="edit_buttons"><a class="btn-link" ng-href="#/{{getExternalScopes().table}}/edit/{{row.entity.id}}" tooltip="Modifier" tooltip-trigger tooltip-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>\
-                                                           <button class="btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove" tooltip="Supprimer" tooltip-trigger tooltip-placement="left"></span></button></div>'});
+                                            cellTemplate: '<div class="edit_buttons"><a class="btn-link" ng-href="#/{{getExternalScopes().table}}/edit/{{row.entity.id}}" tooltip="' + gettextCatalog.getString("Edit") + '" tooltip-trigger tooltip-placement="left"><span class="glyphicon glyphicon-pencil"></span></a>\
+                                                           <button class="btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove" tooltip="' + gettextCatalog.getString("Delete") + '" tooltip-trigger tooltip-placement="left"></span></button></div>'});
         $http.get("/admin/get/" + $scope.table).success(function(response) {
             if (response.ok)
                 $scope.rows = response.data;

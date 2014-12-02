@@ -32,6 +32,10 @@ msgstr ""
 msgid "About {{ .Appname }}"
 msgstr ""
 
+#: static/js/admin.js
+msgid "Actions"
+msgstr ""
+
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
@@ -71,6 +75,14 @@ msgstr ""
 msgid "Date: {{ .Date }}"
 msgstr ""
 
+#: static/js/admin.js
+msgid "Delete"
+msgstr ""
+
+#: static/js/admin.js
+msgid "Edit"
+msgstr ""
+
 #: static/html/admin/users_edit_view.html
 msgid "Edit user"
 msgstr ""
@@ -89,6 +101,7 @@ msgstr ""
 
 #: static/html/admin/users_add_view.html
 #: static/html/admin/users_edit_view.html
+#: static/js/admin.js
 #: templates/admin.html
 msgid "Groups"
 msgstr ""
@@ -107,6 +120,10 @@ msgstr ""
 msgid "Hostname"
 msgstr ""
 
+#: static/js/admin.js
+msgid "ID"
+msgstr ""
+
 #: static/html/admin/videos_edit_view.html
 msgid "IMDB id"
 msgstr ""
@@ -122,6 +139,7 @@ msgstr ""
 msgid "Invitation code"
 msgstr ""
 
+#: static/js/admin.js
 #: templates/admin.html
 msgid "Invitations"
 msgstr ""
@@ -129,13 +147,19 @@ msgstr ""
 #: static/html/admin/configuration.html
 #: static/html/admin/users_add_view.html
 #: static/html/admin/users_edit_view.html
+#: static/js/admin.js
 #: templates/signin.html
 msgid "Login"
 msgstr ""
 
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
+#: static/js/admin.js
 msgid "Name"
+msgstr ""
+
+#: static/html/admin/generic_grid_view.html
+msgid "New"
 msgstr ""
 
 #: static/html/admin/users_edit_view.html
@@ -158,6 +182,7 @@ msgid "Password"
 msgstr ""
 
 #: static/html/admin/videos_edit_view.html
+#: static/js/admin.js
 msgid "Path"
 msgstr ""
 
@@ -170,6 +195,7 @@ msgstr ""
 msgid "Port"
 msgstr ""
 
+#: static/html/admin/configuration.html
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
 #: static/html/admin/users_add_view.html
@@ -197,6 +223,7 @@ msgid "Sign up"
 msgstr ""
 
 #: static/html/admin/videos_edit_view.html
+#: static/js/admin.js
 msgid "Slug"
 msgstr ""
 
@@ -204,7 +231,12 @@ msgstr ""
 msgid "These fields are needed to use the OpenSubtitles API. Use the testing user-agent if you don't want to create an account."
 msgstr ""
 
+#: static/js/admin.js
+msgid "This will permanently remove \"{{ entry }}\". Are you sure ?"
+msgstr ""
+
 #: static/html/admin/videos_edit_view.html
+#: static/js/admin.js
 msgid "Title"
 msgstr ""
 
@@ -213,16 +245,22 @@ msgid "User-Agent"
 msgstr ""
 
 #: static/html/admin/groups_edit_view.html
+#: static/js/admin.js
 #: templates/admin.html
 msgid "Users"
 msgstr ""
 
 #: static/html/admin/invitations_edit_view.html
+#: static/js/admin.js
 msgid "Value"
 msgstr ""
 
 #: templates/about.html
 msgid "Version: {{ .Version }}"
+msgstr ""
+
+#: static/js/admin.js
+msgid "Video Groups"
 msgstr ""
 
 #: static/html/admin/videos_edit_view.html
@@ -231,6 +269,7 @@ msgid "Video groups"
 msgstr ""
 
 #: static/html/admin/video_groups_edit_view.html
+#: static/js/admin.js
 #: templates/admin.html
 #: templates/base.html
 #: templates/videos.html

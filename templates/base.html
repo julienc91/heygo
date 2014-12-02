@@ -54,7 +54,8 @@
             })();
 
             app.run(function (gettextCatalog) {
-                gettextCatalog.setCurrentLanguage('fr_FR');
+                if (window.navigator.language && window.navigator.language.toLowerCase().indexOf("fr") >= 0)
+                    gettextCatalog.setCurrentLanguage('fr_FR');
             });
         </script>
         {{template "js" .}}

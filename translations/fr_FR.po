@@ -1,16 +1,16 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.11\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: fr_FR\n"
 "X-Language: fr_FR\n"
 "X-Source-Language: C\n"
 
@@ -41,8 +41,8 @@ msgid ""
 "<span ng-show=\"is_new\">New</span><span ng-hide=\"is_new\">Edit</span> "
 "video group"
 msgstr ""
-"<span ng-show=\"is_new\">Nouveau</span><span ng-hide=\"is_new\">Modifier "
-"un</span> groupe de vidéos"
+"<span ng-show=\"is_new\">Nouveau</span><span ng-hide=\"is_new\">Modifier un</"
+"span> groupe de vidéos"
 
 #: static/html/admin/configuration.html
 msgid "A reboot is required to use these settings"
@@ -50,11 +50,15 @@ msgstr "Un redémarrage est nécessaire pour prendre en compte ces modifications
 
 #: templates/base.html
 msgid "About"
-msgstr "À propos"
+msgstr "A propos"
 
 #: templates/about.html
-msgid "About HEYGO"
-msgstr "À propos de HEYGO"
+msgid "About {{ .Appname }}"
+msgstr "A propos de {{ .Appname }}"
+
+#: static/js/admin.js
+msgid "Actions"
+msgstr "Actions"
 
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
@@ -71,9 +75,11 @@ msgstr "Administration"
 msgid "Author: <a href=\"{{ .Website }}\">{{ .Author }}</a>"
 msgstr "Auteur : <a href=\"{{ .Website }}\">{{ .Author }}</a>"
 
-#: static/html/admin/configuration.html static/html/admin/groups_edit_view.html
+#: static/html/admin/configuration.html
+#: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
-#: static/html/admin/users_add_view.html static/html/admin/users_edit_view.html
+#: static/html/admin/users_add_view.html
+#: static/html/admin/users_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
 #: static/html/admin/videos_edit_view.html
 msgid "Cancel"
@@ -89,7 +95,15 @@ msgstr "Fermer"
 
 #: templates/about.html
 msgid "Date: {{ .Date }}"
-msgstr "Date : {{ .Dae }}"
+msgstr "Date : {{ .Date }}"
+
+#: static/js/admin.js
+msgid "Delete"
+msgstr "Supprimer"
+
+#: static/js/admin.js
+msgid "Edit"
+msgstr "Modifier"
 
 #: static/html/admin/users_edit_view.html
 msgid "Edit user"
@@ -107,7 +121,8 @@ msgstr "Filtrer..."
 msgid "French"
 msgstr "Français"
 
-#: static/html/admin/users_add_view.html static/html/admin/users_edit_view.html
+#: static/html/admin/users_add_view.html
+#: static/html/admin/users_edit_view.html static/js/admin.js
 #: templates/admin.html
 msgid "Groups"
 msgstr "Groupes"
@@ -117,61 +132,69 @@ msgid ""
 "HEYGO is a private media sharing platform. Authentication is required to get "
 "access to the contents.\n"
 "    HEYGO is available by invitation only. If you don't have an invitation "
-"code, ask the <a "
-"href=\"mailto:heygo@julienc.io?subject=Invitation\">admin</a>."
+"code, ask the <a href=\"mailto:heygo@julienc.io?subject=Invitation\">admin</"
+"a>."
 msgstr ""
 "HEYGO est une plate-forme privée de partage de média. L'authentification est "
 "nécessaire pour accéder aux contenus proposés.\n"
 "    HEYGO est accessible sur invitation seulement. Si vous n'avez pas votre "
-"code d'invitation, demandez-en un à l'<a "
-"href=\"mailto:heygo@julienc.io?subject=Invitation\">admin</a>."
+"code d'invitation, demandez-en un à l'<a href=\"mailto:heygo@julienc.io?"
+"subject=Invitation\">admin</a>."
 
 #: templates/base.html
 msgid ""
-"HEYGO is an <a href=\"https://github.com/julienc91/heygo\" "
-"class=\"navbar-link\">open-source</a> project"
+"HEYGO is an <a href=\"https://github.com/julienc91/heygo\" class=\"navbar-"
+"link\">open-source</a> project"
 msgstr ""
-"HEYGO est un projet <a href=\"https://github.com/julienc91/heygo\" "
-"class=\"navbar-link\">open-source</a>"
+"HEYGO est un projet <a href=\"https://github.com/julienc91/heygo\" class="
+"\"navbar-link\">open-source</a>"
 
 #: static/html/admin/configuration.html
 msgid "Hostname"
 msgstr "Domaine"
+
+#: static/js/admin.js
+msgid "ID"
+msgstr "ID"
 
 #: static/html/admin/videos_edit_view.html
 msgid "IMDB id"
 msgstr "ID IMDB"
 
 #: templates/signin.html
-#, qt-format
 msgid ""
 "If you forgot your password, please contact the\n"
-"                <a "
-"href=\"mailto:heygo@julienc.io?subject=Forgot%20password\">admin</a>\n"
+"                <a href=\"mailto:heygo@julienc.io?subject=Forgot%20password"
+"\">admin</a>\n"
 "                to reset it."
 msgstr ""
 "Si vous avez oublié votre mot de passe, contactez\n"
-"                l'<a "
-"href=\"mailto:heygo@julienc.io?subject=Forgot%20password\">admin</a>\n"
+"                l'<a href=\"mailto:heygo@julienc.io?subject=Forgot%20password"
+"\">admin</a>\n"
 "                pour le réinitialiser."
 
 #: templates/signin.html
 msgid "Invitation code"
 msgstr "Code d'invitation"
 
-#: templates/admin.html
+#: static/js/admin.js templates/admin.html
 msgid "Invitations"
 msgstr "Invitations"
 
 #: static/html/admin/configuration.html static/html/admin/users_add_view.html
-#: static/html/admin/users_edit_view.html templates/signin.html
+#: static/html/admin/users_edit_view.html static/js/admin.js
+#: templates/signin.html
 msgid "Login"
 msgstr "Login"
 
 #: static/html/admin/groups_edit_view.html
-#: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/video_groups_edit_view.html static/js/admin.js
 msgid "Name"
 msgstr "Nom"
+
+#: static/html/admin/generic_grid_view.html
+msgid "New"
+msgstr "Nouveau"
 
 #: static/html/admin/users_edit_view.html
 msgid "New password"
@@ -190,7 +213,7 @@ msgstr "OpenSubtitles"
 msgid "Password"
 msgstr "Mot de passe"
 
-#: static/html/admin/videos_edit_view.html
+#: static/html/admin/videos_edit_view.html static/js/admin.js
 msgid "Path"
 msgstr "Chemin"
 
@@ -203,9 +226,11 @@ msgstr "Permissions"
 msgid "Port"
 msgstr "Port"
 
+#: static/html/admin/configuration.html
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
-#: static/html/admin/users_add_view.html static/html/admin/users_edit_view.html
+#: static/html/admin/users_add_view.html
+#: static/html/admin/users_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
 #: static/html/admin/videos_edit_view.html
 msgid "Save"
@@ -214,14 +239,6 @@ msgstr "Enregistrer"
 #: static/html/admin/configuration.html
 msgid "Server"
 msgstr "Serveur"
-
-#: static/html/admin/configuration.html
-msgid ""
-"Server<button class=\"btn btn-link\" type=\"button\" "
-"popover-placement=\"right\" popover=\"{{ A reboot is required to use these "
-"settings | translate }}\">\n"
-"            <span class=\"glyphicon glyphicon-info-sign\"></span></button>"
-msgstr ""
 
 #: static/html/admin/configuration.html templates/admin.html
 msgid "Settings"
@@ -235,15 +252,25 @@ msgstr "Connexion"
 msgid "Sign up"
 msgstr "Inscription"
 
-#: static/html/admin/videos_edit_view.html
+#: static/html/admin/videos_edit_view.html static/js/admin.js
 msgid "Slug"
 msgstr "Slug"
 
 #: static/html/admin/configuration.html
-msgid "These fields are needed to use the OpenSubtitles API. Use the testing user-agent if you don't want to create an account."
-msgstr "Ces informations sont nécessaires à l'utilisation de l'API OpenSubtitles. Utilisez le user-agent de test si vous ne souhaitez pas créer de compte."
+msgid ""
+"These fields are needed to use the OpenSubtitles API. Use the testing user-"
+"agent if you don't want to create an account."
+msgstr ""
+"Ces informations sont nécessaires à l'utilisation de l'API OpenSubtitles. "
+"Utilisez le user-agent de test si vous ne souhaitez pas créer de compte."
 
-#: static/html/admin/videos_edit_view.html
+#: static/js/admin.js
+msgid "This will permanently remove \"{{ entry }}\". Are you sure ?"
+msgstr ""
+"Cette action supprimera définitivement \"{{ entry }}\". Voulez-vous "
+"continuer ?"
+
+#: static/html/admin/videos_edit_view.html static/js/admin.js
 msgid "Title"
 msgstr "Titre"
 
@@ -251,11 +278,12 @@ msgstr "Titre"
 msgid "User-Agent"
 msgstr "User-Agent"
 
-#: static/html/admin/groups_edit_view.html templates/admin.html
+#: static/html/admin/groups_edit_view.html static/js/admin.js
+#: templates/admin.html
 msgid "Users"
 msgstr "Utilisateurs"
 
-#: static/html/admin/invitations_edit_view.html
+#: static/html/admin/invitations_edit_view.html static/js/admin.js
 msgid "Value"
 msgstr "Valeur"
 
@@ -263,12 +291,17 @@ msgstr "Valeur"
 msgid "Version: {{ .Version }}"
 msgstr "Version: {{ .Version }}"
 
+#: static/js/admin.js
+#, fuzzy
+msgid "Video Groups"
+msgstr "Groupes de vidéos"
+
 #: static/html/admin/videos_edit_view.html templates/admin.html
 msgid "Video groups"
-msgstr "Groupe de vidéos"
+msgstr "Groupes de vidéos"
 
-#: static/html/admin/video_groups_edit_view.html templates/admin.html
-#: templates/base.html templates/videos.html
+#: static/html/admin/video_groups_edit_view.html static/js/admin.js
+#: templates/admin.html templates/base.html templates/videos.html
 msgid "Videos"
 msgstr "Vidéos"
 
