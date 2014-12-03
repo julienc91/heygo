@@ -1,15 +1,17 @@
 {{define "title"}}About{{end}}
 {{define "body"}}
 
-    <div class="page-header">
+    <div class="page-header col-sm-12">
         <h1 translate>About {{ .Appname }}</h1>
     </div>
 
-    <ul>
-        <li translate>Version: {{ .Version }}</li>
-        <li translate>Date: {{ .Date }}</li>
-        <li translate>Author: <a href="{{ .Website }}">{{ .Author }}</a></li>
-    </ul>
+    <div class="col-sm-12">
+        <ul>
+            <li translate>Version: {{ .Version }}</li>
+            <li translate>Date: {{ .Date }}</li>
+            <li translate>Author: <a href="{{ .Website }}">{{ .Author }}</a></li>
+        </ul>
+    </div>
 {{end}}
 
 {{define "js"}}

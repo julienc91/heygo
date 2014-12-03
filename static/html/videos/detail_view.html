@@ -1,4 +1,6 @@
-{{ model.title }}
+<div class="page_header">
+	<h3>{{ model.title }}</h3>
+</div>
 
 <p class="video_container">
 	<videogular vg-theme="video_config.theme.url" vg-player-ready="on_player_ready">
@@ -26,7 +28,7 @@
 <p>
 	<div id="search_subtitles" class="btn-group">
 		<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-			{{ Find subtitles | translate }}
+			{{ 'Find subtitles' | translate }}
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu" role="menu">

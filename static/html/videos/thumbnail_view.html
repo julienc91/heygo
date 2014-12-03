@@ -1,4 +1,4 @@
-<form id="form_video_list" class="form-inline" role="form">
+<form id="form_video_list" class="form-inline col-md-12" role="form">
     <div class="btn-group" role="group">
         <a class="btn btn-default" href="/videos#/grid"><span class="glyphicon glyphicon-th-list"></span></a>
         <a class="btn btn-default active" href="/videos#/list"><span class="glyphicon glyphicon-th-large"></span></a>
@@ -11,14 +11,17 @@
     </div>
 </form>
 
-<div class="row">
-    <div class="col-sm-6 col-md-4" ng-repeat="row in rows_to_display">
-        <div class="thumbnail">
-            <img ng-src="{{ row.thumbnail }}" alt="{{ row.title }}">
-            <div class="caption">
-                <h3>{{ row.title }} <small>{{ row.year }}</small></h3>
-                <p>{{ row.resume }}</p>
-                <p><a ng-href="#/watch/{{row.slug}}" class="btn btn-primary" role="button" translate>Watch</a></p>
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-6 col-md-4" ng-repeat="row in rows_to_display">
+            <div class="thumbnail">
+                <img ng-src="{{ row.thumbnail }}" alt="{{ row.title }}">
+                <div class="caption">
+                    <h3>{{ row.title }} <small>{{ row.year }}</small></h3>
+                    <p>{{ row.resume }}</p>
+                    <p><a ng-href="#/watch/{{row.slug}}" class="btn btn-primary" role="button" translate>Watch</a></p>
+                </div>
             </div>
         </div>
     </div>

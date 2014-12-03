@@ -96,6 +96,10 @@ msgid "Filter..."
 msgstr ""
 
 #: static/html/videos/detail_view.html
+msgid "Find subtitles"
+msgstr ""
+
+#: static/html/videos/detail_view.html
 msgid "French"
 msgstr ""
 
@@ -131,8 +135,8 @@ msgstr ""
 #: templates/signin.html
 msgid ""
 "If you forgot your password, please contact the\n"
-"                <a href=\"mailto:heygo@julienc.io?subject=Forgot%20password\">admin</a>\n"
-"                to reset it."
+"                        <a href=\"mailto:heygo@julienc.io?subject=Forgot%20password\">admin</a>\n"
+"                        to reset it."
 msgstr ""
 
 #: templates/signin.html
@@ -227,6 +231,15 @@ msgstr ""
 msgid "Slug"
 msgstr ""
 
+#: templates/signin.html
+msgid ""
+"The salted hash (SHA512) is the only thing stored on the server.\n"
+"\n"
+"                        Once the inscription is complete, your account must be authorized by\n"
+"                        the admin. Meanwhile, you may not have access to all the contents.\n"
+"                        Please be patient !"
+msgstr ""
+
 #: static/html/admin/configuration.html
 msgid "These fields are needed to use the OpenSubtitles API. Use the testing user-agent if you don't want to create an account."
 msgstr ""
@@ -259,11 +272,8 @@ msgstr ""
 msgid "Version: {{ .Version }}"
 msgstr ""
 
-#: static/js/admin.js
-msgid "Video Groups"
-msgstr ""
-
 #: static/html/admin/videos_edit_view.html
+#: static/js/admin.js
 #: templates/admin.html
 msgid "Video groups"
 msgstr ""

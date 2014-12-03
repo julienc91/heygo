@@ -1,10 +1,10 @@
 {{define "title"}}Connexion{{end}}
 {{define "body"}}
-    <div class="page-header">
+    <div class="page-header col-sm-12">
         <h1>HEYGO</h1>
     </div>
 
-    <p class="lead" translate>HEYGO is a private media sharing platform. Authentication is required to get access to the contents.
+    <p class="lead col-md-12" translate>HEYGO is a private media sharing platform. Authentication is required to get access to the contents.
     HEYGO is available by invitation only. If you don't have an invitation code, ask the <a href="mailto:heygo@julienc.io?subject=Invitation">admin</a>.</p>
 
     <div class="container-fluid">
@@ -13,56 +13,68 @@
 
             <div class="col-md-6">
 
-                <h2 translate>Sign in</h2>
+                <div class="panel panel-default">
 
-                <p translate>If you forgot your password, please contact the
-                <a href="mailto:heygo@julienc.io?subject=Forgot%20password">admin</a>
-                to reset it.</p>
+                    <div class="panel-heading" translate>Sign in</div>
 
-                <form role="form" method="post" action="/login">
-                    <div class="form-group">
-                        <label for="signin_login">Login</label>
-                        <input type="text" class="form-control" id="signin_login" name="login" required />
+                    <div class="panel-body">
+                        <p translate>If you forgot your password, please contact the
+                        <a href="mailto:heygo@julienc.io?subject=Forgot%20password">admin</a>
+                        to reset it.</p>
+
+                        <form role="form" method="post" action="/login">
+                            <div class="form-group">
+                                <label for="signin_login">Login</label>
+                                <input type="text" class="form-control" id="signin_login" name="login" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="signin_password">Mot de passe</label>
+                                <input type="password" class="form-control" id="signin_password" name="password" required />
+                            </div>
+
+                            <button type="submit" class="btn btn-default" translate>Sign in</button>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="signin_password">Mot de passe</label>
-                        <input type="password" class="form-control" id="signin_password" name="password" required />
-                    </div>
-
-                    <button type="submit" class="btn btn-default" translate>Sign in</button>
-                </form>
+                </div>
 
             </div>
 
             <div class="col-md-6">
 
-                <h2 translate>Sign up</h2>
+                <div class="panel panel-default">
 
-                <p>The salted hash (SHA512) is the only thing stored on the server.
+                    <div class="panel-heading" translate>Sign up</div>
 
-                Once the inscription is complete, your account must be authorized by
-                the admin. Meanwhile, you may not have access to all the contents.
-                Please be patient !</p>
+                    <div class="panel-body">
 
-                <form role="form" method="post" action="/signup">
-                    <div class="form-group">
-                        <label for="signup_login" translate>Login</label>
-                        <input type="text" class="form-control" id="signup_login" name="login" required />
+                        <p translate>The salted hash (SHA512) is the only thing stored on the server.
+
+                        Once the inscription is complete, your account must be authorized by
+                        the admin. Meanwhile, you may not have access to all the contents.
+                        Please be patient !</p>
+
+                        <form role="form" method="post" action="/signup">
+                            <div class="form-group">
+                                <label for="signup_login" translate>Login</label>
+                                <input type="text" class="form-control" id="signup_login" name="login" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="signup_password" translate>Password</label>
+                                <input type="password" class="form-control" id="signup_password" name="password" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="singup_password2" translate>Check password</label>
+                                <input type="password" class="form-control" id="singup_password2" name="password2" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="signup_invitation" translate>Invitation code</label>
+                                <input type="text" class="form-control" id="signup_invitation" name="invitation" required />
+                            </div>
+                            <button type="submit" class="btn btn-default" translate>Sign up</button>
+                        </form>
+
                     </div>
-                    <div class="form-group">
-                        <label for="signup_password" translate>Password</label>
-                        <input type="password" class="form-control" id="signup_password" name="password" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="singup_password2" translate>Check password</label>
-                        <input type="password" class="form-control" id="singup_password2" name="password2" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="signup_invitation" translate>Invitation code</label>
-                        <input type="text" class="form-control" id="signup_invitation" name="invitation" required />
-                    </div>
-                    <button type="submit" class="btn btn-default" translate>Sign up</button>
-                </form>
+                </div>
 
             </div>
         </div>

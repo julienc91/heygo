@@ -1,12 +1,15 @@
-<form id="form_video_list" class="form-inline" role="form">
+<form id="form_video_list" class="form-inline col-md-12" role="form">
     <div class="btn-group" role="group">
         <a class="btn btn-default active" href="/videos#/grid"><span class="glyphicon glyphicon-th-list"></span></a>
         <a class="btn btn-default" href="/videos#/list"><span class="glyphicon glyphicon-th-large"></span></a>
     </div>
 </form>
-{{ TITLE | translate }}
 
-<div class="grid_wrapper">
-    <div class="grid_style" ui-grid="grid_options" ui-grid-resize-columns ui-grid-auto-resize>
+<div class="container">
+
+    <div class="grid_wrapper">
+        <div class="grid_style" ui-grid="grid_options" ui-grid-resize-columns ui-grid-auto-resize>
+        </div>
     </div>
+
 </div>

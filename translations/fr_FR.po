@@ -118,6 +118,10 @@ msgid "Filter..."
 msgstr "Filtrer..."
 
 #: static/html/videos/detail_view.html
+msgid "Find subtitles"
+msgstr "Chercher des sous-titres"
+
+#: static/html/videos/detail_view.html
 msgid "French"
 msgstr "Français"
 
@@ -164,13 +168,13 @@ msgstr "ID IMDB"
 #: templates/signin.html
 msgid ""
 "If you forgot your password, please contact the\n"
-"                <a href=\"mailto:heygo@julienc.io?subject=Forgot%20password"
-"\">admin</a>\n"
-"                to reset it."
+"                        <a href=\"mailto:heygo@julienc.io?subject=Forgot"
+"%20password\">admin</a>\n"
+"                        to reset it."
 msgstr ""
 "Si vous avez oublié votre mot de passe, contactez\n"
-"                l'<a href=\"mailto:heygo@julienc.io?subject=Forgot%20password"
-"\">admin</a>\n"
+"                l'<a href=\"mailto:heygo@julienc.io?subject=Mot%20de%20passe"
+"%20oublié\">admin</a>\n"
 "                pour le réinitialiser."
 
 #: templates/signin.html
@@ -256,6 +260,24 @@ msgstr "Inscription"
 msgid "Slug"
 msgstr "Slug"
 
+#: templates/signin.html
+msgid ""
+"The salted hash (SHA512) is the only thing stored on the server.\n"
+"\n"
+"                        Once the inscription is complete, your account must "
+"be authorized by\n"
+"                        the admin. Meanwhile, you may not have access to all "
+"the contents.\n"
+"                        Please be patient !"
+msgstr ""
+"Seul le hash (SHA512) de votre mot de passe est stocké sur le server.\n"
+"\n"
+"                Une fois l'inscription terminée, votre compte doit être "
+"validé par\n"
+"                l'admin. En attendant, vous pouvez ne pas avoir accès à la "
+"totalité des contenus.\n"
+"                Un peu de patience !"
+
 #: static/html/admin/configuration.html
 msgid ""
 "These fields are needed to use the OpenSubtitles API. Use the testing user-"
@@ -291,12 +313,8 @@ msgstr "Valeur"
 msgid "Version: {{ .Version }}"
 msgstr "Version: {{ .Version }}"
 
-#: static/js/admin.js
-#, fuzzy
-msgid "Video Groups"
-msgstr "Groupes de vidéos"
-
-#: static/html/admin/videos_edit_view.html templates/admin.html
+#: static/html/admin/videos_edit_view.html static/js/admin.js
+#: templates/admin.html
 msgid "Video groups"
 msgstr "Groupes de vidéos"
 

@@ -6,7 +6,7 @@ app.run(function(gettextCatalog) {
             "invitations": gettextCatalog.getString("Invitations"),
             "groups": gettextCatalog.getString("Groups"),
             "videos": gettextCatalog.getString("Videos"),
-            "video_groups": gettextCatalog.getString("Video Groups")
+            "video_groups": gettextCatalog.getString("Video groups")
         },
         "fields": {
             "users": ["id", "login", "password"],
