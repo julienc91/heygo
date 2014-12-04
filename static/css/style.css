@@ -150,3 +150,8 @@ div.col-sm-10 {
     padding-left: 0px;
     padding-right: 0px;
 }
+
+.thumbnail {
+    padding-top: 20px;
+    background-color: #fafafa;
+}
