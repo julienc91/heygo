@@ -173,7 +173,8 @@ func SearchSubtitles(hash string, size uint64, imdbId string, lang string) ([]st
 				if err != nil {
 					return "", err
 				}
-				return buffer.String(), nil
+
+				return TryToUtf8(buffer.String(), lang), nil
 			}
 		}
 		return "", errors.New("No srt subtitles found")
