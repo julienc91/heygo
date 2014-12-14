@@ -39,6 +39,7 @@ func main() {
 	rtr.HandleFunc("/admin/set/{table:[a-z_]+}", views.AdminSetHandler)
 	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", views.AdminUpdateHandler)
 	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", views.AdminInsertHandler)
+	rtr.HandleFunc("/admin/batchinsert/{table:videos}", views.AdminBatchInsertVideosHandler)
 	rtr.HandleFunc("/admin/delete/{table:[a-z_]+}/{id:[0-9]+}", views.AdminDeleteHandler)
 	rtr.HandleFunc("/admin/media/check", views.AdminMediaCheckHandler)
 	rtr.HandleFunc("/admin", views.AdminHandler)

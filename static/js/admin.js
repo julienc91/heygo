@@ -15,6 +15,9 @@ app.run(function(gettextCatalog) {
             "videos": ["id", "title", "path", "slug", "imdb_id"],
             "video_groups": ["id", "title"]
         },
+        "batch_fields": {
+            "videos": ["path", "recursive", "extension", "column", "filter", "values", "pivot_table"]
+        },
         "column_definitions": {
             "users": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "login", width: "70%", displayName: gettextCatalog.getString("Login")}],
             "invitations": [{field: "id", width: "5%", displayName: gettextCatalog.getString("ID")}, {field: "value", width: "70%", displayName: gettextCatalog.getString("Value")}],
@@ -35,6 +38,9 @@ app.run(function(gettextCatalog) {
             "groups": [0, ""],
             "videos": [0, "", "", "", ""],
             "video_groups": [0, ""]
+        },
+        "default_batch_values": {
+            "videos": ["", true, ".mp4", "video_groups_id", "videos_id", {}, "video_classification"]
         },
         "joins": {
             "users": ["groups"],
@@ -88,6 +94,10 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             url: "/{table:videos}/{mode:new|edit}/{id:[0-9]*}",
             controller: "generic_edit_view_controller",
             templateUrl: "/static/html/admin/videos_edit_view.html"})
+        .state('videos_batch_insert', {
+            url: "/{table:videos}/{mode:batch}/",
+            controller: "generic_edit_view_controller",
+            templateUrl: "/static/html/admin/videos_batch_insert_view.html"})
         .state('configuration', {
             url: "/{table:configuration}",
             controller: "configuration_controller",
@@ -146,11 +156,12 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
 app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams', '$location',
     function ($scope, $http, $stateParams, $location) {
         $scope.table = $stateParams.table;
-        $scope.fields = config.fields[$scope.table];
         $scope.valid_path = false;
-        $scope.is_new = $stateParams.mode == "new";
+        $scope.is_new = $stateParams.mode == "new" || $stateParams.mode == "batch";
+        $scope.is_batch = $stateParams.mode == "batch";
         $scope.joins = {};
         $scope.pivots = {};
+        $scope.fields = $scope.is_batch ? config.batch_fields[$scope.table] : config.fields[$scope.table];
 
         if (!$scope.is_new && (!$stateParams.id || $stateParams.id === 0))
             $location.path("/" + $scope.table + "/new/");
@@ -193,7 +204,7 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
             if (!$scope.is_new)
                 return;
             for (var i=0; i<$scope.fields.length; i++) {
-                var default_value = config.default_values[$scope.table][i];
+                var default_value = $scope.is_batch ? config.default_batch_values[$scope.table][i] : config.default_values[$scope.table][i];
                 if ($scope[default_value])
                     default_value = $scope[default_value]();
                 $scope.model[$scope.fields[i]] = default_value;
@@ -249,17 +260,32 @@ app.controller('generic_edit_view_controller', ['$scope', '$http', '$stateParams
                     for (var key in $scope.pivots[pivot.table]) {
                         if ($scope.pivots[pivot.table][key])
                             values.push(key);
-                        }
-                        $http.get("/admin/set/" + pivot.table, {params: {"filter": pivot.filter, "value": $scope.model.id, "column": pivot.column, "values": values}}).success(function(response) {
-                            if (response.ok) {
-                                $scope.pivots[pivot.table] = {};
-                                for (key in response.data) {
-                                    $scope.pivots[pivot.table][response.data[key]] = true;
-                                }
+                    }
+                    $http.get("/admin/set/" + pivot.table, {params: {"filter": pivot.filter, "value": $scope.model.id, "column": pivot.column, "values": values}}).success(function(response) {
+                        if (response.ok) {
+                            $scope.pivots[pivot.table] = {};
+                            for (key in response.data) {
+                                $scope.pivots[pivot.table][response.data[key]] = true;
                             }
-                            $location.path("/" + $scope.table);
-                        }).error(display_error_message);
-                    });
+                        }
+                        $location.path("/" + $scope.table);
+                    }).error(display_error_message);
+                });
+            }
+        };
+
+        $scope.save_batch_insert = function() {
+            if ($scope.edit.$valid) {
+                var values = [];
+                for (var key in $scope.model.values) {
+                    if ($scope.model.values[key])
+                        values.push(key);
+                }
+                $scope.model.values = values;
+                var url = "/admin/batchinsert/" + $scope.table;
+                $http.get(url, {params: $scope.model}).success(function() {
+                    $location.path("/" + $scope.table);
+                }).error(display_error_message);
             }
         };
     }

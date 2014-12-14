@@ -8,3 +8,7 @@
 <a class="btn-link" ng-href="#/{{table}}/new/" tooltip="{{ 'New' | translate }}" tooltip-trigger tooltip-placement="right">
     <span class="glyphicon glyphicon-plus-sign"></span>
 </a>
+
+<a class="btn-link" ng-if="table == 'videos'" ng-href="#/{{table}}/batch/" tooltip="{{ 'Batch insert' | translate }}" tooltip-trigger tooltip-placement="right">
+    <span class="glyphicon glyphicon-folder-open"></span>
+</a>

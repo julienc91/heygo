@@ -2,8 +2,8 @@
 package globals
 
 const APPNAME = "HEYGO"
-const VERSION = "0.1"
-const DATE = "2014-10-01"
+const VERSION = "0.2"
+const DATE = "2014-12-14"
 const AUTHOR = "Julien CHAUMONT"
 const WEBSITE = "https://julienc.io"
 

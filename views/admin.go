@@ -7,6 +7,7 @@ import (
 	"heygo/tools"
 	"html/template"
 	"net/http"
+	"path"
 	"strconv"
 )
 
@@ -111,6 +112,80 @@ func AdminInsertHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ret["data"] = inserted
+	writeJsonResult(ret, w, http.StatusOK)
+}
+
+// Create media from the given subfolder
+func AdminBatchInsertVideosHandler(w http.ResponseWriter, req *http.Request) {
+
+	if RedirectIfNotAdmin(w, req) {
+		return
+	}
+
+	params := mux.Vars(req)
+
+	table := params["table"]
+	if !tools.InArray([]string{database.TableVideos}, table) {
+		http.Error(w, "table is not valid", http.StatusBadRequest)
+		return
+	}
+
+	req.ParseForm()
+
+	var filepath = req.FormValue("path")
+	var extension = req.FormValue("extension")
+	var filter = req.FormValue("filter")
+	var column = req.FormValue("column")
+	var values = req.Form["values"]
+	var pivotTable = req.FormValue("pivot_table")
+	if !tools.InArray(database.PivotTables, pivotTable) {
+		http.Error(w, "pivot table is not valid", http.StatusBadRequest)
+		return
+	}
+	recursive, err := strconv.ParseBool(req.FormValue("recursive"))
+	if err != nil {
+		http.Error(w, "recursive is not valid", http.StatusBadRequest)
+		return
+	}
+
+	files, err := tools.GetFilesFromSubfolder(filepath, extension, recursive)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var ret = map[string]interface{}{"ok": true, "err": ""}
+	var data []map[string]interface{}
+
+	for _, filename := range files {
+		var params = map[string]interface{}{
+			"path":  filename,
+			"title": path.Base(filename),
+			"slug":  tools.SlugFromFilename(path.Base(filename))}
+		inserted, err := database.PrepareInsert(params, table)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		insertedId := inserted["id"].(int64)
+
+		for _, key := range values {
+			keyId, err := strconv.ParseInt(key, 10, 64)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			data := map[string]interface{}{filter: insertedId, column: keyId}
+			if _, err := database.PrepareInsert(data, pivotTable); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		data = append(data, inserted)
+	}
+
+	ret["data"] = data
 	writeJsonResult(ret, w, http.StatusOK)
 }
 

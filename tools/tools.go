@@ -8,8 +8,12 @@ import (
 	"fmt"
 	"heygo/globals"
 	"io"
+	"io/ioutil"
 	mrand "math/rand"
 	"os"
+	"path"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -27,6 +31,42 @@ func InArray(a []string, e string) bool {
 func CheckFilePath(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+// Get all files with the given extension in the given directory
+func GetFilesFromSubfolder(subfolder string, extension string, recursive bool) ([]string, error) {
+
+	files, err := ioutil.ReadDir(subfolder)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []string
+	for _, f := range files {
+		if f.IsDir() && recursive {
+			subres, err := GetFilesFromSubfolder(path.Join(subfolder, f.Name()), extension, recursive)
+			if err != nil {
+				return nil, err
+			}
+			res = append(res, subres...)
+		} else if !f.IsDir() && path.Ext(f.Name()) == extension {
+			res = append(res, path.Join(subfolder, f.Name()))
+		}
+	}
+	return res, nil
+}
+
+// Get a slug from the given filename
+func SlugFromFilename(filename string) string {
+
+	var slug = strings.ToLower(filename)
+	var from = "ãàáäâ@ẽèéëêìíïîõòóöôùúüûñç"
+	var to = "aaaaaaeeeeeiiiiooooouuuunc"
+	for i := 0; i < len(from) && i < len(to); i++ {
+		slug = strings.Replace(slug, string(from[i]), string(to[i]), -1)
+	}
+	var re = regexp.MustCompile("[^\\w]+")
+	return re.ReplaceAllString(slug, "_")
 }
 
 // Hash function

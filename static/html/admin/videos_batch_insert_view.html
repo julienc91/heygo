@@ -1,0 +1,47 @@
+<h2 translate>Videos batch insert</h2>
+
+
+<form name="edit" class="form-horizontal" role="form" ng-init="init();" ng-submit="save_batch_insert()">
+
+    <div class="form-group" ng-class="{'has-error': edit.path.$invalid && edit.$submitted}">
+        <label for="path" class="col-sm-2 control-label" translate>Path</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="path" name="path" required maxlength="255" ng-model="model.path" ng-change="checked_file_on_server=false; valid_path=false">
+            <span class="input-group-btn">
+                <button type="button" class="check_on_server btn btn-default" ng-disabled="edit.path.$invalid" ng-class="{'btn-warning': checked_file_on_server && !valid_path, 'btn-success': checked_file_on_server && valid_path}" ng-click="checked_file_on_server=true; valid_path=check_file_on_server('path')">
+                    <span class="glyphicon" ng-class="{'glyphicon-cloud': !checked_file_on_server, 'glyphicon-ok': checked_file_on_server && valid_path, 'glyphicon-remove': checked_file_on_server && !valid_path}"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="recursive" translate>Recursive search</label>
+        <div class="checkbox_list col-sm-10">
+            <input type="checkbox" id="recursive" name="recursive" ng-model="model.recursive">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" translate>Extension</label>
+        <div class="checkbox_list col-sm-10">
+            <div class="form-control">
+                <div class="radio"><label><input type="radio" ng-model="model.extension" value=".mp4">mp4</label></div>
+                <div class="radio"><label><input type="radio" ng-model="model.extension" value=".webm">webm</label></div>
+                <div class="radio"><label><input type="radio" ng-model="model.extension" value=".ogg">ogg</label></div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label" translate>Video groups</label>
+        <div class="checkbox_list col-sm-10">
+            <div class="form-control">
+                <div class="checkbox" ng-repeat="x in joins.video_groups"><label><input type="checkbox" ng-model="model.values[x.id]">{{ x.title }}</label></div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a class="btn btn-default" ng-href="#/{{table}}" translate>Cancel</a>
+            <button type="submit" class="btn btn-primary" ng-disabled="edit.$invalid || edit.$pristine" translate>Add</button>
+        </div>
+    </div>
+</form>

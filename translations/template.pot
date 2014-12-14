@@ -39,6 +39,7 @@ msgstr ""
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html
 msgid "Add"
 msgstr ""
@@ -52,12 +53,17 @@ msgstr ""
 msgid "Author: <a href=\"{{ .Website }}\">{{ .Author }}</a>"
 msgstr ""
 
+#: static/html/admin/generic_grid_view.html
+msgid "Batch insert"
+msgstr ""
+
 #: static/html/admin/configuration.html
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
 #: static/html/admin/users_add_view.html
 #: static/html/admin/users_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html
 msgid "Cancel"
 msgstr ""
@@ -89,6 +95,10 @@ msgstr ""
 
 #: static/html/videos/detail_view.html
 msgid "English"
+msgstr ""
+
+#: static/html/admin/videos_batch_insert_view.html
+msgid "Extension"
 msgstr ""
 
 #: static/html/videos/thumbnail_view.html
@@ -185,6 +195,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html
 #: static/js/admin.js
 msgid "Path"
@@ -197,6 +208,10 @@ msgstr ""
 
 #: static/html/admin/configuration.html
 msgid "Port"
+msgstr ""
+
+#: static/html/admin/videos_batch_insert_view.html
+msgid "Recursive search"
 msgstr ""
 
 #: static/html/admin/configuration.html
@@ -272,6 +287,7 @@ msgstr ""
 msgid "Version: {{ .Version }}"
 msgstr ""
 
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html
 #: static/js/admin.js
 #: templates/admin.html
@@ -284,6 +300,10 @@ msgstr ""
 #: templates/base.html
 #: templates/videos.html
 msgid "Videos"
+msgstr ""
+
+#: static/html/admin/videos_batch_insert_view.html
+msgid "Videos batch insert"
 msgstr ""
 
 #: static/html/videos/thumbnail_view.html

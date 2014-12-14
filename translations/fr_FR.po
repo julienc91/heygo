@@ -63,6 +63,7 @@ msgstr "Actions"
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html
 msgid "Add"
 msgstr "Ajouter"
@@ -75,12 +76,17 @@ msgstr "Administration"
 msgid "Author: <a href=\"{{ .Website }}\">{{ .Author }}</a>"
 msgstr "Auteur : <a href=\"{{ .Website }}\">{{ .Author }}</a>"
 
+#: static/html/admin/generic_grid_view.html
+msgid "Batch insert"
+msgstr "Insertion en lot"
+
 #: static/html/admin/configuration.html
 #: static/html/admin/groups_edit_view.html
 #: static/html/admin/invitations_edit_view.html
 #: static/html/admin/users_add_view.html
 #: static/html/admin/users_edit_view.html
 #: static/html/admin/video_groups_edit_view.html
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html
 msgid "Cancel"
 msgstr "Annuler"
@@ -112,6 +118,10 @@ msgstr "Modifier un utilisateur"
 #: static/html/videos/detail_view.html
 msgid "English"
 msgstr "Anglais"
+
+#: static/html/admin/videos_batch_insert_view.html
+msgid "Extension"
+msgstr "Extension"
 
 #: static/html/videos/thumbnail_view.html
 msgid "Filter..."
@@ -217,6 +227,7 @@ msgstr "OpenSubtitles"
 msgid "Password"
 msgstr "Mot de passe"
 
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html static/js/admin.js
 msgid "Path"
 msgstr "Chemin"
@@ -229,6 +240,10 @@ msgstr "Permissions"
 #: static/html/admin/configuration.html
 msgid "Port"
 msgstr "Port"
+
+#: static/html/admin/videos_batch_insert_view.html
+msgid "Recursive search"
+msgstr "Recherche récursive"
 
 #: static/html/admin/configuration.html
 #: static/html/admin/groups_edit_view.html
@@ -313,6 +328,7 @@ msgstr "Valeur"
 msgid "Version: {{ .Version }}"
 msgstr "Version: {{ .Version }}"
 
+#: static/html/admin/videos_batch_insert_view.html
 #: static/html/admin/videos_edit_view.html static/js/admin.js
 #: templates/admin.html
 msgid "Video groups"
@@ -322,6 +338,10 @@ msgstr "Groupes de vidéos"
 #: templates/admin.html templates/base.html templates/videos.html
 msgid "Videos"
 msgstr "Vidéos"
+
+#: static/html/admin/videos_batch_insert_view.html
+msgid "Videos batch insert"
+msgstr "Insertion en lot de vidéos"
 
 #: static/html/videos/thumbnail_view.html
 msgid "Watch"
