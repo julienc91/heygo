@@ -8,12 +8,12 @@ import (
 // Check if the password is correct
 func AuthenticateUser(id int64, password string) error {
 
-	user, err := PrepareGetFromId(id, TableUsers)
+	user, err := GetUserFromId(id)
 	if err != nil {
 		return errors.New("user does not exist")
 	}
 
-	if tools.Hash(password, user["salt"].(string)) != user["password"].(string) {
+	if tools.Hash(password, user.Salt) != user.Password {
 		return errors.New("invalid password")
 	}
 

@@ -1,4 +1,4 @@
-package views
+package admin
 
 import (
 	"github.com/gorilla/mux"
@@ -11,8 +11,44 @@ import (
 	"strconv"
 )
 
+func updateUser(w http.ResponseWriter, req *httpRequest) {
+
+	if _, ok := req.Value("user"); !ok {
+		http.Error(w, "user is not set", http.StatusBadRequest)
+		return
+	}
+	if _, ok := req.Value("groups"); !ok {
+		http.Error(w, "groups are not set", http.StatusBadRequest)
+		return
+	}
+	var user globals.User
+	err := json.Unmarshal([]byte(req.Value("user")), &user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	var groups []globals.Group
+	err := json.Unmarshal([]byte(req.Value("groups")), &groups))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	oldUser, err := database.GetUserFromId(user.Id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if user.Password == "" {
+		user.Password = oldUser.Password
+	} else if oldUser.Password != user.Password {
+		user.Salt = tools.SaltGenerator()
+		user.Password = tools.Hash(user.Password, salt)
+	}
+}
+
 // Handle update requests from admin panel
-func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
+func AdminUpdate(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAdmin(w, req) {
 		return
@@ -26,7 +62,20 @@ func AdminUpdateHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	req.ParseForm()
+	err := req.ParseForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var ret = map[string]interface{}{"ok": true, "err": ""}
+
+	switch table {
+		case database.TableUsers:
+
+		default:
+
+	}
 
 	var data = make(map[string]interface{})
 	for k := range req.Form {

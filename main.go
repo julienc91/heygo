@@ -32,16 +32,14 @@ func main() {
 	rtr.HandleFunc("/media/thumbnail/{url}", views.MediaThumbnailHandler)
 	rtr.HandleFunc("/media/subtitles/list/{slug:[a-z0-9_]+}/{lang:fre|eng}", views.VideoGetSubtitles)
 	rtr.HandleFunc("/media/subtitles/get/{hash:[a-zA-Z0-9/_=-]+}", views.SubtitlesServerHandler)
-	rtr.HandleFunc("/admin/get/configuration", views.AdminGetConfigurationHandler)
-	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", views.AdminGetHandler)
-	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", views.AdminGetFromIdHandler)
-	rtr.HandleFunc("/admin/set/configuration", views.AdminSetConfigurationHandler)
-	rtr.HandleFunc("/admin/set/{table:[a-z_]+}", views.AdminSetHandler)
-	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", views.AdminUpdateHandler)
-	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", views.AdminInsertHandler)
+	rtr.HandleFunc("/admin/get/configuration", views.AdminGetConfiguration)
+	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", views.AdminGetAll)
+	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", views.AdminGetFromId)
+	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", views.AdminUpdate)
+	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", views.AdminInsert)
 	rtr.HandleFunc("/admin/batchinsert/{table:videos}", views.AdminBatchInsertVideosHandler)
-	rtr.HandleFunc("/admin/delete/{table:[a-z_]+}/{id:[0-9]+}", views.AdminDeleteHandler)
-	rtr.HandleFunc("/admin/media/check", views.AdminMediaCheckHandler)
+	rtr.HandleFunc("/admin/delete/{table:[a-z_]+}/{id:[0-9]+}", views.AdminDelete)
+	rtr.HandleFunc("/admin/media/check", views.AdminMediaCheck)
 	rtr.HandleFunc("/admin", views.AdminHandler)
 	rtr.HandleFunc("/", views.MainPageHandler)
 
@@ -55,32 +53,7 @@ func main() {
 // Hot reloading of the configuration
 func reloadConfiguration() {
 	for _ = range globals.LoadConfiguration {
-		loadConfiguration()
+		database.LoadConfiguration()
+		tools.InitFromConfiguration()
 	}
-}
-
-// Load the configuration from the database to the global variable
-func loadConfiguration() {
-
-	config, err := database.PrepareGetAll(database.TableConfiguration)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, row := range config {
-		switch row["key"].(string) {
-		case "domain":
-			globals.CONFIGURATION.Domain = row["value"].(string)
-		case "port":
-			globals.CONFIGURATION.Port = row["value"].(string)
-		case "opensubtitles_login":
-			globals.CONFIGURATION.OpensubtitlesLogin = row["value"].(string)
-		case "opensubtitles_password":
-			globals.CONFIGURATION.OpensubtitlesPassword = row["value"].(string)
-		case "opensubtitles_useragent":
-			globals.CONFIGURATION.OpensubtitlesUseragent = row["value"].(string)
-		}
-	}
-
-	tools.InitFromConfiguration()
 }

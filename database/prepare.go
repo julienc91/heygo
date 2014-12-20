@@ -82,7 +82,7 @@ func checkFields(values map[string]interface{}, validFields []string, requiredFi
 }
 
 // Prepare and check arguments before calling insertRow
-func PrepareInsert(values map[string]interface{}, table string) (map[string]interface{}, error) {
+func prepareInsert(values map[string]interface{}, table string) (map[string]interface{}, error) {
 
 	columns, ok := validColumns[table]
 	if !ok {
@@ -104,7 +104,7 @@ func PrepareInsert(values map[string]interface{}, table string) (map[string]inte
 }
 
 // Prepare and check arguments before calling updateFromId
-func PrepareUpdateFromId(id int64, values map[string]interface{}, table string) (map[string]interface{}, error) {
+func prepareUpdateFromId(id int64, values map[string]interface{}, table string) (map[string]interface{}, error) {
 
 	columns, ok := validColumns[table]
 	if !ok {
@@ -127,19 +127,19 @@ func PrepareUpdateFromId(id int64, values map[string]interface{}, table string) 
 }
 
 // Prepare and check arguments before calling updateFromKey
-func PrepareUpdateConfiguration(key string, value interface{}) (map[string]interface{}, error) {
+func prepareUpdateConfiguration(key string, value interface{}) (map[string]interface{}, error) {
 
-	row, err := PrepareGetFromKey("key", key, TableConfiguration)
+	row, err := prepareGetFromKey("key", key, TableConfiguration)
 	if err != nil {
 		return nil, err
 	}
-	res, err := PrepareUpdateFromId(row["id"].(int64), map[string]interface{}{"value": value}, TableConfiguration)
+	res, err := prepareUpdateFromId(row["id"].(int64), map[string]interface{}{"value": value}, TableConfiguration)
 	globals.LoadConfiguration <- true
 	return res, err
 }
 
 // Prepare and check arguments before calling getAll
-func PrepareGetAll(table string) ([]map[string]interface{}, error) {
+func prepareGetAll(table string) ([]map[string]interface{}, error) {
 
 	if !tools.InArray(Tables, table) {
 		return nil, errors.New("invalid table")
@@ -148,7 +148,7 @@ func PrepareGetAll(table string) ([]map[string]interface{}, error) {
 }
 
 // Prepare and check arguments before calling getAllFilteredByColumn
-func PrepareGetColumnFiltered(column string, filter string, value interface{}, table string) ([]interface{}, error) {
+func prepareGetColumnFiltered(column string, filter string, value interface{}, table string) ([]interface{}, error) {
 
 	columns, ok := validColumns[table]
 	if !ok {
@@ -164,7 +164,7 @@ func PrepareGetColumnFiltered(column string, filter string, value interface{}, t
 }
 
 // Prepare and check arguments before calling getFromId
-func PrepareGetFromId(id int64, table string) (map[string]interface{}, error) {
+func prepareGetFromId(id int64, table string) (map[string]interface{}, error) {
 
 	if !tools.InArray(MainTables, table) {
 		return nil, errors.New("invalid table")
@@ -174,7 +174,7 @@ func PrepareGetFromId(id int64, table string) (map[string]interface{}, error) {
 }
 
 // Prepare and check arguments before calling getFromKey
-func PrepareGetFromKey(key string, value interface{}, table string) (map[string]interface{}, error) {
+func prepareGetFromKey(key string, value interface{}, table string) (map[string]interface{}, error) {
 
 	columns, ok := uniqueColumns[table]
 	if !ok {
@@ -187,7 +187,7 @@ func PrepareGetFromKey(key string, value interface{}, table string) (map[string]
 }
 
 // Prepare and check arguments before calling deleteFromId
-func PrepareDeleteFromId(id int64, table string) error {
+func prepareDeleteFromId(id int64, table string) error {
 
 	if !tools.InArray(MainTables, table) {
 		return errors.New("invalid table")
@@ -200,7 +200,7 @@ func PrepareDeleteFromId(id int64, table string) error {
 }
 
 // Prepare and check arguments before calling deleteFromKey
-func PrepareDeleteFromKey(key string, value interface{}, table string) error {
+func prepareDeleteFromKey(key string, value interface{}, table string) error {
 
 	columns, ok := uniqueColumns[table]
 	if !ok {
@@ -216,7 +216,7 @@ func PrepareDeleteFromKey(key string, value interface{}, table string) error {
 }
 
 // Prepare and check arguments before calling deleteFromFilter
-func PrepareDeleteFromFilter(filter string, value interface{}, table string) error {
+func prepareDeleteFromFilter(filter string, value interface{}, table string) error {
 
 	columns, ok := validColumns[table]
 	if !ok {
@@ -229,17 +229,4 @@ func PrepareDeleteFromFilter(filter string, value interface{}, table string) err
 		return err
 	}
 	return deleteFromFilter(filter, value, table)
-}
-
-// Delete foreign key dependencies
-func deleteDependencies(value interface{}, table string) error {
-
-	for _, pivot := range pivots[table] {
-		var pivotTable = pivot[0]
-		var pivotColumn = pivot[1]
-		if err := PrepareDeleteFromFilter(pivotColumn, value, pivotTable); err != nil {
-			return err
-		}
-	}
-	return nil
 }
