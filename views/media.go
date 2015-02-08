@@ -3,7 +3,7 @@ package views
 import (
 	"encoding/base64"
 	"github.com/gorilla/mux"
-	"heygo/database"
+	"github.com/julienc91/heygo/database"
 	"io/ioutil"
 	"net/http"
 	"net/url"

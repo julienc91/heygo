@@ -2,7 +2,7 @@ package database
 
 import (
 	"errors"
-	"heygo/tools"
+	"github.com/julienc91/heygo/tools"
 )
 
 // Check if the password is correct

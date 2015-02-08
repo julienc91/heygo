@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"heygo/database"
-	"heygo/globals"
-	"heygo/tools"
-	"heygo/views"
+	"github.com/julienc91/heygo/database"
+	"github.com/julienc91/heygo/globals"
+	"github.com/julienc91/heygo/tools"
+	"github.com/julienc91/heygo/views"
 	"net/http"
 )
 

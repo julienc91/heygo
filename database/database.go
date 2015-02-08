@@ -6,7 +6,7 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
-	"heygo/globals"
+	"github.com/julienc91/heygo/globals"
 	"strings"
 )
 

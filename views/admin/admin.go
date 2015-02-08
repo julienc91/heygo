@@ -2,9 +2,9 @@ package admin
 
 import (
 	"github.com/gorilla/mux"
-	"heygo/database"
-	"heygo/globals"
-	"heygo/tools"
+	"github.com/julienc91/heygo/database"
+	"github.com/julienc91/heygo/globals"
+	"github.com/julienc91/heygo/tools"
 	"html/template"
 	"net/http"
 	"path"

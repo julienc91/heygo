@@ -4,7 +4,7 @@ package views
 import (
 	"encoding/json"
 	"fmt"
-	"heygo/database"
+	"github.com/julienc91/heygo/database"
 	"net/http"
 )
 

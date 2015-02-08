@@ -2,7 +2,7 @@ package views
 
 import (
 	"github.com/gorilla/securecookie"
-	"heygo/database"
+	"github.com/julienc91/heygo/database"
 	"html/template"
 	"net/http"
 )

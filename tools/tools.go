@@ -6,7 +6,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
-	"heygo/globals"
+	"github.com/julienc91/heygo/globals"
 	"io"
 	"io/ioutil"
 	mrand "math/rand"

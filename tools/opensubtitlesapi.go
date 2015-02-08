@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/kolo/xmlrpc"
-	"heygo/globals"
+	"github.com/julienc91/heygo/globals"
 	"io"
 	"net/http"
 	"os"

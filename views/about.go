@@ -1,7 +1,7 @@
 package views
 
 import (
-	"heygo/globals"
+	"github.com/julienc91/heygo/globals"
 	"html/template"
 	"net/http"
 )

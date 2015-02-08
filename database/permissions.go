@@ -1,7 +1,7 @@
 package database
 
 import (
-	"heygo/globals"
+	"github.com/julienc91/heygo/globals"
 )
 
 // Check if the given user is allowed to access the given video

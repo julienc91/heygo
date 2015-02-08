@@ -2,8 +2,8 @@ package database
 
 import (
 	"errors"
-	"heygo/globals"
-	"heygo/tools"
+	"github.com/julienc91/heygo/globals"
+	"github.com/julienc91/heygo/tools"
 )
 
 var validColumns = map[string][]string{

@@ -1,5 +1,5 @@
 package database
 
 import (
-    "heygo/globals"
+    "github.com/julienc91/heygo/globals"
 )

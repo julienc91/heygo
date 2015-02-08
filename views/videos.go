@@ -2,8 +2,8 @@ package views
 
 import (
 	"github.com/gorilla/mux"
-	"heygo/database"
-	"heygo/tools"
+	"github.com/julienc91/heygo/database"
+	"github.com/julienc91/heygo/tools"
 	"html/template"
 	"net/http"
 )
