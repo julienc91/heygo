@@ -7,7 +7,7 @@
     <p class="lead col-md-12" translate>HEYGO is a private media sharing platform. Authentication is required to get access to the contents.
     HEYGO is available by invitation only. If you don't have an invitation code, ask the <a href="mailto:heygo@julienc.io?subject=Invitation">admin</a>.</p>
 
-    <div class="container-fluid">
+    <div class="container-fluid" ng-controller="login_controller">
 
         <div class="row">
 
@@ -22,14 +22,14 @@
                         <a href="mailto:heygo@julienc.io?subject=Forgot%20password">admin</a>
                         to reset it.</p>
 
-                        <form role="form" method="post" action="/login">
+                        <form role="form" method="post" ng-submit="login()">
                             <div class="form-group">
                                 <label for="signin_login">Login</label>
-                                <input type="text" class="form-control" id="signin_login" name="login" required />
+                                <input type="text" class="form-control" id="signin_login" name="login" ng-model="user.login" required />
                             </div>
                             <div class="form-group">
                                 <label for="signin_password">Mot de passe</label>
-                                <input type="password" class="form-control" id="signin_password" name="password" required />
+                                <input type="password" class="form-control" id="signin_password" name="password" ng-model="user.password" required />
                             </div>
 
                             <button type="submit" class="btn btn-default" translate>Sign in</button>
@@ -53,22 +53,22 @@
                         the admin. Meanwhile, you may not have access to all the contents.
                         Please be patient !</p>
 
-                        <form role="form" method="post" action="/signup">
+                        <form role="form" method="post" ng-submit="signup()">
                             <div class="form-group">
                                 <label for="signup_login" translate>Login</label>
-                                <input type="text" class="form-control" id="signup_login" name="login" required />
+                                <input type="text" class="form-control" id="signup_login" name="login" ng-model="user.login" required />
                             </div>
                             <div class="form-group">
                                 <label for="signup_password" translate>Password</label>
-                                <input type="password" class="form-control" id="signup_password" name="password" required />
+                                <input type="password" class="form-control" id="signup_password" name="password" ng-model="user.password" required />
                             </div>
                             <div class="form-group">
                                 <label for="singup_password2" translate>Check password</label>
-                                <input type="password" class="form-control" id="singup_password2" name="password2" required />
+                                <input type="password" class="form-control" id="signup_password2" name="password2" required />
                             </div>
                             <div class="form-group">
                                 <label for="signup_invitation" translate>Invitation code</label>
-                                <input type="text" class="form-control" id="signup_invitation" name="invitation" required />
+                                <input type="text" class="form-control" id="signup_invitation" name="invitation" required ng-model="invitation.value"/>
                             </div>
                             <button type="submit" class="btn btn-default" translate>Sign up</button>
                         </form>
@@ -80,4 +80,6 @@
         </div>
     </div>
 {{end}}
-{{define "js"}}{{end}}
+{{define "js"}}
+<script src="/static/js/login.js"></script>
+{{end}}

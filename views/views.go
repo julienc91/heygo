@@ -2,8 +2,6 @@
 package views
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/julienc91/heygo/database"
 	"net/http"
 )
@@ -57,30 +55,8 @@ func RedirectIfNotAuthenticated(w http.ResponseWriter, req *http.Request) bool {
 	return false
 }
 
-// Answer the user's query with the given codes and with a json object constructed
-// from 'ret'.
-func writeJsonResult(ret map[string]interface{}, w http.ResponseWriter, code int) {
-
-	val, err := json.Marshal(ret)
-	if err != nil {
-		ret["err"] = err.Error()
-		ret["ok"] = false
-		code = http.StatusInternalServerError
-	}
-
-	writeResponse(string(val), w, "application/json", code)
-}
-
-// Set http error code and content-type and write response
-func writeResponse(content interface{}, w http.ResponseWriter, contentType string, code int) {
-
-	w.Header().Set("Content-Type", contentType)
-	w.WriteHeader(code)
-	fmt.Fprint(w, content)
-}
-
 // Fille a ViewInfo variable
-func getViewInfo(req *http.Request, viewName string) ViewInfo {
+func GetViewInfo(req *http.Request, viewName string) ViewInfo {
 
 	var viewInfo ViewInfo
 	var id = GetUserId(req)

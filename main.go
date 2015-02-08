@@ -6,6 +6,7 @@ import (
 	"github.com/julienc91/heygo/globals"
 	"github.com/julienc91/heygo/tools"
 	"github.com/julienc91/heygo/views"
+	"github.com/julienc91/heygo/views/admin"
 	"net/http"
 )
 
@@ -14,7 +15,9 @@ func main() {
 
 	defer tools.OpenSubtitlesClose()
 	defer close(globals.LoadConfiguration)
-	loadConfiguration()
+
+	database.LoadConfiguration()
+	tools.InitFromConfiguration()
 	go reloadConfiguration()
 
 	var rtr = mux.NewRouter()
@@ -25,22 +28,21 @@ func main() {
 	rtr.HandleFunc("/videos/get", views.VideoGetAllHandler)
 	rtr.HandleFunc("/videos", views.VideoMenuHandler)
 	rtr.HandleFunc("/signin", views.SignInHandler)
-	rtr.HandleFunc("/signup", views.SignupHandler)
-	rtr.HandleFunc("/signout", views.SignoutHandler)
-	rtr.HandleFunc("/login", views.LoginHandler)
-	rtr.HandleFunc("/media/{type:videos}/{slug:[a-z0-9_]+}", views.MediaHandler)
+	rtr.HandleFunc("/signup", views.Signup)
+	rtr.HandleFunc("/signout", views.Signout)
+	rtr.HandleFunc("/login", views.Login)
+	rtr.HandleFunc("/media/{type:videos}/{slug:[a-z0-9_]+}", views.StreamMedia)
 	rtr.HandleFunc("/media/thumbnail/{url}", views.MediaThumbnailHandler)
 	rtr.HandleFunc("/media/subtitles/list/{slug:[a-z0-9_]+}/{lang:fre|eng}", views.VideoGetSubtitles)
 	rtr.HandleFunc("/media/subtitles/get/{hash:[a-zA-Z0-9/_=-]+}", views.SubtitlesServerHandler)
-	rtr.HandleFunc("/admin/get/configuration", views.AdminGetConfiguration)
-	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", views.AdminGetAll)
-	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", views.AdminGetFromId)
-	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", views.AdminUpdate)
-	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", views.AdminInsert)
-	rtr.HandleFunc("/admin/batchinsert/{table:videos}", views.AdminBatchInsertVideosHandler)
-	rtr.HandleFunc("/admin/delete/{table:[a-z_]+}/{id:[0-9]+}", views.AdminDelete)
-	rtr.HandleFunc("/admin/media/check", views.AdminMediaCheck)
-	rtr.HandleFunc("/admin", views.AdminHandler)
+	rtr.HandleFunc("/admin/get/{table:[a-z_]+}", admin.AdminGetAll)
+	rtr.HandleFunc("/admin/get/{table:[a-z_]+}/{id:[0-9]+}", admin.AdminGetFromId)
+	rtr.HandleFunc("/admin/update/{table:[a-z_]+}/{id:[0-9]+}", admin.AdminUpdate)
+	rtr.HandleFunc("/admin/insert/{table:[a-z_]+}", admin.AdminInsert)
+	rtr.HandleFunc("/admin/batchinsert/{table:videos}", admin.AdminBatchInsertVideos)
+	rtr.HandleFunc("/admin/delete/{table:[a-z_]+}", admin.AdminDelete)
+	rtr.HandleFunc("/admin/media/check", admin.AdminMediaCheck)
+	rtr.HandleFunc("/admin", admin.AdminHandler)
 	rtr.HandleFunc("/", views.MainPageHandler)
 
 	// serve static files

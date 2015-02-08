@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/julienc91/heygo/globals"
+	"strings"
 )
 
 // Check if the given user is allowed to access the given video
@@ -80,3 +81,105 @@ func GetAllowedVideos(userId int64) ([]map[string]interface{}, error) {
 
 	return res, nil
 }
+
+func getPermissionsFromGroupId(id int64) ([]globals.VideoGroup, error) {
+
+	var query = "SELECT video_groups.id, video_groups.title FROM video_groups "
+	query += "INNER JOIN video_permissions ON video_permissions.groups_id=? AND video_permissions.video_groups_id=video_groups.id;"
+	var params = []interface{}{id}
+
+	res, err := getDb(query, params, func() interface{} { return globals.VideoGroup{} })
+	if err != nil {
+		return nil, err
+	}
+	var videoGroups []globals.VideoGroup
+	for _, v := range res {
+		videoGroups = append(videoGroups, v.(globals.VideoGroup))
+	}
+	return videoGroups, nil
+}
+
+func getPermissionsFromVideoGroupId(id int64) ([]globals.Group, error) {
+
+	var query = "SELECT groups.id, groups.title FROM groups "
+	query += "INNER JOIN video_permissions ON video_permissions.video_groups_id=? AND video_permissions.groups_id=groups.id;"
+	var params = []interface{}{id}
+
+	res, err := getDb(query, params, func() interface{} { return globals.Group{} })
+	if err != nil {
+		return nil, err
+	}
+	var groups []globals.Group
+	for _, g := range res {
+		groups = append(groups, g.(globals.Group))
+	}
+	return groups, nil
+}
+
+func updatePermissionsFromGroupId(id int64, videoGroups []globals.VideoGroup) ([]globals.VideoGroup, error) {
+
+	if err := deletePermissionsFromGroupId(id); err != nil {
+		return nil, err
+	}
+
+	var query = "INSERT INTO video_permissions (groups_id, video_groups_id) VALUES "
+	var params = []interface{}{}
+	var values []string
+	for _, videoGroup := range videoGroups {
+		values = append(values, "(?, ?)")
+		params = append(params, id, videoGroup.Id)
+	}
+	query += strings.Join(values, ", ") + ";"
+
+	if err := insertDb(query, params); err != nil {
+		return nil, err
+	}
+	return getPermissionsFromGroupId(id)
+}
+
+func updatePermissionsFromVideoGroupId(id int64, groups []globals.Group) ([]globals.Group, error) {
+
+	if err := deletePermissionsFromVideoGroupId(id); err != nil {
+		return nil, err
+	}
+
+	var query = "INSERT INTO video_permissions (groups_id, video_groups_id) VALUES "
+	var params = []interface{}{}
+	var values []string
+	for _, group := range groups {
+		values = append(values, "(?, ?)")
+		params = append(params, group.Id, id)
+	}
+	query += strings.Join(values, ", ") + ";"
+
+	if err := insertDb(query, params); err != nil {
+		return nil, err
+	}
+	return getPermissionsFromVideoGroupId(id)
+}
+
+func deletePermissionsFromGroupId(id int64) error {
+
+	var query = "DELETE FROM video_permissions WHERE groups_id=?;"
+	var params = []interface{}{id}
+	return deleteDb(query, params)
+}
+
+func deletePermissionsFromVideoGroupId(id int64) error {
+
+	var query = "DELETE FROM video_permissions WHERE video_groups_id=?;"
+	var params = []interface{}{id}
+	return deleteDb(query, params)
+}
+
+// Public functions
+func UpdatePermissionsFromGroup(group globals.Group, videoGroups []globals.VideoGroup) ([]globals.VideoGroup, error) {
+	return updatePermissionsFromGroupId(group.Id, videoGroups)
+}
+
+func UpdatePermissionsFromVideoGroup(videoGroup globals.VideoGroup, groups []globals.Group) ([]globals.Group, error) {
+	return updatePermissionsFromVideoGroupId(videoGroup.Id, groups)
+}
+
+var GetPermissionsFromGroupId = getPermissionsFromGroupId
+var GetPermissionsFromVideoGroupId = getPermissionsFromVideoGroupId

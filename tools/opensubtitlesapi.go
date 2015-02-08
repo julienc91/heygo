@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"github.com/kolo/xmlrpc"
 	"github.com/julienc91/heygo/globals"
 	"io"
@@ -117,7 +116,6 @@ func SearchSubtitles(hash string, size uint64, imdbId string, lang string) ([]st
 			if _, ok := result["data"].(bool); ok {
 				return nil, nil
 			}
-			fmt.Println(result)
 			return nil, errors.New("Type assertion error for data")
 		}
 

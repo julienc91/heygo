@@ -5,11 +5,13 @@ import (
 	crand "crypto/rand"
 	"crypto/sha512"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/julienc91/heygo/globals"
 	"io"
 	"io/ioutil"
 	mrand "math/rand"
+	"net/http"
 	"os"
 	"path"
 	"regexp"
@@ -98,4 +100,26 @@ func UuidGenerator() (string, error) {
 	uuid[8] = uuid[8]&^0xc0 | 0x80
 	uuid[6] = uuid[6]&^0xf0 | 0x40
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
+}
+
+// Answer the user's query with the given codes and with a json object constructed
+// from 'ret'.
+func WriteJsonResult(ret map[string]interface{}, w http.ResponseWriter, code int) {
+
+	val, err := json.Marshal(ret)
+	if err != nil {
+		ret["err"] = err.Error()
+		ret["ok"] = false
+		code = http.StatusInternalServerError
+	}
+
+	WriteResponse(string(val), w, "application/json", code)
+}
+
+// Set http error code and content-type and write response
+func WriteResponse(content interface{}, w http.ResponseWriter, contentType string, code int) {
+
+	w.Header().Set("Content-Type", contentType)
+	w.WriteHeader(code)
+	fmt.Fprint(w, content)
 }

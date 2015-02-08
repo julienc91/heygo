@@ -23,13 +23,13 @@ func VideoMenuHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var viewInfo = getViewInfo(req, "videos")
+	var viewInfo = GetViewInfo(req, "videos")
 
 	t := template.Must(template.New("videos.html").ParseFiles(
 		"templates/videos.html", "templates/base.html"))
 	err := t.ExecuteTemplate(w, "base", viewInfo)
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -52,7 +52,7 @@ func VideoGetAllHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	ret["data"] = rows
-	writeJsonResult(ret, w, http.StatusOK)
+	tools.WriteJsonResult(ret, w, http.StatusOK)
 }
 
 // Return video informations
@@ -65,24 +65,24 @@ func VideoDetailHandler(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	slug := params["slug"]
 
-	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
+	video, _, err := database.GetVideoFromSlug(slug)
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	id := GetUserId(req)
-	ok, err := database.CheckPermission(id, video["id"].(int64))
+	ok, err := database.CheckPermission(id, video.Id)
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if !ok {
 		http.Error(w, "", http.StatusForbidden)
 		return
 	}
 
-	var ret = map[string]interface{}{"ok": true, "err": "", "data": video}
-	writeJsonResult(ret, w, http.StatusOK)
+	var ret = map[string]interface{}{"ok": true, "err": "", "data": map[string]interface{}{"video": video}}
+	tools.WriteJsonResult(ret, w, http.StatusOK)
 }
 
 // Call the OpenSubtitles API
@@ -96,30 +96,29 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 	slug := params["slug"]
 	lang := params["lang"]
 
-	video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
-
-	id := GetUserId(req)
-	ok, err := database.CheckPermission(id, video["id"].(int64))
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		http.Error(w, "", http.StatusForbidden)
-		return
-	}
-
-	hash, size, err := tools.OpensubtitlesHash(video["path"].(string))
+	video, _, err := database.GetVideoFromSlug(slug)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	res, err := tools.SearchSubtitles(hash, size, video["imdb_id"].(string), lang)
+	id := GetUserId(req)
+	ok, err := database.CheckPermission(id, video.Id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else if !ok {
+		http.Error(w, "", http.StatusForbidden)
+		return
+	}
+
+	hash, size, err := tools.OpensubtitlesHash(video.Path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res, err := tools.SearchSubtitles(hash, size, video.ImdbId, lang)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -135,7 +134,7 @@ func VideoGetSubtitles(w http.ResponseWriter, req *http.Request) {
 	}
 	ret["data"] = data
 
-	writeJsonResult(ret, w, http.StatusOK)
+	tools.WriteJsonResult(ret, w, http.StatusOK)
 }
 
 // Serve subtitle files
@@ -152,5 +151,5 @@ func SubtitlesServerHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
-	writeResponse(subtitlesToServe[hash], w, "text/vtt", http.StatusOK)
+	tools.WriteResponse(subtitlesToServe[hash], w, "text/vtt", http.StatusOK)
 }

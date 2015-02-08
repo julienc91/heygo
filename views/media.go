@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"github.com/gorilla/mux"
 	"github.com/julienc91/heygo/database"
+	"github.com/julienc91/heygo/tools"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -20,11 +21,12 @@ func init() {
 }
 
 // Stream a media
-func MediaHandler(w http.ResponseWriter, req *http.Request) {
+func StreamMedia(w http.ResponseWriter, req *http.Request) {
 
 	if RedirectIfNotAuthenticated(w, req) {
 		return
 	}
+
 	id := GetUserId(req)
 
 	params := mux.Vars(req)
@@ -33,31 +35,29 @@ func MediaHandler(w http.ResponseWriter, req *http.Request) {
 
 	switch mediaType {
 	case "videos":
-		video, err := database.PrepareGetFromKey("slug", slug, database.TableVideos)
+		video, _, err := database.GetVideoFromSlug(slug)
 		if err != nil {
 			http.Error(w, "Video not found", http.StatusNotFound)
 			return
 		}
 
-		ok, err := database.CheckPermission(id, video["id"].(int64))
+		ok, err := database.CheckPermission(id, video.Id)
 		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
-		}
-		if !ok {
+		} else if !ok {
 			http.Error(w, "", http.StatusForbidden)
 			return
 		}
 
-		var path = video["path"].(string)
-		f, err := os.Open(path)
+		f, err := os.Open(video.Path)
 		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer f.Close()
 
-		http.ServeContent(w, req, path, time.Time{}, f)
+		http.ServeContent(w, req, video.Path, time.Time{}, f)
 	}
 }
 
@@ -78,7 +78,7 @@ func MediaThumbnailHandler(w http.ResponseWriter, req *http.Request) {
 
 	preloadedMedia, ok := thumbnailsToServe[mediaUrlB64]
 	if ok {
-		writeResponse(preloadedMedia, w, "image/jpg", http.StatusOK)
+		tools.WriteResponse(preloadedMedia, w, "image/jpg", http.StatusOK)
 		return
 	}
 
@@ -115,5 +115,5 @@ func MediaThumbnailHandler(w http.ResponseWriter, req *http.Request) {
 	var thumbnail = string(data)
 	thumbnailsToServe[mediaUrlB64] = thumbnail
 
-	writeResponse(thumbnail, w, "image/jpg", http.StatusOK)
+	tools.WriteResponse(thumbnail, w, "image/jpg", http.StatusOK)
 }

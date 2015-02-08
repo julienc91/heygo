@@ -20,7 +20,7 @@ type About struct {
 // Display the "About" page
 func AboutHandler(w http.ResponseWriter, req *http.Request) {
 
-	var viewInfo = getViewInfo(req, "about")
+	var viewInfo = GetViewInfo(req, "about")
 
 	t := template.Must(template.New("about.html").ParseFiles(
 		"templates/about.html", "templates/base.html"))
@@ -28,6 +28,6 @@ func AboutHandler(w http.ResponseWriter, req *http.Request) {
 		About{globals.APPNAME, globals.VERSION, globals.DATE, globals.AUTHOR, globals.WEBSITE, viewInfo.IsUserAuthenticated,
 			viewInfo.IsUserAdmin, viewInfo.ViewName})
 	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

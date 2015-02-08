@@ -1,13 +1,7 @@
 var config = {};
 
 app.run(function(gettextCatalog) {
-        config = { "titles": {
-            "users": gettextCatalog.getString("Users"),
-            "invitations": gettextCatalog.getString("Invitations"),
-            "groups": gettextCatalog.getString("Groups"),
-            "videos": gettextCatalog.getString("Videos"),
-            "video_groups": gettextCatalog.getString("Video groups")
-        },
+    config = {
         "fields": {
             "users": ["id", "login", "password"],
             "invitations": ["id", "value"],
@@ -66,10 +60,27 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
     $urlRouterProvider.otherwise("/users");
 
     $stateProvider
-        .state('generic_tables', {
-            url: "/{table:users|invitations|groups|videos|video_groups}",
-            controller: "generic_grid_view_controller",
+        .state('users_grid_view', {
+            url: "/{table:users}",
+            controller: "users_grid_view_controller",
             templateUrl: "/static/html/admin/generic_grid_view.html"})
+        .state('invitations_grid_view', {
+            url: "/{table:invitations}",
+            controller: "invitations_grid_view_controller",
+            templateUrl: "/static/html/admin/generic_grid_view.html"})
+        .state('groups_grid_view', {
+            url: "/{table:groups}",
+            controller: "groups_grid_view_controller",
+            templateUrl: "/static/html/admin/generic_grid_view.html"})
+        .state('videos_grid_view', {
+            url: "/{table:videos}",
+            controller: "videos_grid_view_controller",
+            templateUrl: "/static/html/admin/generic_grid_view.html"})
+        .state('video_groups_grid_view', {
+            url: "/{table:video_groups}",
+            controller: "video_groups_grid_view_controller",
+            templateUrl: "/static/html/admin/generic_grid_view.html"})
+
         .state('users_new', {
             url: "/{table:users}/{mode:new}/",
             controller: "generic_edit_view_controller",
@@ -104,20 +115,72 @@ app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $u
             templateUrl: "/static/html/admin/configuration.html"});
 }]);
 
+app.controller('users_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog', '$controller',
+    function ($scope, $http, $stateParams, gettextCatalog, $controller) {
+        $controller('generic_grid_view_controller', {$scope: $scope, $http: $http, $stateParams: $stateParams, gettextCatalog: gettextCatalog});
+        $scope.title = gettextCatalog.getString("Users");
+        $scope.main_field = "login";
+        $scope.delete_param = "user";
+        $scope.get_all_param = "users";
+    }
+]);
+
+app.controller('invitations_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog', '$controller',
+    function ($scope, $http, $stateParams, gettextCatalog, $controller) {
+        $controller('generic_grid_view_controller', {$scope: $scope, $http: $http, $stateParams: $stateParams, gettextCatalog: gettextCatalog});
+        $scope.title = gettextCatalog.getString("Invitations");
+        $scope.main_field = "value";
+        $scope.delete_param = "invitation";
+        $scope.get_all_param = "invitations";
+    }
+]);
+
+app.controller('groups_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog', '$controller',
+    function ($scope, $http, $stateParams, gettextCatalog, $controller) {
+        $controller('generic_grid_view_controller', {$scope: $scope, $http: $http, $stateParams: $stateParams, gettextCatalog: gettextCatalog});
+        $scope.title = gettextCatalog.getString("Invitations");
+        $scope.main_field = "title";
+        $scope.delete_param = "group";
+        $scope.get_all_param = "groups";
+    }
+]);
+
+app.controller('videos_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog', '$controller',
+    function ($scope, $http, $stateParams, gettextCatalog, $controller) {
+        $controller('generic_grid_view_controller', {$scope: $scope, $http: $http, $stateParams: $stateParams, gettextCatalog: gettextCatalog});
+        $scope.title = gettextCatalog.getString("Videos");
+        $scope.main_field = "title";
+        $scope.delete_param = "video";
+        $scope.get_all_param = "videos";
+    }
+]);
+
+app.controller('video_groups_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog', '$controller',
+    function ($scope, $http, $stateParams, gettextCatalog, $controller) {
+        $controller('generic_grid_view_controller', {$scope: $scope, $http: $http, $stateParams: $stateParams, gettextCatalog: gettextCatalog});
+        $scope.title = gettextCatalog.getString("Video Groups");
+        $scope.main_field = "title";
+        $scope.delete_param = "video_group";
+        $scope.get_all_param = "video_groups";
+    }
+]);
+
 
 app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams', 'gettextCatalog',
     function ($scope, $http, $stateParams, gettextCatalog) {
         $scope.table = $stateParams.table;
-        $scope.title = config.titles[$scope.table];
         $scope.rows = [];
 
         $scope.external_scope = {
             table: $scope.table,
             delete_row: function(row) {
-                bootbox.confirm(gettextCatalog.getString("This will permanently remove \"{{ entry }}\". Are you sure ?", {entry: row[config.main_fields[$scope.table]]}),
+                bootbox.confirm(gettextCatalog.getString("This will permanently remove \"{{ entry }}\". Are you sure ?", {entry: row[$scope.main_field]}),
                     function(result) {
                         if (result) {
-                            $http.get("/admin/delete/" + $scope.table + "/" + row.id).success(function(response) {
+                            var params = {};
+                            params[$scope.delete_param] = JSON.stringify(row);
+
+                            $http.get("/admin/delete/" + $scope.table + "/", {params: params}).success(function(response) {
                                 if (response.ok) {
                                     var index_to_delete = -1;
                                     for (var i=0; i<$scope.rows.length; i++) {
@@ -129,9 +192,10 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
                                     if (index_to_delete >= 0)
                                         $scope.rows.splice(index_to_delete, 1);
                                 }
-                        }).error(display_error_message);
+                            }).error(display_error_message);
+                        }
                     }
-                });
+                );
             }
         };
 
@@ -147,7 +211,7 @@ app.controller('generic_grid_view_controller', ['$scope', '$http', '$stateParams
                                                            <button class="btn-link" ng-click="getExternalScopes().delete_row(row.entity)"><span class="glyphicon glyphicon-remove" tooltip="' + gettextCatalog.getString("Delete") + '" tooltip-trigger tooltip-placement="left"></span></button></div>'});
         $http.get("/admin/get/" + $scope.table).success(function(response) {
             if (response.ok)
-                $scope.rows = response.data;
+                $scope.rows = response.data[$scope.get_all_param];
         }).error(display_error_message);
     }
 ]);
