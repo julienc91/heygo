@@ -209,7 +209,7 @@ func AdminBatchInsertVideos(w http.ResponseWriter, req *http.Request) {
 		var video globals.Video
 		video.Path = filename
 		video.Title = path.Base(filename)
-		video.Slug = tools.SlugFromFilename(path.Base(filename))
+		video.Slug = tools.GetSlugFromString(path.Base(filename))
 
 		video, _, err := database.InsertVideo(video, videoGroups)
 		if err != nil {

@@ -59,13 +59,13 @@ func GetFilesFromSubfolder(subfolder string, extension string, recursive bool) (
 }
 
 // Get a slug from the given filename
-func SlugFromFilename(filename string) string {
+func GetSlugFromString(filename string) string {
 
 	var slug = strings.ToLower(filename)
-	var from = "ãàáäâ@ẽèéëêìíïîõòóöôùúüûñç"
-	var to = "aaaaaaeeeeeiiiiooooouuuunc"
+	var from = []string{"ã", "à", "á", "ä", "â", "@", "ẽ", "è", "é", "ë", "ê", "ì", "í", "ï", "î", "õ", "ò", "ó", "ö", "ô", "ù", "ú", "ü", "û", "ñ", "ç", "$"}
+	var to = []string{"a", "a", "a", "a", "a", "a", "e", "e", "e", "e", "e", "i", "i", "i", "i", "o", "o", "o", "o", "o", "u", "u", "u", "u", "n", "c", "s"}
 	for i := 0; i < len(from) && i < len(to); i++ {
-		slug = strings.Replace(slug, string(from[i]), string(to[i]), -1)
+		slug = strings.Replace(slug, from[i], to[i], -1)
 	}
 	var re = regexp.MustCompile("[^\\w]+")
 	return re.ReplaceAllString(slug, "_")
